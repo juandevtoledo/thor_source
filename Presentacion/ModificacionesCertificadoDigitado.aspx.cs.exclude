@@ -1,0 +1,3477 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data;
+
+public partial class Presentacion_ModificacionesCertificadoDigitado : System.Web.UI.Page
+{
+    public static string poliza;
+    public static DataTable dt = new DataTable();
+    public static DataTable otrosAsegurados = new DataTable();
+    public static DataTable dtArchivo = new DataTable();
+    public static DataTable dtNovedades = new DataTable();
+    public static DataTable dtConyuge = new DataTable();
+    public static DataTable dtTemp;
+    public static DataTable dtTempOtrosAsegurados;
+    public static List<Asegurado> beneficiario = new List<Asegurado>();
+    public static List<Asegurado> beneficiarioConyuge = new List<Asegurado>();
+    public static int extraPrima = 0;
+    public static int extraPrimaConyuge = 0;
+    public static DataTable dtBeneficiario = new DataTable();
+    public static DataTable dtBeneficiarioConyuge = new DataTable();
+    public static DataTable dtEliminarPrincipal = new DataTable();
+    public static DataTable dtEliminarConyuge = new DataTable();
+    public static DataTable dtMesYAnio = new DataTable();
+    public static int cer_Id;
+    public static int primaOtroAsegurado = 0;
+    DataTable dtCertificadoFull = new DataTable();
+    DataTable dtOtroAsegurado = new DataTable();
+    DataTable dtEncabezadoCertificado = new DataTable(); //JC 22-09-2015
+    public static bool sePuedenHijosPMI = true;
+    public static string movimientoPrincipal;
+    public static string movimientoConyuge;
+    public static string movimientoOtrosAsegurados = "";
+    public static int tipoMovimientoDefinitivo = 0;
+    public bool teniaConyuge;
+    public bool teniaOtrosAsegurados = false;
+    public static int cer_Antiguo;
+    public static DataTable dtPeriodicidad = new DataTable();
+    public static DataTable dtArchivoPagaduria = new DataTable();
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        // TEMPORALES
+        //Session["numeroCertificado"] = "2";
+        //Session["cer_Id"] = "2";
+        //Session["operacionCertificado"] = "modificar";
+        //Session["pro_Id"] = "1";
+        //Session["ter_Id"] = "28757443";
+
+
+        //Codigo para redireccionar al caducar la session*****************************JC
+        Response.AddHeader("Refresh", Convert.ToString((Session.Timeout * 60) + 3));
+        if (Session["usuario"] == null)
+            Response.Redirect("~/login.aspx");
+        //******************************************************************************
+
+        AdministrarCertificados.usuarioSistema.NombreUsuario = Session["Usuario"].ToString();
+
+        txtFechaExpedicionCertificado.Enabled = false;
+        txtFechaVigenciaCertificado.Enabled = false;
+        txtCertificado.Enabled = false;
+        txtNombreAsesor.Enabled = false;
+        txtAgencia.Enabled = false;
+        txtPrima.Enabled = false;
+        txtCedulaPrincipal.Enabled = false;
+        txtNombrePrincipal.Enabled = false;
+        txtApellidoPrincipal.Enabled = false;
+        txtEdadPrincipal.Enabled = false;
+        txtPagaduriaPrincipal.Enabled = false;
+        txtPrimaPrincipal.Enabled = false;
+        txtCedulaConyuge.Enabled = false;
+        txtNombreConyuge.Enabled = false;
+        txtApellidoConyuge.Enabled = false;
+        txtEdadConyuge.Enabled = false;
+        txtPrimaConyuge.Enabled = false;
+        txtPrima.Enabled = false;
+        txtPrimaConyuge.Enabled = false;
+        txtPrimaOtros.Enabled = false;
+        txtPrimaPrincipal.Enabled = false;
+        txtCedulaOtro.Enabled = false;
+        txtNombreOtro.Enabled = false;
+        txtApellidoOtro.Enabled = false;
+        txtEdadOtro.Enabled = false;
+        txtFechaNacimiento.Enabled = false;
+        btnAdicionarOtrosAsegurados.Enabled = false;
+        grvAmparoOtro.Visible = false;
+        btnGuardarCambios.Enabled = false;
+
+        AdministrarCertificados.usuarioSistema.NombreUsuario = Session["Usuario"].ToString();
+
+        txtFechaExpedicionCertificado.Enabled = false;
+        txtFechaVigenciaCertificado.Enabled = false;
+        txtCertificado.Enabled = false;
+        txtNombreAsesor.Enabled = false;
+        txtAgencia.Enabled = false;
+        txtPrima.Enabled = false;
+        txtCedulaPrincipal.Enabled = false;
+        txtNombrePrincipal.Enabled = false;
+        txtApellidoPrincipal.Enabled = false;
+        txtEdadPrincipal.Enabled = false;
+        txtPagaduriaPrincipal.Enabled = false;
+        txtPrimaPrincipal.Enabled = false;
+        txtCedulaConyuge.Enabled = false;
+        txtNombreConyuge.Enabled = false;
+        txtApellidoConyuge.Enabled = false;
+        txtEdadConyuge.Enabled = false;
+        txtPrimaConyuge.Enabled = false;
+        txtPrima.Enabled = false;
+        txtPrimaConyuge.Enabled = false;
+        txtPrimaOtros.Enabled = false;
+        txtPrimaPrincipal.Enabled = false;
+        txtCedulaOtro.Enabled = false;
+        txtNombreOtro.Enabled = false;
+        txtApellidoOtro.Enabled = false;
+        txtEdadOtro.Enabled = false;
+        txtFechaNacimiento.Enabled = false;
+        btnAdicionarOtrosAsegurados.Enabled = false;
+        grvAmparoOtro.Visible = false;
+        txtHServicio1.Enabled = false;
+        txtHServicio2.Enabled = false;
+        txtHServicio3.Enabled = false;
+        txtAnexoConversion.Enabled = false;
+
+        if (!IsPostBack)
+        {
+            btnSiguienteCertificado.Enabled = false;
+            reqtxtPlanPrincipal.Enabled = false;
+            txtPlanPrincipal.Visible = false;
+            reqtxtPlanConyuge.Enabled = false;
+            txtPlanConyuge.Visible = false;
+            lblPlan.Visible = false;
+            labPlan.Visible = false;
+        }
+        if (ddlPoliza.Text != "")
+        {
+            txtDocumentoConyugue.Enabled = true;
+            txtDocumentoOtros.Enabled = true;
+        }
+        else
+        {
+            txtDocumentoConyugue.Enabled = false;
+            txtDocumentoOtros.Enabled = false;
+        }
+
+        if (!IsPostBack)
+        {
+            dtBeneficiario = new DataTable();
+            DataColumn columns = new DataColumn();
+            columns.DataType = System.Type.GetType("System.String");
+            columns.AllowDBNull = true;
+            columns.Caption = "NumeroDocumento";
+            columns.ColumnName = "NumeroDocumento";
+            dtBeneficiario.Columns.Add(columns);
+
+            columns = new DataColumn();
+            columns.DataType = System.Type.GetType("System.String");
+            columns.AllowDBNull = true;
+            columns.Caption = "Apellidos";
+            columns.ColumnName = "Apellidos";
+            dtBeneficiario.Columns.Add(columns);
+
+            columns = new DataColumn();
+            columns.DataType = System.Type.GetType("System.String");
+            columns.AllowDBNull = true;
+            columns.Caption = "Nombres";
+            columns.ColumnName = "Nombres";
+            dtBeneficiario.Columns.Add(columns);
+
+            columns = new DataColumn();
+            columns.DataType = System.Type.GetType("System.String");
+            columns.AllowDBNull = true;
+            columns.Caption = "Edad";
+            columns.ColumnName = "Edad";
+            dtBeneficiario.Columns.Add(columns);
+
+            columns = new DataColumn();
+            columns.DataType = System.Type.GetType("System.String");
+            columns.AllowDBNull = true;
+            columns.Caption = "Porcentaje";
+            columns.ColumnName = "Porcentaje";
+            dtBeneficiario.Columns.Add(columns);
+
+            columns = new DataColumn();
+            columns.DataType = System.Type.GetType("System.String");
+            columns.AllowDBNull = true;
+            columns.Caption = "Parentesco";
+            columns.ColumnName = "Parentesco";
+            dtBeneficiario.Columns.Add(columns);
+
+            grvBeneficiarioPrincipal.DataSource = dtBeneficiario;
+            grvBeneficiarioPrincipal.DataBind();
+            grvBeneficiarioPrincipal.Enabled = true;
+
+            dtBeneficiarioConyuge = new DataTable();
+            DataColumn column = new DataColumn();
+            column.DataType = System.Type.GetType("System.String");
+            column.AllowDBNull = true;
+            column.Caption = "NumeroDocumento";
+            column.ColumnName = "NumeroDocumento";
+            dtBeneficiarioConyuge.Columns.Add(column);
+
+            column = new DataColumn();
+            column.DataType = System.Type.GetType("System.String");
+            column.AllowDBNull = true;
+            column.Caption = "Apellidos";
+            column.ColumnName = "Apellidos";
+            dtBeneficiarioConyuge.Columns.Add(column);
+
+            column = new DataColumn();
+            column.DataType = System.Type.GetType("System.String");
+            column.AllowDBNull = true;
+            column.Caption = "Nombres";
+            column.ColumnName = "Nombres";
+            dtBeneficiarioConyuge.Columns.Add(column);
+
+            column = new DataColumn();
+            column.DataType = System.Type.GetType("System.String");
+            column.AllowDBNull = true;
+            column.Caption = "Edad";
+            column.ColumnName = "Edad";
+            dtBeneficiarioConyuge.Columns.Add(column);
+
+            column = new DataColumn();
+            column.DataType = System.Type.GetType("System.String");
+            column.AllowDBNull = true;
+            column.Caption = "Porcentaje";
+            column.ColumnName = "Porcentaje";
+            dtBeneficiarioConyuge.Columns.Add(column);
+
+            column = new DataColumn();
+            column.DataType = System.Type.GetType("System.String");
+            column.AllowDBNull = true;
+            column.Caption = "Parentesco";
+            column.ColumnName = "Parentesco";
+            dtBeneficiarioConyuge.Columns.Add(column);
+
+            grvBeneficiarioConyuge.DataSource = dtBeneficiarioConyuge;
+            grvBeneficiarioConyuge.DataBind();
+            grvBeneficiarioConyuge.Enabled = true;
+
+            otrosAsegurados = new DataTable();
+
+            if (!IsPostBack)
+            {
+                dtTemp = new DataTable();
+
+                poliza = Session["numeroCertificado"].ToString();
+                if (poliza != null)
+                {
+                    txtCertificado.Text = poliza;
+                }
+                //dtCertificadoFull = AdministrarCertificados.consultarCertificadoFull(int.Parse(poliza));
+                if (int.Parse(Session["pro_Id"].ToString()) == 99)
+                    dtCertificadoFull = AdministrarCertificados.consultarCertificadoFullCedula(double.Parse(Session["ter_Id"].ToString()), 1);
+                if (dtCertificadoFull.Rows.Count == 0)
+                    dtCertificadoFull = AdministrarCertificados.consultarCertificadoFullCedula(double.Parse(Session["ter_Id"].ToString()), int.Parse(Session["pro_Id"].ToString()));
+            }
+            int Edad = 0;
+
+            if (!IsPostBack)
+            {
+                // Todos
+                AdministrarCertificados.certificadoPrecargado(int.Parse(Session["cer_Id"].ToString()));
+                txtAgencia.Text = AdministrarCertificados.certificadoPre.Agencia;
+                txtFechaExpedicionCertificado.Text = AdministrarCertificados.certificadoPre.FechaExpedicion.ToString("yyyy-MM-dd");
+                txtFechaVigenciaCertificado.Text = AdministrarCertificados.certificadoPre.Vigencia.ToString("yyyy-MM-dd");
+                txtCertificado.Text = AdministrarCertificados.certificadoPre.NumeroCertificado;
+                txtNombreAsesor.Text = AdministrarCertificados.certificadoPre.NombreAsesor;
+                txtNombrePrincipal.Text = AdministrarCertificados.aseguradoPre.Nombres;
+                txtApellidoPrincipal.Text = AdministrarCertificados.aseguradoPre.Apellidos;
+                txtCedulaPrincipal.Text = AdministrarCertificados.aseguradoPre.NumeroDocumento;
+                txtPagaduriaPrincipal.Text = AdministrarCertificados.certificadoPre.Pagaduria;
+                txtHServicio1.Text = AdministrarCertificados.certificadoPre.HojaServicio1;
+                txtHServicio2.Text = AdministrarCertificados.certificadoPre.HojaServicio2;
+                txtHServicio3.Text = AdministrarCertificados.certificadoPre.HojaServicio3;
+                txtAnexoConversion.Text = AdministrarCertificados.certificadoPre.AnexoConversion;
+                Edad = Convert.ToInt32(Session["edad"]);
+                txtEdadPrincipal.Text = Edad.ToString();
+
+                DataTable dt = new DataTable(), dtAgencia = new DataTable(), dtPeriodoPago = new DataTable(), dtLocalidades = new DataTable(), dtOcupacionPrincipal = new DataTable();
+
+                dtPeriodoPago = AdministrarCertificados.ConsultarPeriodosPago();
+                ddlperiodoPagoCertificado.DataValueField = "perpago_Id";
+                ddlperiodoPagoCertificado.DataTextField = "perpago_Nombre";
+                ddlperiodoPagoCertificado.DataSource = dtPeriodoPago;
+                ddlperiodoPagoCertificado.DataBind();
+                ddlperiodoPagoCertificado.Items.Insert(0, new ListItem("", ""));
+
+                dtLocalidades = AdministrarCertificados.ConsultarLocalidadesCertificado(int.Parse(Session["cer_Id"].ToString()));
+                ddlLocalidadCertificado.DataValueField = "dep_Id";
+                ddlLocalidadCertificado.DataTextField = "dep_Nombre";
+                ddlLocalidadCertificado.DataSource = dtLocalidades;
+                ddlLocalidadCertificado.DataBind();
+                ddlLocalidadCertificado.Items.Insert(0, new ListItem("", ""));
+                ddlLocalidadCertificado.Attributes.Add("onclick", "localStorage.setItem('accIndex', 0);");
+
+                dtOcupacionPrincipal = AdministrarCertificados.ConsultarOcupacionCertificado(int.Parse(txtCedulaPrincipal.Text));
+                ddlOcupacionPrincipal.DataValueField = "ocu_Id";
+                ddlOcupacionPrincipal.DataTextField = "ocu_Nombre";
+                ddlOcupacionPrincipal.DataSource = dtOcupacionPrincipal;
+                ddlOcupacionPrincipal.DataBind();
+
+                //cer_Id = AdministrarCertificados.ConsultarIdCertificado(int.Parse(Session["ter_Id"].ToString()), int.Parse(Session["pro_Id"].ToString()), "VIGENTE");
+                cer_Id = int.Parse(Session["cer_id"].ToString());
+
+                // Cargar todo lo relacionado con modificar
+                if (dtCertificadoFull.Rows.Count > 0)
+                {
+                    if ((string)Session["operacionCertificado"] == "modificar" || int.Parse(Session["pro_Id"].ToString()) == 99)
+                    {
+                        ReqddlPlanPrincipal.Enabled = false;
+                        reqddlPlanConyuge.Enabled = false;
+                        reqtxtPlanConyuge.Enabled = false;
+                        reqtxtPlanPrincipal.Enabled = false;
+
+                        ddlLocalidadCertificado.SelectedValue = dtCertificadoFull.Rows[0]["Localidad"].ToString();
+                        DataTable dtPolizaInicio = new DataTable();
+                        dtPolizaInicio = AdministrarCertificados.spConsultarPolizaPorProudcto(int.Parse(ddlLocalidadCertificado.SelectedValue.ToString()));
+                        ddlPoliza.DataSource = dtPolizaInicio;
+                        ddlPoliza.DataTextField = "pol_Numero";
+                        ddlPoliza.DataValueField = "pol_Id";
+                        ddlPoliza.SelectedValue = dtPolizaInicio.Rows[0]["pol_Id"].ToString(); ;
+                        ddlPoliza.DataBind();
+
+                        txtFechaDigitacionCertificado.Text = DateTime.Parse(dtCertificadoFull.Rows[0]["cer_FechaRecibido"].ToString()).ToString("yyyy-MM-dd");
+                        //ddlPoliza.Text = dtCertificadoFull.Rows[0]["pol_Id"].ToString();
+                        ddlperiodoPagoCertificado.SelectedIndex = ddlperiodoPagoCertificado.Items.IndexOf(ddlperiodoPagoCertificado.Items.FindByText(dtCertificadoFull.Rows[0]["perpago_Nombre"].ToString())); //jc
+                        txtDeclaracionAsegurado.Text = dtCertificadoFull.Rows[0]["cer_Declaracion"].ToString();
+                        txtDeclaracionEG.Text = dtCertificadoFull.Rows[0]["cer_DeclaracionEnfe"].ToString();
+                        txtPrima.Text = dtCertificadoFull.Rows[0]["cer_PrimaTotal"].ToString();
+                        txtPlanPrincipal.Text = dtCertificadoFull.Rows[0]["pla_Id"].ToString();
+                        txtpesoPrincipal.Text = dtCertificadoFull.Rows[0]["PesoPrincipal"].ToString();
+                        txtestaturaPrincipal.Text = dtCertificadoFull.Rows[0]["cer_EstaturaPrincipal"].ToString();
+                        txtPeso.Text = dtCertificadoFull.Rows[0]["PesoConyuge"].ToString();
+                        txtEstatura.Text = dtCertificadoFull.Rows[0]["cer_EstaturaConyuge"].ToString();
+                        txtEdadPrincipal.Text = Funciones.Edad(DateTime.Parse(dtCertificadoFull.Rows[0]["ter_FechaNacimiento"].ToString())).ToString(); //Envía fecha y devuelve la edad
+
+                        //DataTable que trae info de tercero por ter_Id para llenar compos de conyuge
+                        DataTable dtConyuge = new DataTable();
+                        dtConyuge = AdministrarCertificados.consultarNewTerceroPorCedula(int.Parse(txtCedulaPrincipal.Text), int.Parse(AdministrarCertificados.certificadoPre.Producto));
+                        if (dtConyuge.Rows.Count > 0)
+                        {
+                            teniaConyuge = true;
+                            txtCedulaConyuge.Text = dtConyuge.Rows[0]["ter_Id"].ToString();
+                            txtNombreConyuge.Text = dtConyuge.Rows[0]["ter_Nombres"].ToString();
+                            txtApellidoConyuge.Text = dtConyuge.Rows[0]["ter_Apellidos"].ToString();
+                            txtEdadConyuge.Text = Funciones.Edad(DateTime.Parse(dtConyuge.Rows[0]["ter_FechaNacimiento"].ToString())).ToString(); //Envía fecha y devuelve la edad
+                        }
+                        else
+                            teniaConyuge = false;
+
+                        txtFechaDigitacionCertificado.Text = DateTime.Parse(dtCertificadoFull.Rows[0]["cer_FechaRecibido"].ToString()).ToString("yyyy-MM-dd");
+                        ddlPoliza.Text = dtCertificadoFull.Rows[0]["pol_Numero"].ToString();
+                        txtDeclaracionAsegurado.Text = dtCertificadoFull.Rows[0]["cer_Declaracion"].ToString();
+                        txtDeclaracionEG.Text = dtCertificadoFull.Rows[0]["cer_DeclaracionEnfe"].ToString();
+                        txtPrima.Text = dtCertificadoFull.Rows[0]["cer_PrimaTotal"].ToString();
+                        txtPlanPrincipal.Text = dtCertificadoFull.Rows[0]["pla_Id"].ToString();
+                        txtpesoPrincipal.Text = dtCertificadoFull.Rows[0]["PesoPrincipal"].ToString();
+                        txtestaturaPrincipal.Text = dtCertificadoFull.Rows[0]["cer_EstaturaPrincipal"].ToString();
+                        txtPeso.Text = dtCertificadoFull.Rows[0]["PesoConyuge"].ToString();
+                        txtEstatura.Text = dtCertificadoFull.Rows[0]["cer_EstaturaConyuge"].ToString();
+
+                        cer_Id = AdministrarCertificados.ConsultarIdCertificado(int.Parse(Session["ter_Id"].ToString()), int.Parse(Session["pro_Id"].ToString()), "VIGENTE", "PRODUCCION NUEVA");
+                        //cer_Id = int.Parse(Session["cer_id"].ToString());
+
+                        dtBeneficiario = AdministrarCertificados.ConsultarBeneficiarioModificacion(cer_Id, int.Parse(txtCedulaPrincipal.Text), 1);
+                        grvBeneficiarioPrincipal.DataSource = dtBeneficiario;
+                        grvBeneficiarioPrincipal.DataBind();
+
+                        cer_Antiguo = 0;
+                        if (int.Parse(Session["pro_Id"].ToString()) == 99 && dtBeneficiario.Rows.Count == 0)
+                        {
+                            try
+                            {
+                                cer_Antiguo = int.Parse(dtCertificadoFull.Rows[0]["cer_Id"].ToString());
+                            }
+                            catch { }
+
+                            dtBeneficiario = AdministrarCertificados.ConsultarBeneficiarioModificacion(cer_Antiguo, int.Parse(txtCedulaPrincipal.Text), 1);
+                            grvBeneficiarioPrincipal.DataSource = dtBeneficiario;
+                            grvBeneficiarioPrincipal.DataBind();
+                        }
+
+                        dtEliminarPrincipal = AdministrarCertificados.consultarAmparosPorPlanModificacion(cer_Id, 1);
+                        grvAmparoPrincipal.DataSource = dtEliminarPrincipal;
+                        grvAmparoPrincipal.DataBind();
+
+                        if (int.Parse(Session["pro_Id"].ToString()) == 99 && dtEliminarPrincipal.Rows.Count == 0)
+                        {
+                            dtEliminarPrincipal = AdministrarCertificados.consultarAmparosPorPlanModificacion(cer_Antiguo, 1);
+                            grvAmparoPrincipal.DataSource = dtEliminarPrincipal;
+                            grvAmparoPrincipal.DataBind();
+                        }
+
+                        if (txtCedulaConyuge.Text != "")
+                        {
+                            DataTable dtPlanPrin = new DataTable();
+                            dtPlanPrin = AdministrarCertificados.consultarPlanPorPoliza(int.Parse(ddlPoliza.SelectedValue.ToString()), 2, int.Parse(txtEdadConyuge.Text));
+                            ddlPlanConyuge.DataSource = dtPlanPrin;
+                            ddlPlanConyuge.DataValueField = "plapol_Id";
+                            ddlPlanConyuge.DataTextField = "plan_ValAsegurado";
+                            ddlPlanConyuge.DataBind();
+
+                            dtPlanPrin = AdministrarCertificados.consultarPlanPorPoliza(int.Parse(ddlPoliza.SelectedValue.ToString()), 1, int.Parse(txtEdadPrincipal.Text));
+                            ddlPlanPrincipal.DataSource = dtPlanPrin;
+                            ddlPlanPrincipal.DataValueField = "plapol_Id";
+                            ddlPlanPrincipal.DataTextField = "plan_ValAsegurado";
+                            ddlPlanPrincipal.DataBind();
+
+                            dtBeneficiarioConyuge = AdministrarCertificados.ConsultarBeneficiarioModificacion(cer_Id, int.Parse(txtCedulaConyuge.Text), 2);
+                            grvBeneficiarioConyuge.DataSource = dtBeneficiarioConyuge;
+                            grvBeneficiarioConyuge.DataBind();
+
+                            if (int.Parse(Session["pro_Id"].ToString()) == 99 && dtBeneficiarioConyuge.Rows.Count == 0)
+                            {
+                                dtBeneficiarioConyuge = AdministrarCertificados.ConsultarBeneficiarioModificacion(cer_Antiguo, int.Parse(txtCedulaConyuge.Text), 2);
+                                grvBeneficiarioConyuge.DataSource = dtBeneficiarioConyuge;
+                                grvBeneficiarioConyuge.DataBind();
+                            }
+
+                            if (dtBeneficiarioConyuge.Rows.Count == 0)
+                            {
+                                dtBeneficiarioConyuge = new DataTable();
+                                column = new DataColumn();
+                                column.DataType = System.Type.GetType("System.String");
+                                column.AllowDBNull = true;
+                                column.Caption = "NumeroDocumento";
+                                column.ColumnName = "NumeroDocumento";
+                                dtBeneficiarioConyuge.Columns.Add(column);
+
+                                column = new DataColumn();
+                                column.DataType = System.Type.GetType("System.String");
+                                column.AllowDBNull = true;
+                                column.Caption = "Apellidos";
+                                column.ColumnName = "Apellidos";
+                                dtBeneficiarioConyuge.Columns.Add(column);
+
+                                column = new DataColumn();
+                                column.DataType = System.Type.GetType("System.String");
+                                column.AllowDBNull = true;
+                                column.Caption = "Nombres";
+                                column.ColumnName = "Nombres";
+                                dtBeneficiarioConyuge.Columns.Add(column);
+
+                                column = new DataColumn();
+                                column.DataType = System.Type.GetType("System.String");
+                                column.AllowDBNull = true;
+                                column.Caption = "Edad";
+                                column.ColumnName = "Edad";
+                                dtBeneficiarioConyuge.Columns.Add(column);
+
+                                column = new DataColumn();
+                                column.DataType = System.Type.GetType("System.String");
+                                column.AllowDBNull = true;
+                                column.Caption = "Porcentaje";
+                                column.ColumnName = "Porcentaje";
+                                dtBeneficiarioConyuge.Columns.Add(column);
+
+                                column = new DataColumn();
+                                column.DataType = System.Type.GetType("System.String");
+                                column.AllowDBNull = true;
+                                column.Caption = "Parentesco";
+                                column.ColumnName = "Parentesco";
+                                dtBeneficiarioConyuge.Columns.Add(column);
+
+                                DataRow row1 = dtBeneficiarioConyuge.NewRow();
+                                row1["NumeroDocumento"] = "";
+                                row1["Apellidos"] = "";
+                                row1["Nombres"] = "";
+                                row1["Edad"] = "";
+                                row1["Porcentaje"] = "";
+                                row1["Parentesco"] = "";
+                                dtBeneficiarioConyuge.Rows.Add(row1);
+
+                                grvBeneficiarioConyuge.DataSource = dtBeneficiarioConyuge;
+                                grvBeneficiarioConyuge.DataBind();
+                                grvBeneficiarioConyuge.Enabled = true;
+                            }
+                        }
+
+                        otrosAsegurados = AdministrarCertificados.consultarOtroAsegurado(cer_Id);
+                        dtTemp = AdministrarCertificados.consultarOtroAseguradoIndex(cer_Id);
+                        grvOtrosAsegurados.DataSource = otrosAsegurados;
+                        grvOtrosAsegurados.DataBind();
+
+                        if (int.Parse(Session["pro_Id"].ToString()) == 99 && otrosAsegurados.Rows.Count == 0)
+                        {
+                            otrosAsegurados = AdministrarCertificados.consultarOtroAsegurado(cer_Antiguo);
+                            dtTemp = AdministrarCertificados.consultarOtroAseguradoIndex(cer_Antiguo);
+                            grvOtrosAsegurados.DataSource = otrosAsegurados;
+                            grvOtrosAsegurados.DataBind();
+                        }
+
+                        teniaOtrosAsegurados = true;
+
+                        if (txtCedulaConyuge.Text != "")
+                        {
+                            dtEliminarConyuge = AdministrarCertificados.consultarAmparosPorPlanModificacion(cer_Id, 2);
+                            grvAmparoConyuge.DataSource = dtEliminarConyuge;
+                            grvAmparoConyuge.DataBind();
+
+                            if (int.Parse(Session["pro_Id"].ToString()) == 99 && dtEliminarConyuge.Rows.Count == 0)
+                            {
+                                dtEliminarConyuge = AdministrarCertificados.consultarAmparosPorPlanModificacion(cer_Antiguo, 2);
+                                grvAmparoConyuge.DataSource = dtEliminarConyuge;
+                                grvAmparoConyuge.DataBind();
+                            }
+                        }
+                    }
+                }
+
+                if (AdministrarCertificados.certificadoPre.Producto == "1")
+                {
+                    if ((string)Session["operacionCertificado"] == "modificar")
+                    {
+                        reqtxtPlanPrincipal.Enabled = false;
+                        reqtxtPlanConyuge.Enabled = false;
+                    }
+                    else
+                    {
+                        reqtxtPlanPrincipal.Enabled = true;
+                        reqtxtPlanConyuge.Enabled = true;
+                    }
+
+                    txtPlanPrincipal.Visible = true;
+                    txtPlanConyuge.Visible = true;
+
+                    lblPlan.Visible = true;
+                    labPlan.Visible = true;
+
+                    ReqddlPlanPrincipal.Enabled = false;
+                    ddlPlanPrincipal.Visible = false;
+
+                    reqddlPlanConyuge.Enabled = false;
+                    ddlPlanConyuge.Visible = false;
+
+                    labPlan1.Visible = false;
+                    lblPlan2.Visible = false;
+
+                    reqtxtPeso.Enabled = false;
+                    txtPeso.Visible = false;
+
+                    reqtxtPesoPrincipal.Enabled = false;
+                    txtpesoPrincipal.Visible = false;
+
+                    reqtxtestaturaPrincipal.Enabled = false;
+                    txtestaturaPrincipal.Visible = false;
+
+                    reqtxtEstatura.Enabled = false;
+                    txtEstatura.Visible = false;
+
+                    lblPesoConyuge.Visible = false;
+                    lblEstaturaConyuge.Visible = false;
+                    labPeso.Visible = false;
+                    labEstatura.Visible = false;
+                }
+
+                if (AdministrarCertificados.certificadoPre.Producto == "99" || AdministrarCertificados.certificadoPre.Producto == "4"
+                      || AdministrarCertificados.certificadoPre.Producto == "98" || AdministrarCertificados.certificadoPre.Producto == "2" ||
+                       AdministrarCertificados.certificadoPre.Producto == "21")
+                {
+                    if (AdministrarCertificados.certificadoPre.Producto == "21")
+                    {
+                        reqtxtPeso.Enabled = true;
+                        txtPeso.Visible = true;
+
+                        reqtxtPesoPrincipal.Enabled = true;
+                        txtpesoPrincipal.Visible = true;
+
+                        reqtxtestaturaPrincipal.Enabled = true;
+                        txtestaturaPrincipal.Visible = true;
+
+                        reqtxtEstatura.Enabled = true;
+                        txtEstatura.Visible = true;
+
+                        lblPesoConyuge.Visible = true;
+                        lblEstaturaConyuge.Visible = true;
+                        labPeso.Visible = true;
+                        labEstatura.Visible = true;
+                    }
+                    else
+                    {
+                        reqtxtPeso.Enabled = false;
+                        txtPeso.Visible = false;
+
+                        reqtxtPesoPrincipal.Enabled = false;
+                        txtpesoPrincipal.Visible = false;
+
+                        reqtxtestaturaPrincipal.Enabled = false;
+                        txtestaturaPrincipal.Visible = false;
+
+                        reqtxtEstatura.Enabled = false;
+                        txtEstatura.Visible = false;
+
+                        lblPesoConyuge.Visible = false;
+                        lblEstaturaConyuge.Visible = false;
+                        labPeso.Visible = false;
+                        labEstatura.Visible = false;
+                    }
+                }
+
+                if (AdministrarCertificados.certificadoPre.Producto == "3" || AdministrarCertificados.certificadoPre.Producto == "9")
+                {
+                    if ((string)Session["operacionCertificado"] == "modificar")
+                    {
+                        reqtxtPlanPrincipal.Enabled = false;
+                        reqtxtPlanConyuge.Enabled = false;
+                    }
+                    else
+                    {
+                        reqtxtPlanPrincipal.Enabled = true;
+                        reqtxtPlanConyuge.Enabled = true;
+                    }
+
+                    txtPlanPrincipal.Visible = true;
+                    txtPlanConyuge.Visible = true;
+
+                    lblPlan.Visible = true;
+                    labPlan.Visible = true;
+
+                    ReqddlPlanPrincipal.Enabled = false;
+                    ddlPlanPrincipal.Visible = false;
+
+                    reqddlPlanConyuge.Enabled = false;
+                    ddlPlanConyuge.Visible = false;
+
+                    labPlan1.Visible = false;
+                    lblPlan2.Visible = false;
+
+                    reqtxtPeso.Enabled = true;
+                    txtPeso.Visible = true;
+
+                    reqtxtPesoPrincipal.Enabled = true;
+                    txtpesoPrincipal.Visible = true;
+
+                    reqtxtestaturaPrincipal.Enabled = true;
+                    txtestaturaPrincipal.Visible = true;
+
+                    reqtxtEstatura.Enabled = true;
+                    txtEstatura.Visible = true;
+
+                    lblPesoConyuge.Visible = true;
+                    lblEstaturaConyuge.Visible = true;
+                    labPeso.Visible = true;
+                    labEstatura.Visible = true;
+                }
+            }
+
+            if (!IsPostBack)
+            {
+                if (AdministrarCertificados.certificadoPre.Producto == "99")
+                {
+                    txtAnexoConversion.Visible = true;
+                    txtHServicio1.Visible = true;
+                    txtHServicio2.Visible = true;
+                    txtHServicio3.Visible = true;
+                    btnGuardarCambios.Visible = true;
+                    btnCambiosPreCargue.Visible = true;
+                    lblAnexoConversion.Visible = true;
+                    lblHServicio1.Visible = true;
+                    lblHServicio2.Visible = true;
+                    lblHServicio3.Visible = true;
+                }
+                else
+                {
+                    txtAnexoConversion.Visible = false;
+                    txtHServicio1.Visible = false;
+                    txtHServicio2.Visible = false;
+                    txtHServicio3.Visible = false;
+                    btnGuardarCambios.Visible = false;
+                    btnCambiosPreCargue.Visible = false;
+                    lblAnexoConversion.Visible = false;
+                    lblHServicio1.Visible = false;
+                    lblHServicio2.Visible = false;
+                    lblHServicio3.Visible = false;
+                }
+
+                if (otrosAsegurados.Rows.Count == 0)
+                {
+                    otrosAsegurados = new DataTable();
+                    column = new DataColumn();
+                    column.DataType = System.Type.GetType("System.String");
+                    column.AllowDBNull = true;
+                    column.Caption = "Cedula";
+                    column.ColumnName = "Cedula";
+
+                    otrosAsegurados.Columns.Add(column);
+
+                    column = new DataColumn();
+                    column.DataType = System.Type.GetType("System.String");
+                    column.AllowDBNull = true;
+                    column.Caption = "Nombre";
+                    column.ColumnName = "Nombre";
+                    otrosAsegurados.Columns.Add(column);
+
+                    column = new DataColumn();
+                    column.DataType = System.Type.GetType("System.String");
+                    column.AllowDBNull = true;
+                    column.Caption = "Apellidos";
+                    column.ColumnName = "Apellidos";
+                    otrosAsegurados.Columns.Add(column);
+
+                    column = new DataColumn();
+                    column.DataType = System.Type.GetType("System.String");
+                    column.AllowDBNull = true;
+                    column.Caption = "Fecha Nacimiento";
+                    column.ColumnName = "Fecha Nacimiento";
+                    otrosAsegurados.Columns.Add(column);
+
+                    column = new DataColumn();
+                    column.DataType = System.Type.GetType("System.String");
+                    column.AllowDBNull = true;
+                    column.Caption = "Parentesco";
+                    column.ColumnName = "Parentesco";
+                    otrosAsegurados.Columns.Add(column);
+
+                    column = new DataColumn();
+                    column.DataType = System.Type.GetType("System.String");
+                    column.AllowDBNull = true;
+                    column.Caption = "Plan";
+                    column.ColumnName = "Plan";
+                    otrosAsegurados.Columns.Add(column);
+
+                    column = new DataColumn();
+                    column.DataType = System.Type.GetType("System.String");
+                    column.AllowDBNull = true;
+                    column.Caption = "Prima";
+                    column.ColumnName = "Prima";
+                    otrosAsegurados.Columns.Add(column);
+                }
+            }
+
+            if (!IsPostBack)
+            {
+                if (dtCertificadoFull.Rows.Count > 0)
+                {
+                    if ((string)Session["operacionCertificado"] == "modificar" || int.Parse(Session["pro_Id"].ToString()) == 99)
+                    {
+                        beneficiario.Clear();
+                        ObtenerNuevaLista();
+                        grvBeneficiarioPrincipal.DataSource = dtBeneficiario;
+                        grvBeneficiarioPrincipal.DataBind();
+
+                    }
+                    else
+                    {
+                        beneficiario.Clear();
+                        ObtenerNuevaLista();
+                        grvBeneficiarioPrincipal.DataSource = beneficiario;
+                        grvBeneficiarioPrincipal.DataBind();
+                        GridViewRow rowPrincipales = grvBeneficiarioPrincipal.Rows[0];
+                        rowPrincipales.Visible = false;
+                    }
+                }
+                else
+                {
+                    beneficiario.Clear();
+                    ObtenerNuevaLista();
+                    grvBeneficiarioPrincipal.DataSource = beneficiario;
+                    grvBeneficiarioPrincipal.DataBind();
+                    GridViewRow rowPrincipales2 = grvBeneficiarioPrincipal.Rows[0];
+                    rowPrincipales2.Visible = false;
+                }
+            }
+            if (!IsPostBack)
+            {
+                if (dtCertificadoFull.Rows.Count > 0)
+                {
+                    if ((string)Session["operacionCertificado"] == "modificar" || int.Parse(Session["pro_Id"].ToString()) == 99)
+                    {
+                        beneficiario.Clear();
+                        ObtenerNuevaListaConyuge();
+                        grvBeneficiarioConyuge.DataSource = dtBeneficiarioConyuge;
+                        grvBeneficiarioConyuge.DataBind();
+                    }
+                    else
+                    {
+                        beneficiarioConyuge.Clear();
+                        ObtenerNuevaListaConyuge();
+                        grvBeneficiarioConyuge.DataSource = beneficiarioConyuge;
+                        grvBeneficiarioConyuge.DataBind();
+                        GridViewRow rowConyuge = grvBeneficiarioConyuge.Rows[0];
+                        rowConyuge.Visible = false;
+                    }
+                }
+                else
+                {
+                    beneficiarioConyuge.Clear();
+                    ObtenerNuevaListaConyuge();
+                    grvBeneficiarioConyuge.DataSource = beneficiarioConyuge;
+                    grvBeneficiarioConyuge.DataBind();
+                    GridViewRow rowConyuges = grvBeneficiarioConyuge.Rows[0];
+                    rowConyuges.Visible = false;
+                }
+            }
+
+            if (!IsPostBack)
+            {
+                DataTable dt = new DataTable();
+                dt = AdministrarCertificados.consultarParentesco(int.Parse(AdministrarCertificados.certificadoPre.Producto));
+                ddlParentesoOtro.DataTextField = "par_Nombre";
+                ddlParentesoOtro.DataValueField = "par_Id";
+                ddlParentesoOtro.DataSource = dt;
+                ddlParentesoOtro.DataBind();
+                ddlParentesoOtro.Items.Insert(0, new ListItem("", ""));
+            }
+
+            /*------------------------------------------------*/
+            if (!IsPostBack)
+            {
+                DataTable dt = new DataTable();
+                dt = AdministrarTercero.asegurado.sp_MostrarTipoDocumento();
+                ddlTipoDocumentoTercero.DataTextField = "tipDoc_Nombre"; // Cargamos lo que aparece en el ddl
+                ddlTipoDocumentoTercero.DataValueField = "tipDoc_Id"; // Cargamos lo que vale por debajo
+                ddlTipoDocumentoTercero.DataSource = dt;
+                ddlTipoDocumentoTercero.DataBind();
+                ddlTipoDocumentoTercero.Items.Insert(0, new ListItem("", ""));
+            }
+
+            if (!IsPostBack)
+            {
+                DataTable dt = new DataTable();
+                dt = AdministrarTercero.asegurado.sp_MostrarDepartamento();
+                ddlDepartamento.DataTextField = "dep_Nombre"; // Cargamos lo que aparece en el ddl
+                ddlDepartamento.DataValueField = "dep_Id"; // Cargamos lo que vale por debajo
+                ddlDepartamento.DataSource = dt;
+                ddlDepartamento.DataBind();
+                ddlDepartamento.Items.Insert(0, new ListItem("", ""));
+            }
+
+            if (!IsPostBack)
+            {
+                DataTable dt = new DataTable();
+                dt = AdministrarTercero.asegurado.sp_MostrarOcupacion();
+                ddlOcupacionTercero.DataTextField = "ocu_Nombre"; // Cargamos lo que aparece en el ddl
+                ddlOcupacionTercero.DataValueField = "ocu_Id"; // Cargamos lo que vale por debajo
+                ddlOcupacionTercero.DataSource = dt;
+                ddlOcupacionTercero.DataBind();
+                ddlOcupacionTercero.Items.Insert(0, new ListItem("", ""));
+            }
+
+            if (!IsPostBack)
+            {
+                DataTable dt = new DataTable();
+                dt = AdministrarTercero.asegurado.sp_ConsultarEstadoCivil();
+                ddlEstadoCivilTercero.DataTextField = "estCiv_Nombre"; // Cargamos lo que aparece en el ddl
+                ddlEstadoCivilTercero.DataValueField = "estCiv_Id"; // Cargamos lo que vale por debajo
+                ddlEstadoCivilTercero.DataSource = dt;
+                ddlEstadoCivilTercero.DataBind();
+                ddlEstadoCivilTercero.Items.Insert(0, new ListItem("", ""));
+            }
+
+            /*-----------------------------------------------------*/
+            if (!IsPostBack)
+            {
+                DataTable dt = new DataTable();
+                dt = AdministrarTercero.asegurado.sp_MostrarTipoDocumento();
+                ddlTipoDocumentoOtros.DataTextField = "tipDoc_Nombre"; // Cargamos lo que aparece en el ddl
+                ddlTipoDocumentoOtros.DataValueField = "tipDoc_Id"; // Cargamos lo que vale por debajo
+                ddlTipoDocumentoOtros.DataSource = dt;
+                ddlTipoDocumentoOtros.DataBind();
+                ddlTipoDocumentoOtros.Items.Insert(0, new ListItem("", ""));
+            }
+
+            if (!IsPostBack)
+            {
+                DataTable dt = new DataTable();
+                dt = AdministrarTercero.asegurado.sp_MostrarDepartamento();
+                ddlDepartamentoOtros.DataTextField = "dep_Nombre"; // Cargamos lo que aparece en el ddl
+                ddlDepartamentoOtros.DataValueField = "dep_Id"; // Cargamos lo que vale por debajo
+                ddlDepartamentoOtros.DataSource = dt;
+                ddlDepartamentoOtros.DataBind();
+                ddlDepartamentoOtros.Items.Insert(0, new ListItem("", ""));
+            }
+
+            if (!IsPostBack)
+            {
+                DataTable dt = new DataTable();
+                dt = AdministrarTercero.asegurado.sp_MostrarOcupacion();
+                ddlOcupacionOtros.DataTextField = "ocu_Nombre"; // Cargamos lo que aparece en el ddl
+                ddlOcupacionOtros.DataValueField = "ocu_Id"; // Cargamos lo que vale por debajo
+                ddlOcupacionOtros.DataSource = dt;
+                ddlOcupacionOtros.DataBind();
+                ddlOcupacionOtros.Items.Insert(0, new ListItem("", ""));
+            }
+
+            if (txtCedulaConyuge.Text == "")
+            {
+                ddlPlanConyuge.Enabled = false;
+                grvAmparoConyuge.Visible = false;
+                btnExtraPrima2.Visible = false;
+                btnLimpiar.Visible = false;
+            }
+            else
+            {
+                ddlPlanConyuge.Enabled = true;
+                grvAmparoConyuge.Visible = true;
+                grvBeneficiarioConyuge.Visible = true;
+                beneficiariosConyuge.Visible = true;
+                btnExtraPrima2.Visible = true;
+                btnLimpiar.Visible = true;
+            }
+
+            if (ddlPlanConyuge.SelectedValue != "")
+            {
+                amparosConyuge.Visible = true;
+            }
+            else
+            {
+                amparosConyuge.Visible = false;
+            }
+
+            if (ddlPlanPrincipal.SelectedValue != "")
+            {
+                amparosPrincipal.Visible = true;
+            }
+            else
+            {
+                amparosPrincipal.Visible = false;
+            }
+
+            if (!IsPostBack)
+            {
+                DataTable dt = new DataTable();
+                dt = AdministrarTercero.asegurado.sp_ConsultarEstadoCivil();
+                ddlEstadoCivilOtros.DataTextField = "estCiv_Nombre"; // Cargamos lo que aparece en el ddl
+                ddlEstadoCivilOtros.DataValueField = "estCiv_Id"; // Cargamos lo que vale por debajo
+                ddlEstadoCivilOtros.DataSource = dt;
+                ddlEstadoCivilOtros.DataBind();
+                ddlEstadoCivilOtros.Items.Insert(0, new ListItem("", ""));
+
+                if (txtCedulaOtro.Text != "" && ddlPoliza.Text != "")
+                {
+                    ddlParentesoOtro.Enabled = true;
+                }
+                else
+                {
+                    ddlParentesoOtro.Enabled = false;
+                }
+
+                if (ddlPoliza.Text != "" && txtCedulaOtro.Text != "" && ddlParentesoOtro.Text != "")
+                {
+                    ddlPlanOtros.Enabled = true;
+                }
+                else
+                {
+                    ddlPlanOtros.Enabled = false;
+                }
+
+                if (ddlPoliza.Text == "")
+                {
+                    ddlPlanPrincipal.Enabled = false;
+                }
+                else
+                {
+                    ddlPlanPrincipal.Enabled = true;
+                }
+
+                if (ddlPoliza.Text != "" && txtCedulaConyuge.Text != "")
+                {
+                    ddlPlanConyuge.Enabled = true;
+                }
+                else
+                {
+                    ddlPlanConyuge.Enabled = false;
+                }
+
+                if (ddlLocalidadCertificado.Text == "")
+                {
+                    ddlPoliza.Enabled = false;
+                }
+                else
+                {
+                    ddlPoliza.Enabled = true;
+                }
+
+                txtPlanPrincipal.Text = "";
+                txtPlanConyuge.Text = "";
+
+                if (ddlPoliza.Text != "")
+                {
+                    txtPlanPrincipal.Enabled = true;
+                }
+                else
+                {
+                    txtPlanPrincipal.Enabled = false;
+                }
+                if (ddlPoliza.Text != "" && txtCedulaConyuge.Text != "")
+                {
+                    txtPlanConyuge.Enabled = true;
+                }
+                else
+                {
+                    txtPlanConyuge.Enabled = false;
+                }
+                txtFechaDigitacionCertificado.Text = DateTime.Now.ToString("dd/MM/yyyy");
+
+
+                if (ddlPoliza.SelectedValue != "")
+                {
+                    txtDocumentoOtros.Enabled = true;
+                    txtDocumentoConyugue.Enabled = true;
+
+                    DataTable dtPoliza = new DataTable();
+                    if ((string)Session["operacionCertificado"] == "modificar")
+                        dtPoliza = AdministrarCertificados.consultarPlanPorPolizaPermanencia(int.Parse(ddlPoliza.SelectedValue.ToString()), 1, int.Parse(txtEdadPrincipal.Text));
+                    else
+                        dtPoliza = AdministrarCertificados.consultarPlanPorPoliza(int.Parse(ddlPoliza.SelectedValue.ToString()), 1, int.Parse(txtEdadPrincipal.Text));
+                    ddlPlanPrincipal.DataSource = dtPoliza;
+                    ddlPlanPrincipal.DataValueField = "plapol_Id";
+                    ddlPlanPrincipal.DataTextField = "plan_ValAsegurado";
+                    ddlPlanPrincipal.DataBind();
+                    ddlPlanPrincipal.Items.Insert(0, new ListItem("", ""));
+
+                    if (dtPoliza.Rows.Count > 0)
+                    {
+                        Session["plapol_Id"] = dtPoliza.Rows[0]["plapol_Id"].ToString();
+                        if (txtCedulaOtro.Text != "" && ddlPoliza.Text != "")
+                        {
+                            ddlParentesoOtro.Enabled = true;
+                        }
+                        else
+                        {
+                            ddlParentesoOtro.Enabled = false;
+
+                        }
+
+                        if (ddlPoliza.Text != "")
+                        {
+                            txtPlanPrincipal.Enabled = true;
+                        }
+                        else
+                        {
+                            txtPlanPrincipal.Enabled = false;
+                        }
+
+                        if (ddlPoliza.Text == "")
+                        {
+                            ddlPlanPrincipal.Enabled = false;
+                        }
+                        else
+                        {
+                            ddlPlanPrincipal.Enabled = true;
+                        }
+
+                        if (ddlPoliza.Text != "" && txtCedulaConyuge.Text != "")
+                        {
+                            ddlPlanConyuge.Enabled = true;
+                        }
+                        else
+                        {
+                            ddlPlanConyuge.Enabled = false;
+                        }
+                    }
+                }
+            }
+        }
+        //JC 22-09-2015
+        try
+        {
+            cer_Id = int.Parse(Session["cer_id"].ToString());
+            //dtEncabezadoCertificado = AdministrarCertificados.spConsultarEncabezadoCertificado(int.Parse(Session["cer_Id"].ToString()));
+            dtEncabezadoCertificado = AdministrarCertificados.spConsultarEncabezadoCertificado(cer_Id);
+            txtCompania.Text = dtEncabezadoCertificado.Rows[0]["com_Nombre"].ToString();
+            ddlProducto.DataTextField = "pro_Nombre"; // Cargamos lo que aparece en el ddl
+            ddlProducto.DataValueField = "pro_Id"; // Cargamos lo que vale por debajo
+            ddlProducto.DataSource = dtEncabezadoCertificado;
+            ddlProducto.DataBind();
+            txtEstadoNegocio.Text = dtEncabezadoCertificado.Rows[0]["cer_EstadoNegocio"].ToString();
+            txtTipoMovimiento.Text = dtEncabezadoCertificado.Rows[0]["tipMov_Nombre"].ToString();
+            txtmesProduccion.Text = dtEncabezadoCertificado.Rows[0]["MesProduccion"].ToString();
+        }
+        catch (Exception ex)
+        { }
+
+        if (txtCedulaConyuge.Text != "")
+        {
+            grvBeneficiarioConyuge.Visible = true;
+            beneficiariosConyuge.Visible = true;
+        }
+        else
+        {
+            grvBeneficiarioConyuge.Visible = false;
+            beneficiariosConyuge.Visible = false;
+        }
+
+        if (!IsPostBack)
+        {
+            if ((string)Session["operacionCertificado"] == "modificar" || (int.Parse(Session["pro_Id"].ToString()) == 99 && dtCertificadoFull.Rows.Count > 0))
+            {
+                int pagaduria = int.Parse(AdministrarCertificados.consultarConvenioPorPagaduria(txtPagaduriaPrincipal.Text, dtCertificadoFull.Rows[0]["Localidad"].ToString()).Rows[0]["paga_Id"].ToString());
+                DataTable dt = new DataTable();
+                dt = AdministrarCertificados.consultarConvenios(int.Parse(ddlProducto.SelectedValue.ToString()), int.Parse(ddlLocalidadCertificado.SelectedValue.ToString()), pagaduria);
+                ddlConvenioPrincipal.DataTextField = "con_Nombre";
+                ddlConvenioPrincipal.DataValueField = "con_Id";
+                ddlConvenioPrincipal.DataSource = dt;
+                ddlConvenioPrincipal.DataBind();
+                ddlConvenioPrincipal.Items.Insert(0, new ListItem("", ""));
+                if ((string)Session["operacionCertificado"] == "modificar")
+                    ddlConvenioPrincipal.SelectedIndex = ddlConvenioPrincipal.Items.IndexOf(ddlConvenioPrincipal.Items.FindByText(dtCertificadoFull.Rows[0]["con_Nombre"].ToString())); //jc
+            }
+        }
+
+        if (!IsPostBack)
+        {
+            ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "RECUERDE VALIDAR SECUENCIALMENTE LOS FORMULARIOS" + "');", true);
+        }
+    }
+
+    protected void ConsultarAmparosPlan(object sender, EventArgs e)
+    {
+        // Validar que el plan escogido pueda ser seleccionado por los cúmulos
+        DataTable dtCumuloValor = new DataTable();
+        double valorAsegurado = 0;
+        dtCumuloValor = AdministrarCertificados.spConsultarCumulo(int.Parse(dtEncabezadoCertificado.Rows[0]["com_Id"].ToString()));
+        valorAsegurado = AdministrarCertificados.spConsultarValoresAsegurado(int.Parse(dtEncabezadoCertificado.Rows[0]["com_Id"].ToString()), int.Parse(txtCedulaPrincipal.Text));
+        if ((valorAsegurado + double.Parse(ddlPlanPrincipal.SelectedItem.ToString())) <= double.Parse(dtCumuloValor.Rows[0]["cum_Nombre"].ToString()))
+        {
+            if (ddlPlanPrincipal.SelectedItem.ToString() != "")
+            {
+                if ((string)Session["operacionCertificado"] == "modificar")
+                    dtEliminarPrincipal = AdministrarCertificados.consultarAmparosPorPlanPermanencia(int.Parse(ddlPlanPrincipal.SelectedValue.ToString()), int.Parse(txtEdadPrincipal.Text), 0);
+                else
+                    dtEliminarPrincipal = AdministrarCertificados.consultarAmparosPorPlan(int.Parse(ddlPlanPrincipal.SelectedValue.ToString()), int.Parse(txtEdadPrincipal.Text), 0);
+                grvAmparoPrincipal.DataSource = dtEliminarPrincipal;
+                grvAmparoPrincipal.DataBind();
+
+                double totales = 0;
+                foreach (GridViewRow row in grvAmparoPrincipal.Rows)
+                {
+                    totales += Convert.ToDouble(row.Cells[4].Text);
+                }
+                txtPrimaPrincipal.Text = Convert.ToString(totales);
+                sumarPrima();
+
+                grvAmparoPrincipal.DataSource = dtEliminarPrincipal;
+                grvAmparoPrincipal.DataBind();
+
+                // Cargar tabla de amparos para ingresar la extraprima
+                grvAmparoExtraPrima.DataSource = dtEliminarPrincipal;
+                grvAmparoExtraPrima.DataBind();
+            }
+            else
+            {
+                dtEliminarPrincipal.Clear();
+                grvAmparoPrincipal.DataSource = dtEliminarPrincipal;
+                grvAmparoPrincipal.DataBind();
+            }
+        }
+        else
+        {
+            ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "EL VALOR DEL PLAN SUPERA EL ACEPTADO POR LA COMPAÑÍA PARA TODOS LOS PRODUCTOS" + "');", true);
+        }
+    }
+
+    //metodo para buscar un tercero con su cedula desde conyuge "SEBASTIAN"
+    protected void ConsultarTerceroCertificado(object sender, EventArgs e)
+    {
+        string mensaje = AdministrarCertificados.ConsultarTerceroCertificado(int.Parse(txtDocumentoConyugue.Text));
+        txtNombreConyuge.Text = AdministrarCertificados.aseguradoBusqueda.Nombres;
+        txtApellidoConyuge.Text = AdministrarCertificados.aseguradoBusqueda.Apellidos;
+        txtCedulaConyuge.Text = AdministrarCertificados.aseguradoBusqueda.NumeroDocumento;
+        txtEdadConyuge.Text = Funciones.Edad(AdministrarCertificados.aseguradoBusqueda.FechaNacimiento).ToString();
+
+        if (ddlPoliza.Text != "" && txtCedulaConyuge.Text != "")
+        {
+            txtPlanConyuge.Enabled = true;
+        }
+        else
+        {
+            txtPlanConyuge.Enabled = false;
+        }
+
+        if (ddlPlanConyuge.SelectedValue != "")
+        {
+            amparosConyuge.Visible = true;
+        }
+        else
+        {
+            amparosConyuge.Visible = false;
+        }
+
+        if (ddlPlanPrincipal.SelectedValue != "")
+        {
+            amparosPrincipal.Visible = true;
+        }
+        else
+        {
+            amparosPrincipal.Visible = false;
+        }
+
+        if (txtCedulaConyuge.Text != "")
+        {
+            btnSiguienteConyuge.Enabled = false;
+            ddlPlanConyuge.Enabled = true;
+            grvAmparoConyuge.Visible = true;
+            grvBeneficiarioConyuge.Visible = true;
+            beneficiariosConyuge.Visible = true;
+            btnExtraPrima2.Visible = true;
+            btnLimpiar.Visible = true;
+            txtPeso.Enabled = true;
+            txtEstatura.Enabled = true;
+            btnValidarConyuge.Visible = true;
+
+            dt = AdministrarCertificados.consultarPlanPorPoliza(int.Parse(ddlPoliza.SelectedValue.ToString()), 2, int.Parse(txtEdadConyuge.Text));
+            ddlPlanConyuge.DataSource = dt;
+            ddlPlanConyuge.DataValueField = "plapol_Id";
+            ddlPlanConyuge.DataTextField = "plan_ValAsegurado";
+            ddlPlanConyuge.DataBind();
+            ddlPlanConyuge.Items.Insert(0, new ListItem("", ""));
+            ddlPlanConyuge.Attributes.Add("onclick", "localStorage.setItem('accIndex', 2);");
+        }
+        else
+        {
+            btnSiguienteConyuge.Enabled = true;
+            ddlPlanConyuge.Enabled = false;
+            grvAmparoConyuge.Visible = false;
+            grvBeneficiarioConyuge.Visible = false;
+            beneficiariosConyuge.Visible = false;
+            btnExtraPrima2.Visible = false;
+            btnLimpiar.Visible = false;
+            txtPeso.Enabled = false;
+            txtEstatura.Enabled = false;
+            btnValidarConyuge.Visible = false;
+        }
+
+        if ((string)Session["operacionCertificado"] == "modificar")
+        {
+            if (dtBeneficiarioConyuge.Rows.Count > 0)
+            {
+                dtBeneficiarioConyuge = AdministrarCertificados.ConsultarBeneficiarioModificacion(cer_Id, int.Parse(txtCedulaConyuge.Text), 2);
+                grvBeneficiarioConyuge.DataSource = dtBeneficiarioConyuge;
+                grvBeneficiarioConyuge.DataBind();
+            }
+
+            if (ddlPlanConyuge.SelectedValue != "")
+            {
+                dtEliminarConyuge = AdministrarCertificados.consultarAmparosPorPlanModificacion(int.Parse(ddlPlanConyuge.SelectedValue.ToString()), int.Parse(txtEdadConyuge.Text));
+                grvAmparoConyuge.DataSource = dtEliminarConyuge;
+                grvAmparoConyuge.DataBind();
+            }
+
+            // Para que se vea la tabla de beneficiario en modificacion sin registros
+            if (dtBeneficiarioConyuge.Rows.Count == 0)
+            {
+                beneficiarioConyuge.Clear();
+                ObtenerNuevaListaConyuge();
+                grvBeneficiarioConyuge.DataSource = beneficiarioConyuge;
+                grvBeneficiarioConyuge.DataBind();
+                GridViewRow rowConyuge = grvBeneficiarioConyuge.Rows[0];
+                rowConyuge.Visible = false;
+            }
+        }
+
+        ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + mensaje + "');", true);
+    }
+
+    //metodo para buscar un tercero con su cedula desde otros Asegurados "SEBASTIAN"
+    protected void ConsultarTerceroCertificadoOtroAsegurado(object sender, EventArgs e)
+    {
+        btnAdicionarOtrosAsegurados.Enabled = false;
+        grvOtrosAsegurados.Visible = false;
+        grvAmparoOtro.Visible = false;
+
+        string mensaje = AdministrarCertificados.ConsultarTerceroCertificado(double.Parse(txtDocumentoOtros.Text));
+        txtNombreOtro.Text = AdministrarCertificados.aseguradoBusqueda.Nombres;
+        txtApellidoOtro.Text = AdministrarCertificados.aseguradoBusqueda.Apellidos;
+        txtCedulaOtro.Text = AdministrarCertificados.aseguradoBusqueda.NumeroDocumento;
+        txtEdadOtro.Text = Funciones.Edad(AdministrarCertificados.aseguradoBusqueda.FechaNacimiento).ToString();
+        txtFechaNacimiento.Text = AdministrarCertificados.aseguradoBusqueda.FechaNacimiento.ToString("yyyy-MM-dd");
+
+        if (txtCedulaOtro.Text != "" && ddlPoliza.Text != "")
+        {
+            ddlParentesoOtro.Enabled = true;
+        }
+        else
+        {
+            ddlParentesoOtro.Enabled = false;
+        }
+
+        if (ddlPoliza.Text != "" && txtCedulaOtro.Text != "" && ddlParentesoOtro.Text != "")
+        {
+            ddlPlanOtros.Enabled = true;
+        }
+        else
+        {
+            ddlPlanOtros.Enabled = false;
+        }
+
+        ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + mensaje + "');", true);
+    }
+
+    protected void ConsultarAmparosPlanConyuge(object sender, EventArgs e)
+    {
+        DataTable dtCumuloValorConyuge = new DataTable();
+        double valorAsegurado = 0;
+        dtCumuloValorConyuge = AdministrarCertificados.spConsultarCumulo(int.Parse(dtEncabezadoCertificado.Rows[0]["com_Id"].ToString()));
+        valorAsegurado = AdministrarCertificados.spConsultarValoresAsegurado(int.Parse(dtEncabezadoCertificado.Rows[0]["com_Id"].ToString()), int.Parse(txtCedulaConyuge.Text));
+        if ((valorAsegurado + double.Parse(ddlPlanConyuge.SelectedItem.ToString())) <= double.Parse(dtCumuloValorConyuge.Rows[0]["cum_Nombre"].ToString()))
+        {
+            if (ddlPlanConyuge.SelectedItem.ToString() != "")
+            {
+                dtEliminarConyuge = AdministrarCertificados.consultarAmparosPorPlan(int.Parse(ddlPlanConyuge.SelectedValue.ToString()), int.Parse(txtEdadConyuge.Text), 0);
+                grvAmparoConyuge.DataSource = dtEliminarConyuge;
+                grvAmparoConyuge.DataBind();
+
+                int contador = 0;
+                double total = 0;
+                double totales = 0;
+                foreach (GridViewRow row in grvAmparoConyuge.Rows)
+                {
+                    totales += Convert.ToDouble(row.Cells[4].Text);
+                }
+                txtPrimaConyuge.Text = Convert.ToString(totales);
+                sumarPrima();
+
+                grvAmparoConyuge.DataSource = dtEliminarConyuge;
+                grvAmparoConyuge.DataBind();
+                // Extra Prima
+                grvExtraPrimaConyuge.DataSource = dtEliminarConyuge;
+                grvExtraPrimaConyuge.DataBind();
+            }
+            else
+            {
+                dtEliminarConyuge.Clear();
+                grvAmparoConyuge.DataSource = dtEliminarConyuge;
+                grvAmparoConyuge.DataBind();
+            }
+        }
+        else
+        {
+            ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "ESTA PERSONA SUPERA EL VALOR ASEGURADO MAXIMO PARA ESTA COMPAÑIA" + "');", true);
+        }
+    }
+
+    //sebastian
+    protected void consultarPolizaPorProducto(object sender, EventArgs e)
+    {
+        if (ddlLocalidadCertificado.SelectedItem.ToString() != "")
+        {
+            ddlPoliza.DataSource = AdministrarCertificados.spConsultarPolizaPorProudcto(int.Parse(ddlLocalidadCertificado.SelectedValue.ToString()));
+            ddlPoliza.DataValueField = "pol_Id";
+            ddlPoliza.DataTextField = "pol_numero";
+            ddlPoliza.DataBind();
+            ddlPoliza.Items.Insert(0, new ListItem("", ""));
+            ddlPoliza.Attributes.Add("onclick", "localStorage.setItem('accIndex', 0);");
+
+            if (ddlLocalidadCertificado.Text == "")
+            {
+                ddlPoliza.Enabled = false;
+            }
+            else
+            {
+                ddlPoliza.Enabled = true;
+            }
+            if (ddlPoliza.Text != "")
+            {
+                txtDocumentoConyugue.Enabled = true;
+                txtDocumentoOtros.Enabled = true;
+            }
+            else
+            {
+                txtDocumentoConyugue.Enabled = false;
+                txtDocumentoOtros.Enabled = false;
+            }
+        }
+
+        amparosConyuge.Visible = false;
+        dtEliminarConyuge.Clear();
+        grvAmparoConyuge.DataSource = dtEliminarConyuge;
+        grvAmparoConyuge.DataBind();
+
+        amparosPrincipal.Visible = false;
+        dtEliminarPrincipal.Clear();
+        grvAmparoPrincipal.DataSource = dtEliminarPrincipal;
+        grvAmparoPrincipal.DataBind();
+
+        //int departamento = int.Parse(AdministrarCertificados.consultarDepartamentoPorCiudad(txtAgencia.Text).Rows[0]["dep_Id"].ToString());
+        int pagaduria = int.Parse(AdministrarCertificados.consultarConvenioPorPagaduria(txtPagaduriaPrincipal.Text, dtEncabezadoCertificado.Rows[0]["Localidad"].ToString()).Rows[0]["paga_Id"].ToString());
+        DataTable dt = new DataTable();
+        dt = AdministrarCertificados.consultarConvenios(int.Parse(ddlProducto.SelectedValue.ToString()), int.Parse(ddlLocalidadCertificado.SelectedValue.ToString()), pagaduria);
+        ddlConvenioPrincipal.DataTextField = "con_Nombre";
+        ddlConvenioPrincipal.DataValueField = "con_Id";
+        ddlConvenioPrincipal.DataSource = dt;
+        ddlConvenioPrincipal.DataBind();
+        ddlConvenioPrincipal.Items.Insert(0, new ListItem("", ""));
+        if ((string)Session["operacionCertificado"] == "modificar")
+            ddlConvenioPrincipal.SelectedIndex = ddlConvenioPrincipal.Items.IndexOf(ddlConvenioPrincipal.Items.FindByText(dtCertificadoFull.Rows[0]["con_Nombre"].ToString())); //jc
+    }
+
+    protected void consultarPlaPorParentesco(object sender, EventArgs e)
+    {
+        if (ddlPoliza.SelectedItem.ToString() != "" && ddlParentesoOtro.SelectedItem.ToString() != "")
+        {
+            DataTable planotrosAsegurados = AdministrarCertificados.consultarPlanPorPoliza(int.Parse(ddlPoliza.SelectedValue.ToString()), int.Parse(ddlParentesoOtro.SelectedValue.ToString()), int.Parse(txtEdadOtro.Text));
+            ddlPlanOtros.DataSource = planotrosAsegurados;
+            ddlPlanOtros.DataValueField = "plapol_Id";
+            ddlPlanOtros.DataTextField = "plan_ValAsegurado";
+            ddlPlanOtros.DataBind();
+            ddlPoliza.Items.Insert(0, new ListItem("", ""));
+            ddlPoliza.Attributes.Add("onclick", "localStorage.setItem('accIndex', 3);");
+
+            if (ddlPoliza.Text != "" && txtCedulaOtro.Text != "" && ddlParentesoOtro.Text != "")
+            {
+                ddlPlanOtros.Enabled = true;
+            }
+            else
+            {
+                ddlPlanOtros.Enabled = false;
+            }
+        }
+    }
+
+    protected void consultarPlanPorPoliza(object sender, EventArgs e)
+    {
+        if (ddlPoliza.SelectedItem.ToString() != "")
+        {
+            DataTable dt = new DataTable();
+            dt = AdministrarCertificados.consultarPlanPorPoliza(int.Parse(ddlPoliza.SelectedValue.ToString()), 1, int.Parse(txtEdadPrincipal.Text));
+            ddlPlanPrincipal.DataSource = dt;
+            ddlPlanPrincipal.DataValueField = "plapol_Id";
+            ddlPlanPrincipal.DataTextField = "plan_ValAsegurado";
+            ddlPlanPrincipal.DataBind();
+            ddlPlanPrincipal.Items.Insert(0, new ListItem("", ""));
+            ddlPlanPrincipal.Attributes.Add("onclick", "localStorage.setItem('accIndex', 1);");
+
+            if (dt.Rows.Count > 0)
+            {
+                Session["plapol_Id"] = dt.Rows[0]["plapol_Id"].ToString();
+                if (txtCedulaOtro.Text != "" && ddlPoliza.Text != "")
+                {
+                    ddlParentesoOtro.Enabled = true;
+                }
+                else
+                {
+                    ddlParentesoOtro.Enabled = false;
+                }
+
+                if (ddlPoliza.Text != "")
+                {
+                    txtPlanPrincipal.Enabled = true;
+                }
+                else
+                {
+                    txtPlanPrincipal.Enabled = false;
+                }
+
+                if (ddlPoliza.Text == "")
+                {
+                    ddlPlanPrincipal.Enabled = false;
+                }
+                else
+                {
+                    ddlPlanPrincipal.Enabled = true;
+                }
+
+                if (ddlPoliza.Text != "" && txtCedulaConyuge.Text != "")
+                {
+                    ddlPlanConyuge.Enabled = true;
+                }
+                else
+                {
+                    ddlPlanConyuge.Enabled = false;
+                }
+            }
+            else
+            {
+                ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "ESTA PERSONA NO CUMPLE LOS REQUISITOS PARA SER ASEGURADA " + "');", true);
+            }
+        }
+    }
+
+    protected void sumarPrima()
+    {
+        if (txtPrimaPrincipal.Text == "")
+        {
+            txtPrimaPrincipal.Text = "0";
+        }
+
+        if (txtPrimaConyuge.Text == "")
+        {
+            txtPrimaConyuge.Text = "0";
+        }
+
+        if (txtPrimaOtros.Text == "")
+        {
+            txtPrimaOtros.Text = "0";
+        }
+        primaOtroAsegurado += int.Parse(txtPrimaOtros.Text);
+        int primaTotal = int.Parse(txtPrimaPrincipal.Text) + int.Parse(txtPrimaConyuge.Text) + primaOtroAsegurado;
+        txtPrima.Text = primaTotal.ToString();
+    }
+
+
+    protected static double CalcularValorNovedadCertificado(double primaCertificado, int periodicidad)
+    {
+        double valorTotal = 0;
+        if (periodicidad == 10)
+        {
+            valorTotal = primaCertificado * 6;
+        }
+        if (periodicidad == 14)
+        {
+            valorTotal = primaCertificado * 12;
+        }
+        else
+        {
+            valorTotal = primaCertificado;
+        }
+        return valorTotal;
+    }
+
+    protected static void CalcularMesYAnio()
+    {
+        int mesNovedad = 0;
+        int anioNovedad = 0;
+
+        mesNovedad = int.Parse(dtNovedades.Rows[0]["mes"].ToString()) + 1;
+        anioNovedad = int.Parse(dtNovedades.Rows[0]["anio"].ToString());
+
+        if (mesNovedad == 13)
+        {
+            anioNovedad = anioNovedad + 1;
+            mesNovedad = 1;
+        }
+
+        DataTable dtMesYAnioNovedades = new DataTable();
+        dtMesYAnioNovedades = AdministrarNovedades.ConsultarMesYAnioNovedad(mesNovedad, anioNovedad, int.Parse(dtArchivo.Rows[0]["arcpag_Id"].ToString()));
+
+        if (dtMesYAnioNovedades.Rows.Count > 0)
+        {
+            if (dtMesYAnioNovedades.Rows[0]["enviada"].ToString() == "1")
+            {
+                mesNovedad = mesNovedad + 1;
+                if (mesNovedad == 13)
+                {
+                    anioNovedad = anioNovedad + 1;
+                    mesNovedad = 1;
+                }
+            }
+        }
+
+        dtMesYAnio = new DataTable();
+
+        DataColumn columns = new DataColumn();
+        columns.DataType = System.Type.GetType("System.String");
+        columns.AllowDBNull = true;
+        columns.ColumnName = "mes";
+        dtMesYAnio.Columns.Add(columns);
+
+        columns = new DataColumn();
+        columns.DataType = System.Type.GetType("System.String");
+        columns.AllowDBNull = true;
+        columns.ColumnName = "anio";
+        dtMesYAnio.Columns.Add(columns);
+
+        DataRow fecha = dtMesYAnio.NewRow();
+
+        fecha["mes"] = mesNovedad;
+        fecha["anio"] = anioNovedad;
+        dtMesYAnio.Rows.Add(fecha);
+
+    }
+
+    protected void ActualizarCertificadoPreCargado()
+    {
+        int cer_IdNuevo = 0;
+        cer_IdNuevo = AdministrarCertificados.ConsultarIdCertificado(int.Parse(Session["ter_Id"].ToString()), int.Parse(Session["pro_Id"].ToString()), "", "");
+
+        int hojaServicio1 = 0;
+        int hojaServicio2 = 0;
+        int hojaServicio3 = 0;
+        int anexoConversion = 0;
+
+        if (txtHServicio1.Text != "")
+        {
+            hojaServicio1 = int.Parse(txtHServicio1.Text);
+        }
+        if (txtHServicio2.Text != "")
+        {
+            hojaServicio2 = int.Parse(txtHServicio2.Text);
+        }
+        if (txtHServicio3.Text != "")
+        {
+            hojaServicio3 = int.Parse(txtHServicio3.Text);
+        }
+        if (txtAnexoConversion.Text != "")
+        {
+            anexoConversion = int.Parse(txtAnexoConversion.Text);
+        }
+
+        AdministrarCertificados.ActualizarNewCertificadoPreCargado(cer_IdNuevo, int.Parse(txtHServicio1.Text), int.Parse(txtHServicio2.Text), int.Parse(txtHServicio3.Text), int.Parse(txtAnexoConversion.Text));
+    }
+
+    protected void CalcularNovedades()
+    {
+        //////////////////////////////Inicia operaciones para novedades///////////////////////////////////////////// 
+        DataTable dtNovedadActual = new DataTable();
+        dtNovedadActual = AdministrarCertificados.ConsultarNovedadActual(int.Parse(dtNovedades.Rows[0]["tercero"].ToString()), int.Parse(dtArchivo.Rows[0]["arcpag_Id"].ToString()));
+
+        int cedula = 0;
+        string tipoNovedad = "";
+        string tipoNovedad2 = "";
+        double valor2 = 0;
+        double valor = 0;
+        int estado = 0;
+        int pagaduria = 0;
+        int convenio = 0;
+        int archivo = 0;
+        int enviada = 0;
+        double novedadAnterior = 0;
+
+        cedula = int.Parse(dtNovedades.Rows[0]["tercero"].ToString());
+        convenio = int.Parse(dtNovedades.Rows[0]["convenio"].ToString());
+        pagaduria = int.Parse(AdministrarCertificados.consultarConvenioPorPagaduria(txtPagaduriaPrincipal.Text, dtEncabezadoCertificado.Rows[0]["Localidad"].ToString()).Rows[0]["paga_Id"].ToString());
+        archivo = int.Parse(dtArchivo.Rows[0]["arcpag_Id"].ToString());
+        estado = 1;
+        enviada = 0;
+
+        /////////////////////////////// Variables para calcular el valor que se debe enviar a la novedad ///////////////
+        double primaCertificado = 0;
+        primaCertificado = int.Parse(dtNovedades.Rows[0]["prima"].ToString());
+
+        int periodicidad = 0;
+        periodicidad = int.Parse(dtPeriodicidad.Rows[0]["con_PeriodicidadPago"].ToString());
+
+        double valorTotal = CalcularValorNovedadCertificado(primaCertificado, periodicidad);
+        ///////////////////////////////FINALIZA Variables para calcular el valor que se debe enviar a la novedad ///////////////
+
+        if (dtNovedadActual.Rows.Count == 0)
+        {
+            tipoNovedad = "I";
+            ///////////////////////Cuando esta persona no tiene novedad anterior /////////////////////
+            if (tipoNovedad == "I")
+            {
+                tipoNovedad = "I";
+
+                valor = valorTotal;
+            }
+            /////////////////////  FINALIZA Cuando esta persona no tiene novedad anterior/////////////////////////
+        }
+        else
+        {
+            novedadAnterior = int.Parse(dtNovedadActual.Rows[0]["Valor"].ToString());
+            //////////////////////// cuando es ingreso, modificacion y retiro ////////////////////////////////
+            if (dtArchivoPagaduria.Rows[0]["arcpag_TipoReporte"].ToString() == "0")
+            {
+                //////////////////////// cuando la novedad aun no sido enviada ////////////////////////////////
+                if (dtNovedadActual.Rows[0]["Enviada"].ToString() == "0")
+                {
+                    valor = valorTotal + novedadAnterior;
+                }
+                ////////////////////////FINALIZA cuando la novedad aun no sido enviada ////////////////////////////////
+
+                //////////////////////// cuando la novedad actual ya esta enviada ////////////////////////////////
+
+                if (dtNovedadActual.Rows[0]["Enviada"].ToString() == "1")
+                {
+                    tipoNovedad = "M";
+
+                    //////////////////////// cuando el valor que se desea ingresar es solo la novedad ////////////////////////////////
+                    if (dtArchivoPagaduria.Rows[0]["arcpag_Valor"].ToString() == "0")
+                    {
+                        valor = valorTotal;
+                    }
+                    ////////////////////////FINALIZA cuando el valor que se desea ingresar es solo la novedad ////////////////////////////////
+
+                    ///////////////// cuando el valor que se desea ingresar es la vovedad anterior mas la actual ////////////////////////
+                    if (dtArchivoPagaduria.Rows[0]["arcpag_Valor"].ToString() == "1")
+                    {
+                        valor = valorTotal - novedadAnterior;
+                    }
+                    /////////////FINALIZA cuando el valor que se desea ingresar es la vovedad anterior mas la actual /////////////////
+                }
+                ////////////////////////FINALIZA cuando la novedad actual ya esta enviada ////////////////////////////////
+            }
+            ////////////////////////FINALIZA cuando es ingreso, modificacion y retiro ////////////////////////////////
+
+            //////////////////////// cuando es ingreso y retiro ////////////////////////////////
+            if (dtArchivoPagaduria.Rows[0]["arcpag_TipoReporte"].ToString() == "1")
+            {
+                //////////////////////// cuando la novedad aun no sido enviada ////////////////////////////////
+                if (dtNovedadActual.Rows[0]["Enviada"].ToString() == "0")
+                {
+                    valor = valorTotal + novedadAnterior;
+                }
+                ////////////////////////FINALIZA cuando la novedad aun no sido enviada ////////////////////////////////
+                if (dtNovedadActual.Rows[0]["Enviada"].ToString() == "1")
+                {
+                    tipoNovedad = "I";
+                    valor = valorTotal + novedadAnterior;
+
+                    tipoNovedad2 = "R";
+                    valor2 = novedadAnterior;
+                }
+                ////////////////////////FINALIZA cuando la novedad aun no sido enviada ////////////////////////////////
+            }
+            ////////////////////////FINALIZA cuando es ingreso y retiro ////////////////////////////////
+
+            /////////////////// cuando solo son registros vigentes ///////////////////////////
+            if (dtArchivoPagaduria.Rows[0]["arcpag_TipoReporte"].ToString() == "2")
+            {
+
+            }
+            ///////////////////FINALIZA cuando solo son registros vigentes ///////////////////////////
+        }
+        //////////////////////////////Finaliza operaciones para novedades/////////////////////////////////////////////
+        CalcularMesYAnio();
+
+        if (dtNovedadActual.Rows.Count > 0)
+        {
+            if (dtNovedadActual.Rows[0]["Enviada"].ToString() == "0" || (dtNovedadActual.Rows[0]["Enviada"].ToString() == "1" && dtNovedadActual.Rows[0]["Estado"].ToString() == "1"))
+            {
+                AdministrarNovedades.ActualizarNovedades(int.Parse(dtNovedadActual.Rows[0]["nov_Id"].ToString()), dtNovedadActual.Rows[0]["TipoNovedad"].ToString(), int.Parse(valor.ToString()), int.Parse(dtMesYAnio.Rows[0]["mes"].ToString()), int.Parse(dtMesYAnio.Rows[0]["anio"].ToString()));
+            }
+            else
+            {
+                if (dtArchivoPagaduria.Rows[0]["arcpag_TipoReporte"].ToString() == "1" && dtNovedadActual.Rows[0]["Enviada"].ToString() == "1")
+                {
+                    AdministrarNovedades.InsertarNovedades(int.Parse(cedula.ToString()), tipoNovedad, int.Parse(estado.ToString()), int.Parse(pagaduria.ToString()), int.Parse(convenio.ToString()), int.Parse(archivo.ToString()), int.Parse(valor.ToString()), int.Parse(enviada.ToString()), int.Parse(dtMesYAnio.Rows[0]["mes"].ToString()), int.Parse(dtMesYAnio.Rows[0]["anio"].ToString()));
+
+                    AdministrarNovedades.InsertarNovedades(int.Parse(cedula.ToString()), tipoNovedad2, int.Parse(estado.ToString()), int.Parse(pagaduria.ToString()), int.Parse(convenio.ToString()), int.Parse(archivo.ToString()), int.Parse(valor2.ToString()), int.Parse(enviada.ToString()), int.Parse(dtMesYAnio.Rows[0]["mes"].ToString()), int.Parse(dtMesYAnio.Rows[0]["anio"].ToString()));
+                }
+                if (dtArchivoPagaduria.Rows[0]["arcpag_TipoReporte"].ToString() == "0")
+                {
+                    AdministrarNovedades.InsertarNovedades(int.Parse(cedula.ToString()), tipoNovedad, int.Parse(estado.ToString()), int.Parse(pagaduria.ToString()), int.Parse(convenio.ToString()), int.Parse(archivo.ToString()), int.Parse(valor.ToString()), int.Parse(enviada.ToString()), int.Parse(dtMesYAnio.Rows[0]["mes"].ToString()), int.Parse(dtMesYAnio.Rows[0]["anio"].ToString()));
+                }
+                if (dtArchivoPagaduria.Rows[0]["arcpag_TipoReporte"].ToString() == "2")
+                {
+
+                }
+            }
+        }
+        else
+        {
+            AdministrarNovedades.InsertarNovedades(int.Parse(cedula.ToString()), tipoNovedad, int.Parse(estado.ToString()), int.Parse(pagaduria.ToString()), int.Parse(convenio.ToString()), int.Parse(archivo.ToString()), int.Parse(valor.ToString()), int.Parse(enviada.ToString()), int.Parse(dtMesYAnio.Rows[0]["mes"].ToString()), int.Parse(dtMesYAnio.Rows[0]["anio"].ToString()));
+        }
+    }
+
+    protected void bntGuardarCertificado_Click(object sender, EventArgs e)
+    {
+        // Calcular valor de la novedad anterior
+        DataTable dtNovedadesSinAplicar = AdministrarNovedades.ConsultarNovedadesSinAplicar(Session["ter_Id"].ToString(), int.Parse(dtCertificadoFull.Rows[0]["con_Id"].ToString()));
+
+        dtArchivo = AdministrarCertificados.ConsultarIdArchivo(int.Parse(dtCertificadoFull.Rows[0]["pro_Id"].ToString()), int.Parse(dtCertificadoFull.Rows[0]["con_Id"].ToString()));
+        dtArchivoPagaduria = AdministrarCertificados.ConsultarArchivoPagaduriaPorId(int.Parse(dtArchivo.Rows[0]["arcpag_Id"].ToString()));
+        dtPeriodicidad = AdministrarCertificados.ConsultarPeriodicidadPorConvenio(int.Parse(dtCertificadoFull.Rows[0]["con_Id"].ToString()));
+        double primaCertificado = 0;
+        primaCertificado = int.Parse(dtCertificadoFull.Rows[0]["cer_PrimaTotal"].ToString());
+        int periodicidad = 0;
+        periodicidad = int.Parse(dtPeriodicidad.Rows[0]["con_PeriodicidadPago"].ToString());
+        double valorTotalNovedadAnterior = CalcularValorNovedadCertificado(primaCertificado, periodicidad);
+
+        // Comprobar que no tenga carta de retiro
+        int estado = CanceladoPorFechaRetiro();
+        string estadoCertificado = "PRODUCCION NUEVA";
+        if (estado == 1)
+            estadoCertificado = "CANCELADO";
+
+        int recuperado = CertificadoRecuperado();
+
+
+        ///////////////////////////////////////////////////////////////-- Novedades Sebastian //////////////////////////////////////////////////////
+
+        dtNovedades = new DataTable();
+
+        DataColumn columns = new DataColumn();
+        columns.DataType = System.Type.GetType("System.String");
+        columns.AllowDBNull = true;
+        columns.ColumnName = "producto";
+        dtNovedades.Columns.Add(columns);
+
+        columns = new DataColumn();
+        columns.DataType = System.Type.GetType("System.String");
+        columns.AllowDBNull = true;
+        columns.ColumnName = "tercero";
+        dtNovedades.Columns.Add(columns);
+
+        columns = new DataColumn();
+        columns.DataType = System.Type.GetType("System.String");
+        columns.AllowDBNull = true;
+        columns.ColumnName = "certificado";
+        dtNovedades.Columns.Add(columns);
+
+        columns = new DataColumn();
+        columns.DataType = System.Type.GetType("System.String");
+        columns.AllowDBNull = true;
+        columns.ColumnName = "convenio";
+        dtNovedades.Columns.Add(columns);
+
+        columns = new DataColumn();
+        columns.DataType = System.Type.GetType("System.String");
+        columns.AllowDBNull = true;
+        columns.ColumnName = "mes";
+        dtNovedades.Columns.Add(columns);
+
+        columns = new DataColumn();
+        columns.DataType = System.Type.GetType("System.String");
+        columns.AllowDBNull = true;
+        columns.ColumnName = "anio";
+        dtNovedades.Columns.Add(columns);
+
+        columns = new DataColumn();
+        columns.DataType = System.Type.GetType("System.String");
+        columns.AllowDBNull = true;
+        columns.ColumnName = "prima";
+        dtNovedades.Columns.Add(columns);
+
+        DataRow producto = dtNovedades.NewRow();
+        producto["producto"] = ddlProducto.SelectedValue.ToString();
+        producto["tercero"] = txtCedulaPrincipal.Text;
+        producto["certificado"] = int.Parse(Session["cer_Id"].ToString());
+        producto["convenio"] = ddlConvenioPrincipal.SelectedValue.ToString();
+        producto["mes"] = txtmesProduccion.Text;
+        producto["anio"] = 2015;
+        producto["prima"] = txtPrima.Text;
+        dtNovedades.Rows.Add(producto);
+
+        dtArchivo = AdministrarCertificados.ConsultarIdArchivo(int.Parse(dtNovedades.Rows[0]["producto"].ToString()), int.Parse(dtNovedades.Rows[0]["convenio"].ToString()));
+
+        dtArchivoPagaduria = AdministrarCertificados.ConsultarArchivoPagaduriaPorId(int.Parse(dtArchivo.Rows[0]["arcpag_Id"].ToString()));
+
+        dtPeriodicidad = AdministrarCertificados.ConsultarPeriodicidadPorConvenio(int.Parse(dtNovedades.Rows[0]["convenio"].ToString()));
+
+        primaCertificado = 0;
+        primaCertificado = int.Parse(dtNovedades.Rows[0]["prima"].ToString());
+
+        periodicidad = 0;
+        periodicidad = int.Parse(dtPeriodicidad.Rows[0]["con_PeriodicidadPago"].ToString());
+
+        double valorTotal = CalcularValorNovedadCertificado(primaCertificado, periodicidad);
+
+        ///////////////////////////////////////////////////////////////-- Novedades Sebastian //////////////////////////////////////////////////////
+
+
+
+        int cer_Id = 0;
+        if ((string)Session["operacionCertificado"] == "modificar")
+        {
+            cer_Id = AdministrarCertificados.ConsultarIdCertificado(int.Parse(Session["ter_Id"].ToString()), int.Parse(Session["pro_Id"].ToString()), "VIGENTE", "PRODUCCION NUEVA");
+        }
+
+        int cer_IdNuevo = 0;
+        cer_IdNuevo = AdministrarCertificados.ConsultarIdCertificado(int.Parse(Session["ter_Id"].ToString()), int.Parse(Session["pro_Id"].ToString()), "","");
+
+        List<int> listaPlapolId = AdministrarCertificados.ConsultarPlapolIdCertificado(cer_Id, cer_IdNuevo);
+        List<int> listaTipoMovimiento = AdministrarCertificados.CalcularTipoMovimiento(cer_Id, cer_IdNuevo, listaPlapolId[0], listaPlapolId[1]);
+        if (txtCedulaConyuge.Text != "")
+        {
+            Page.Validate("grpValidacionConyuge");
+        }
+        if (Page.IsValid)
+        {
+            //VALIDACION BENEFICIARIO PRINCIPAL
+            if ((string)Session["operacionCertificado"] == "modificar")
+            {
+                // CALCULO DEL MOVIMIENTO DEL PRINCIPAL
+                // Movimiento Principal
+                //INSERTAR CERTIFICADO
+                // Consultar Amparo Basico Anterior
+                int idFila = 0;
+                int cont = 0;
+                foreach (DataRow row in dtEliminarPrincipal.Rows)
+                {
+                    if (row["Amparo"].ToString() == "Amparo Básico")
+                        idFila = cont;
+                    cont++;
+                }
+                DataTable dtAmparoAnterior = new DataTable();
+                dtAmparoAnterior = AdministrarCertificados.ConsultarAmparoBasicoAnterior(cer_Id, int.Parse(txtCedulaPrincipal.Text));
+                // Preguntar si aumento, rebajó o siguió igual
+                if (double.Parse(dtAmparoAnterior.Rows[0]["ampcer_ValAsegurado"].ToString()) > double.Parse(dtEliminarPrincipal.Rows[idFila]["Valor Asegurado"].ToString()))
+                    movimientoPrincipal = "DISMINUYE";
+
+                if (double.Parse(dtAmparoAnterior.Rows[0]["ampcer_ValAsegurado"].ToString()) == double.Parse(dtEliminarPrincipal.Rows[idFila]["Valor Asegurado"].ToString()))
+                    movimientoPrincipal = "IGUAL";
+
+                if (double.Parse(dtAmparoAnterior.Rows[0]["ampcer_ValAsegurado"].ToString()) < double.Parse(dtEliminarPrincipal.Rows[idFila]["Valor Asegurado"].ToString()))
+                    movimientoPrincipal = "AUMENTA";
+
+                int total = 0;
+                foreach (DataRow row in dtBeneficiario.Rows)
+                {
+                    total = total + int.Parse(row["Porcentaje"].ToString());
+                }
+
+                if (total == 100)
+                {
+                    string idConyuge = txtCedulaConyuge.Text;
+                    if (idConyuge == "")
+                    {
+                        idConyuge = "0";
+                    }
+                    //VALIDACION BENEFICIARIO CONYUGE
+                    if (idConyuge != "0")
+                    {
+                        // CALCULO DEL MOVIMIENTO DEL CÓNYUGE
+                        // Movimiento Cónyuge
+                        //INSERTAR CÓNYUGE
+                        // Consultar Amparo Basico Anterior del cónyuge
+                        idFila = 0;
+                        cont = 0;
+                        foreach (DataRow row in dtEliminarConyuge.Rows)
+                        {
+                            if (row["Amparo"].ToString() == "Amparo Básico")
+                                idFila = cont;
+                            cont++;
+                        }
+                        // Preguntar si aumento, rebajó o siguió igual
+                        DataTable dtAmparoAnteriorCony = new DataTable();
+                        dtAmparoAnteriorCony = AdministrarCertificados.ConsultarAmparoBasicoAnterior(cer_Id, int.Parse(txtCedulaConyuge.Text));
+                        try
+                        {
+                            if (double.Parse(dtAmparoAnteriorCony.Rows[0]["ampcer_ValAsegurado"].ToString()) > double.Parse(dtEliminarConyuge.Rows[idFila]["Valor Asegurado"].ToString()))
+                                movimientoConyuge = "DISMINUYE";
+                            if (double.Parse(dtAmparoAnteriorCony.Rows[0]["ampcer_ValAsegurado"].ToString()) == double.Parse(dtEliminarConyuge.Rows[idFila]["Valor Asegurado"].ToString()))
+                                movimientoConyuge = "IGUAL";
+                            if (double.Parse(dtAmparoAnteriorCony.Rows[0]["ampcer_ValAsegurado"].ToString()) < double.Parse(dtEliminarConyuge.Rows[idFila]["Valor Asegurado"].ToString()))
+                                movimientoConyuge = "AUMENTA";
+                        }
+                        catch (Exception ex)
+                        {
+                            movimientoConyuge = "NOTIENE";
+                        }
+
+                        // Cúmulos
+                        int totalBeneficiarioConyuge = 0;
+                        foreach (DataRow row in dtBeneficiarioConyuge.Rows)
+                        {
+                            if (row["Porcentaje"].ToString() != "")
+                                totalBeneficiarioConyuge = totalBeneficiarioConyuge + int.Parse(row["Porcentaje"].ToString());
+                        }
+
+                        if (totalBeneficiarioConyuge == 100)
+                        {
+                            AdministrarCertificados.insertarBeneficiario(dtBeneficiario, cer_IdNuevo, int.Parse(txtCedulaPrincipal.Text), 1);
+
+                            int plaPrincipal;
+                            if (ddlPlanPrincipal.Text != "")
+                            {
+                                plaPrincipal = int.Parse(ddlPlanPrincipal.SelectedValue.ToString());
+                            }
+                            else
+                            {
+                                plaPrincipal = 0;
+                            }
+                            btnCertificado.Enabled = true;
+
+                            //DeterminarTipoMovimiento();
+                            AdministrarCertificados.ActualizarNewCertificado(cer_IdNuevo, int.Parse(txtPrima.Text), AdministrarCertificados.certificadoPre.Consecutivo.ToString(), ddlConvenioPrincipal.SelectedValue.ToString(),
+                           txtDeclaracionAsegurado.Text, txtDeclaracionEG.Text, estadoCertificado, txtEstatura.Text, txtestaturaPrincipal.Text, "0", int.Parse(idConyuge),
+                           "0", txtPeso.Text, txtpesoPrincipal.Text, listaTipoMovimiento[0], listaTipoMovimiento[2], listaTipoMovimiento[3], int.Parse(ddlLocalidadCertificado.SelectedValue.ToString()), plaPrincipal, int.Parse(ddlPoliza.SelectedValue.ToString()),
+                           3, recuperado, Convert.ToDateTime(txtFechaDigitacionCertificado.Text), int.Parse(ddlperiodoPagoCertificado.SelectedValue.ToString()));
+                            //ActualizarCertificadoPreCargado();
+                            //INSERTAR AMPAROS PRINCIPAL
+                            AdministrarCertificados.insertarAmparos(dtEliminarPrincipal, cer_IdNuevo, int.Parse(txtCedulaPrincipal.Text), 1);
+
+                            //INSERTAR AMPAROS CONYUGE
+                            if (idConyuge != "0")
+                            {
+                                AdministrarCertificados.insertarAmparos(dtEliminarConyuge, cer_IdNuevo, int.Parse(txtCedulaConyuge.Text), 2);
+                            }
+
+                            //INSERTAR OTROS ASEGURADOS
+                            if (otrosAsegurados.Rows.Count > 0)
+                            {
+                                AdministrarCertificados.IngresarOtrosAsegurados(dtTemp, cer_IdNuevo);
+                            }
+
+                            AdministrarCertificados.insertarBeneficiario(dtBeneficiarioConyuge, cer_IdNuevo, int.Parse(txtCedulaConyuge.Text), 2);
+                        }
+                        else
+                        {
+                            ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "EL PORCENTAJE DE LOS BENEFICIARIOS DE EL ASEGURADO CONYUGE NO SUMAN EL 100%" + "');", true);
+                            btnCertificado.Enabled = true;
+                        }
+                    }
+                    else
+                    {
+                        AdministrarCertificados.insertarBeneficiario(dtBeneficiario, cer_IdNuevo, int.Parse(txtCedulaPrincipal.Text), 1);
+
+                        //INSERTAR CERTIFICADO
+                        btnCertificado.Enabled = true;
+
+                        int plaPrincipal;
+                        if (ddlPlanPrincipal.Text != "")
+                        {
+                            plaPrincipal = int.Parse(ddlPlanPrincipal.SelectedValue.ToString());
+                        }
+                        else
+                        {
+                            plaPrincipal = 0;
+                        }
+                        //DeterminarTipoMovimiento();
+                        AdministrarCertificados.ActualizarNewCertificado(cer_IdNuevo, int.Parse(txtPrima.Text), AdministrarCertificados.certificadoPre.Consecutivo.ToString(), ddlConvenioPrincipal.SelectedValue.ToString(),
+                        txtDeclaracionAsegurado.Text, txtDeclaracionEG.Text, estadoCertificado, txtEstatura.Text, txtestaturaPrincipal.Text, "0", int.Parse(idConyuge),
+                        "0", txtPeso.Text, txtpesoPrincipal.Text, listaTipoMovimiento[0], listaTipoMovimiento[2], listaTipoMovimiento[3], int.Parse(ddlLocalidadCertificado.SelectedValue.ToString()), plaPrincipal, int.Parse(ddlPoliza.SelectedValue.ToString()),
+                        3, recuperado, Convert.ToDateTime(txtFechaDigitacionCertificado.Text), int.Parse(ddlperiodoPagoCertificado.SelectedValue.ToString()));
+                        //ActualizarCertificadoPreCargado();
+                        //INSERTAR AMPAROS PRINCIPAL
+                        AdministrarCertificados.insertarAmparos(dtEliminarPrincipal, cer_IdNuevo, int.Parse(txtCedulaPrincipal.Text), 1);
+
+                        //INSERTAR OTROS ASEGURADOS
+                        if (otrosAsegurados.Rows.Count > 0)
+                        {
+                            AdministrarCertificados.IngresarOtrosAsegurados(dtTemp, cer_IdNuevo);
+                        }
+                    }
+
+                    AdministrarCertificados.ActualizarCertificadoAnterior(cer_Id);
+                    if ((string)Session["operacionCertificado"] == "modificar")
+                    {
+                        Session["cer_Id"] = cer_IdNuevo;
+                        CalcularNovedades();
+                        Response.Redirect("ResumenCertificado.aspx");
+                    }
+                }
+                else
+                {
+                    btnCertificado.Enabled = true;
+                    ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "EL PORCENTAJE DE LOS BENEFICIARIOS DE EL ASEGURADO PRINCIPAL NO SUMAN EL 100%" + "');", true);
+                }
+            }
+
+            // Si es un ingreso nuevo
+            else
+            {
+                //VALIDACION BENEFICIARIO PRINCIPAL
+                int total = 0;
+                foreach (DataRow row in dtBeneficiario.Rows)
+                {
+                    total = total + int.Parse(row["Porcentaje"].ToString());
+                }
+
+                if (total == 100)
+                {
+                    string idConyuge = txtCedulaConyuge.Text;
+                    if (idConyuge == "")
+                    {
+                        idConyuge = "0";
+                    }
+
+                    //VALIDACION BENEFICIARIO CONYUGE
+                    if (idConyuge != "0")
+                    {
+                        int totalBeneficiarioConyuge = 0;
+                        //foreach (Asegurado row in beneficiarioConyuge)
+                        foreach (DataRow row in dtBeneficiarioConyuge.Rows)
+                        {
+                            if (row["Porcentaje"].ToString() != "")
+                                totalBeneficiarioConyuge = totalBeneficiarioConyuge + int.Parse(row["Porcentaje"].ToString());
+                        }
+
+                        if (totalBeneficiarioConyuge == 100)
+                        {
+                            AdministrarCertificados.insertarBeneficiario(dtBeneficiario, cer_IdNuevo, int.Parse(txtCedulaPrincipal.Text), 1);
+
+                            //INSERTAR CERTIFICADO
+                            int plaPrincipal;
+                            if (ddlPlanPrincipal.Text != "")
+                            {
+                                plaPrincipal = int.Parse(ddlPlanPrincipal.SelectedValue.ToString());
+                            }
+                            else
+                            {
+                                plaPrincipal = 0;
+                            }
+                            btnCertificado.Enabled = true;
+                            //DeterminarTipoMovimiento();
+                            AdministrarCertificados.ActualizarNewCertificado(cer_IdNuevo, int.Parse(txtPrima.Text), AdministrarCertificados.certificadoPre.Consecutivo.ToString(), ddlConvenioPrincipal.SelectedValue.ToString(),
+                           txtDeclaracionAsegurado.Text, txtDeclaracionEG.Text, estadoCertificado, txtEstatura.Text, txtestaturaPrincipal.Text, "0", int.Parse(idConyuge),
+                           "0", txtPeso.Text, txtpesoPrincipal.Text, listaTipoMovimiento[0], listaTipoMovimiento[2], listaTipoMovimiento[3], int.Parse(ddlLocalidadCertificado.SelectedValue.ToString()), plaPrincipal, int.Parse(ddlPoliza.SelectedValue.ToString()),
+                           3, recuperado, Convert.ToDateTime(txtFechaDigitacionCertificado.Text), int.Parse(ddlperiodoPagoCertificado.SelectedValue.ToString()));
+                            //ActualizarCertificadoPreCargado();
+                            //INSERTAR AMPAROS PRINCIPAL
+                            AdministrarCertificados.insertarAmparos(dtEliminarPrincipal, cer_IdNuevo, int.Parse(txtCedulaPrincipal.Text), 1);
+
+                            //INSERTAR AMPAROS CONYUGE
+                            if (idConyuge != "0")
+                            {
+
+                                AdministrarCertificados.insertarAmparos(dtEliminarConyuge, cer_IdNuevo, int.Parse(txtCedulaConyuge.Text), 2);
+                            }
+                            //INSERTAR OTROS ASEGURADOS
+                            if (otrosAsegurados.Rows.Count > 0)
+                            {
+                                AdministrarCertificados.IngresarOtrosAsegurados(dtTemp, cer_IdNuevo);
+                            }
+
+                            AdministrarCertificados.insertarBeneficiario(dtBeneficiarioConyuge, cer_IdNuevo, int.Parse(txtCedulaConyuge.Text), 2);
+                        }
+                        else
+                        {
+                            ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "EL PORCENTAJE DE LOS BENEFICIARIOS DE EL ASEGURADO CONYUGE NO SUMAN EL 100%" + "');", true);
+                        }
+                    }
+                    else
+                    {
+                        AdministrarCertificados.insertarBeneficiario(dtBeneficiario, cer_IdNuevo, int.Parse(txtCedulaPrincipal.Text), 1);
+                        //INSERTAR CERTIFICADO
+
+                        int plaPrincipal;
+                        if (ddlPlanPrincipal.Text != "")
+                        {
+                            plaPrincipal = int.Parse(ddlPlanPrincipal.SelectedValue.ToString());
+                        }
+                        else
+                        {
+                            plaPrincipal = 0;
+                        }
+                        btnCertificado.Enabled = true;
+                        //DeterminarTipoMovimiento();
+                        // Como es nuevo ingreso y no tiene cónyuge el movimiento es "Ingresa Principal"
+                        AdministrarCertificados.ActualizarNewCertificado(cer_IdNuevo, int.Parse(txtPrima.Text), AdministrarCertificados.certificadoPre.Consecutivo.ToString(), ddlConvenioPrincipal.SelectedValue.ToString(),
+                       txtDeclaracionAsegurado.Text, txtDeclaracionEG.Text, estadoCertificado, txtEstatura.Text, txtestaturaPrincipal.Text, "0", int.Parse(idConyuge),
+                       "0", txtPeso.Text, txtpesoPrincipal.Text, listaTipoMovimiento[0], listaTipoMovimiento[2], listaTipoMovimiento[3], int.Parse(ddlLocalidadCertificado.SelectedValue.ToString()), plaPrincipal, int.Parse(ddlPoliza.SelectedValue.ToString()),
+                       3, recuperado, Convert.ToDateTime(txtFechaDigitacionCertificado.Text), int.Parse(ddlperiodoPagoCertificado.SelectedValue.ToString()));
+                        //ActualizarCertificadoPreCargado();
+                        //INSERTAR AMPAROS PRINCIPAL
+                        AdministrarCertificados.insertarAmparos(dtEliminarPrincipal, cer_IdNuevo, int.Parse(txtCedulaPrincipal.Text), 1);
+
+                        //INSERTAR OTROS ASEGURADOS
+                        if (otrosAsegurados.Rows.Count > 0)
+                        {
+                            AdministrarCertificados.IngresarOtrosAsegurados(dtTemp, cer_IdNuevo);
+                        }
+                    }
+                    Session["cer_Id"] = cer_IdNuevo;
+                    CalcularNovedades();
+                    Response.Redirect("ResumenCertificado.aspx");
+                }
+                else
+                {
+                    btnCertificado.Enabled = true;
+                    ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "EL PORCENTAJE DE LOS BENEFICIARIOS DE EL ASEGURADO PRINCIPAL NO SUMAN EL 100%" + "');", true);
+                }
+            }
+
+        }
+    }
+    private void DeterminarTipoMovimiento()
+    {
+        DataTable dtConyuge = new DataTable();
+        dtConyuge = AdministrarCertificados.consultarNewTerceroPorCedula(int.Parse(txtCedulaPrincipal.Text), int.Parse(AdministrarCertificados.certificadoPre.Producto));
+        if (dtConyuge.Rows.Count > 0)
+            teniaConyuge = true;
+        else
+            teniaConyuge = false;
+
+        if ((string)Session["operacionCertificado"] == "modificar")
+        {
+            string idConyuge = txtCedulaConyuge.Text;
+            if (movimientoPrincipal == "AUMENTA" && movimientoConyuge == "AUMENTA" && movimientoOtrosAsegurados == "MODIFICA")
+                tipoMovimientoDefinitivo = 28;
+            else
+                if (movimientoPrincipal == "AUMENTA" && movimientoConyuge == "AUMENTA" && movimientoOtrosAsegurados == "")
+                    tipoMovimientoDefinitivo = 14;
+                else
+                    if (movimientoPrincipal == "AUMENTA" && movimientoConyuge == "DISMINUYE" && movimientoOtrosAsegurados == "MODIFICA")
+                        tipoMovimientoDefinitivo = 29;
+                    else
+                        if (movimientoPrincipal == "AUMENTA" && movimientoConyuge == "DISMINUYE" && movimientoOtrosAsegurados == "")
+                            tipoMovimientoDefinitivo = 15;
+                        else
+                            if (movimientoPrincipal == "AUMENTA" && ((idConyuge == "" && teniaConyuge == false) || movimientoConyuge == "IGUAL") && movimientoOtrosAsegurados == "MODIFICA")
+                                tipoMovimientoDefinitivo = 26;
+                            else
+                                if (movimientoPrincipal == "AUMENTA" && ((idConyuge == "" && teniaConyuge == false) || movimientoConyuge == "IGUAL") && movimientoOtrosAsegurados == "")
+                                    tipoMovimientoDefinitivo = 10;
+                                else
+                                    if (movimientoPrincipal == "DISMINUYE" && movimientoConyuge == "AUMENTA" && movimientoOtrosAsegurados == "MODIFICA")
+                                        tipoMovimientoDefinitivo = 30;
+                                    else
+                                        if (movimientoPrincipal == "DISMINUYE" && movimientoConyuge == "AUMENTA" && movimientoOtrosAsegurados == "")
+                                            tipoMovimientoDefinitivo = 16;
+                                        else
+                                            if (movimientoPrincipal == "DISMINUYE" && movimientoConyuge == "DISMINUYE" && movimientoOtrosAsegurados == "MODIFICA")
+                                                tipoMovimientoDefinitivo = 31;
+                                            else
+                                                if (movimientoPrincipal == "DISMINUYE" && movimientoConyuge == "DISMINUYE" && movimientoOtrosAsegurados == "")
+                                                    tipoMovimientoDefinitivo = 17;
+                                                else
+                                                    if (movimientoPrincipal == "DISMINUYE" && ((idConyuge == "" && teniaConyuge == false) || movimientoConyuge == "IGUAL") && movimientoOtrosAsegurados == "MODIFICA")
+                                                        tipoMovimientoDefinitivo = 27;
+                                                    else
+                                                        if (movimientoPrincipal == "DISMINUYE" && ((idConyuge == "" && teniaConyuge == false) || movimientoConyuge == "IGUAL") && movimientoOtrosAsegurados == "")
+                                                            tipoMovimientoDefinitivo = 11;
+                                                        else
+                                                            if (movimientoPrincipal == "IGUAL" && movimientoConyuge == "AUMENTA" && movimientoOtrosAsegurados == "MODIFICA")
+                                                                tipoMovimientoDefinitivo = 32;
+                                                            else
+                                                                if (movimientoPrincipal == "IGUAL" && movimientoConyuge == "DISMINUYE" && movimientoOtrosAsegurados == "MODIFICA")
+                                                                    tipoMovimientoDefinitivo = 33;
+                                                                else
+                                                                    if (movimientoPrincipal == "IGUAL" && ((idConyuge == "" && teniaConyuge == false) || movimientoConyuge == "IGUAL") && movimientoOtrosAsegurados == "MODIFICA")
+                                                                        tipoMovimientoDefinitivo = 9;
+                                                                    else
+                                                                        if (movimientoPrincipal == "IGUAL" && movimientoConyuge == "AUMENTA" && movimientoOtrosAsegurados == "")
+                                                                            tipoMovimientoDefinitivo = 12;
+                                                                        else
+                                                                            if (movimientoPrincipal == "IGUAL" && movimientoConyuge == "DISMINUYE" && movimientoOtrosAsegurados == "")
+                                                                                tipoMovimientoDefinitivo = 13;
+                                                                            else
+                                                                                if (teniaConyuge == false && idConyuge != "" && teniaOtrosAsegurados == false && movimientoOtrosAsegurados == "MODIFICA")
+                                                                                    tipoMovimientoDefinitivo = 5;
+                                                                                else
+                                                                                    if ((teniaConyuge == false && idConyuge == "" || teniaConyuge == true && idConyuge != "") && teniaOtrosAsegurados == false && movimientoOtrosAsegurados == "MODIFICA")
+                                                                                        tipoMovimientoDefinitivo = 6;
+                                                                                    else
+                                                                                        if (teniaConyuge == false && idConyuge != "" && teniaOtrosAsegurados == false && movimientoOtrosAsegurados == "")
+                                                                                            tipoMovimientoDefinitivo = 4;
+                                                                                        else
+                                                                                            if (teniaConyuge == true && idConyuge != "" && movimientoOtrosAsegurados == "")
+                                                                                                tipoMovimientoDefinitivo = 7;
+                                                                                            else
+                                                                                                if (teniaConyuge == true && idConyuge != "" && movimientoOtrosAsegurados == "MODIFICA")
+                                                                                                    tipoMovimientoDefinitivo = 8;
+                                                                                                else
+                                                                                                    if (movimientoPrincipal == "AUMENTA" && teniaConyuge == false && idConyuge != "" && movimientoOtrosAsegurados == "MODIFICA")
+                                                                                                        tipoMovimientoDefinitivo = 22;
+                                                                                                    else
+                                                                                                        if (movimientoPrincipal == "AUMENTA" && teniaConyuge == true && idConyuge == "" && movimientoOtrosAsegurados == "MODIFICA")
+                                                                                                            tipoMovimientoDefinitivo = 23;
+                                                                                                        else
+                                                                                                            if (movimientoPrincipal == "AUMENTA" && teniaConyuge == false && idConyuge != "" && movimientoOtrosAsegurados == "")
+                                                                                                                tipoMovimientoDefinitivo = 18;
+                                                                                                            else
+                                                                                                                if (movimientoPrincipal == "AUMENTA" && teniaConyuge == true && idConyuge == "" && movimientoOtrosAsegurados == "")
+                                                                                                                    tipoMovimientoDefinitivo = 19;
+                                                                                                                else
+                                                                                                                    if (movimientoPrincipal == "DISMINUYE" && teniaConyuge == false && idConyuge != "" && movimientoOtrosAsegurados == "MODIFICA")
+                                                                                                                        tipoMovimientoDefinitivo = 24;
+                                                                                                                    else
+                                                                                                                        if (movimientoPrincipal == "DISMINUYE" && teniaConyuge == true && idConyuge == "" && movimientoOtrosAsegurados == "MODIFICA")
+                                                                                                                            tipoMovimientoDefinitivo = 25;
+                                                                                                                        else
+                                                                                                                            if (movimientoPrincipal == "DISMINUYE" && teniaConyuge == false && idConyuge != "" && movimientoOtrosAsegurados == "")
+                                                                                                                                tipoMovimientoDefinitivo = 20;
+                                                                                                                            else
+                                                                                                                                if (movimientoPrincipal == "DISMINUYE" && teniaConyuge == true && idConyuge == "" && movimientoOtrosAsegurados == "")
+                                                                                                                                    tipoMovimientoDefinitivo = 21;
+                                                                                                                                else
+                                                                                                                                    tipoMovimientoDefinitivo = 35;
+        }
+        else
+        {
+            string idConyuge = txtCedulaConyuge.Text;
+            if (idConyuge != "" && movimientoOtrosAsegurados == "MODIFICA")
+                tipoMovimientoDefinitivo = 3;
+            else
+                if (idConyuge != "" && movimientoOtrosAsegurados == "")
+                    tipoMovimientoDefinitivo = 2;
+                else
+                    if (idConyuge == "" && movimientoOtrosAsegurados == "")
+                        tipoMovimientoDefinitivo = 1;
+                    else
+                        if (idConyuge == "" && movimientoOtrosAsegurados == "MODIFICA")
+                            tipoMovimientoDefinitivo = 34;
+                        else
+                            tipoMovimientoDefinitivo = 35;
+        }
+    }
+
+    //sebastian
+    private static void ObtenerNuevaLista()
+    {
+        List<Asegurado> lista = new List<Asegurado>();
+
+        Asegurado P1 = new Asegurado();
+        P1.Nombres = "";
+        P1.Apellidos = "";
+        P1.NumeroDocumento = "";
+        P1.Edad = 0;
+        P1.Porcentaje = 0;
+        P1.Parentesco = "";
+
+        beneficiario.Add(P1);
+    }
+
+    //sebastian
+    private void GuardarLista(Asegurado persona)
+    {
+        if (beneficiario.Count == 0)
+        {
+            ObtenerNuevaLista();
+            beneficiario.Add(persona);
+        }
+        else
+        {
+            beneficiario.Add(persona);
+        }
+    }
+    //sebastian
+    private void ObtenerLista()
+    {
+        if (Session["lista"] == null)
+            ObtenerNuevaLista();
+    }
+
+    //sebastian
+    protected void grvBeneficiarioPrincipal_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+        if (e.CommandName.Equals("addNew"))
+        {
+            TextBox txtNewNombre = (TextBox)grvBeneficiarioPrincipal.FooterRow.FindControl("txtNewNombre");
+            TextBox txtNewApellido = (TextBox)grvBeneficiarioPrincipal.FooterRow.FindControl("txtNewApellido");
+            TextBox txtNewCedula = (TextBox)grvBeneficiarioPrincipal.FooterRow.FindControl("txtNewCedula");
+            TextBox txtNewEdad = (TextBox)grvBeneficiarioPrincipal.FooterRow.FindControl("txtNewEdad");
+            TextBox txtNewPorcentaje = (TextBox)grvBeneficiarioPrincipal.FooterRow.FindControl("txtNewPorcentaje");
+            DropDownList txtNewParentesco = (DropDownList)grvBeneficiarioPrincipal.FooterRow.FindControl("txtNewParentesco");
+
+            Asegurado p = new Asegurado();
+            p.Nombres = txtNewNombre.Text;
+            p.Apellidos = txtNewApellido.Text;
+            p.NumeroDocumento = txtNewCedula.Text;
+            p.Edad = int.Parse(txtNewEdad.Text);
+            p.Porcentaje = int.Parse(txtNewPorcentaje.Text);
+            p.Parentesco = txtNewParentesco.SelectedValue.ToString();
+
+            DataRow row = dtBeneficiario.NewRow();
+            row["NumeroDocumento"] = p.NumeroDocumento;
+            row["Apellidos"] = p.Apellidos;
+            row["Nombres"] = p.Nombres;
+            row["Edad"] = p.Edad;
+            row["Porcentaje"] = p.Porcentaje;
+            row["Parentesco"] = p.Parentesco;
+            dtBeneficiario.Rows.Add(row);
+
+            grvBeneficiarioPrincipal.DataSource = dtBeneficiario;
+            grvBeneficiarioPrincipal.DataBind();
+
+            if (dtBeneficiario.Rows.Count == 0)
+            {
+                grvBeneficiarioPrincipal.FooterRow.Visible = true;
+            }
+        }
+    }
+
+    //sebastian
+    protected void grvBeneficiarioPrincipal_RowDeleting1(object sender, GridViewDeleteEventArgs e)
+    {
+        dtBeneficiario.Rows.RemoveAt(e.RowIndex);
+        grvBeneficiarioPrincipal.DataSource = dtBeneficiario;
+        grvBeneficiarioPrincipal.DataBind();
+        grvBeneficiarioPrincipal.Attributes.Add("onclick", "localStorage.setItem('accIndex', 1);");
+        if (dtBeneficiario.Rows.Count == 0)
+        {
+            DataTable dtBeneficiarioVacio = dtBeneficiario.Clone();
+            DataRow drBeneficiarioVacio = dtBeneficiarioVacio.NewRow();
+            dtBeneficiarioVacio.Rows.Add(drBeneficiarioVacio);
+            grvBeneficiarioPrincipal.DataSource = dtBeneficiarioVacio;
+            grvBeneficiarioPrincipal.DataBind();
+            grvBeneficiarioPrincipal.Rows[0].Visible = false;
+            grvBeneficiarioPrincipal.Rows[0].Controls.Clear();
+        }
+    }
+    /*-------------------------------------------------Tabla beneficiario conyuge---------------------------------------------------*/
+    //sebastian
+    private static void ObtenerNuevaListaConyuge()
+    {
+        List<Asegurado> lista = new List<Asegurado>();
+
+        Asegurado P1 = new Asegurado();
+        P1.Nombres = "";
+        P1.Apellidos = "";
+        P1.NumeroDocumento = "";
+        P1.Edad = 0;
+        P1.Porcentaje = 0;
+        P1.Parentesco = "";
+
+        beneficiarioConyuge.Add(P1);
+    }
+
+    //sebastian
+    private void GuardarListaConyuge(Asegurado persona)
+    {
+        if (beneficiarioConyuge.Count == 0)
+        {
+            ObtenerNuevaListaConyuge();
+            beneficiarioConyuge.Add(persona);
+        }
+        else
+        {
+            beneficiarioConyuge.Add(persona);
+        }
+    }
+
+    //sebastian
+    private void GuardarListaConyuge()
+    {
+        if (Session["lista"] == null)
+            ObtenerNuevaListaConyuge();
+    }
+
+    protected void grvBeneficiarioConyuge_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+        if (e.CommandName.Equals("addNew"))
+        {
+            TextBox txtNewNombre = (TextBox)grvBeneficiarioConyuge.FooterRow.FindControl("txtNewNombre");
+            TextBox txtNewApellido = (TextBox)grvBeneficiarioConyuge.FooterRow.FindControl("txtNewApellido");
+            TextBox txtNewCedula = (TextBox)grvBeneficiarioConyuge.FooterRow.FindControl("txtNewCedula");
+            TextBox txtNewEdad = (TextBox)grvBeneficiarioConyuge.FooterRow.FindControl("txtNewEdad");
+            TextBox txtNewPorcentaje = (TextBox)grvBeneficiarioConyuge.FooterRow.FindControl("txtNewPorcentaje");
+            DropDownList ddlNewParentesco = (DropDownList)grvBeneficiarioConyuge.FooterRow.FindControl("ddlNewParentesco");
+
+            Asegurado p = new Asegurado();
+            p.Nombres = txtNewNombre.Text;
+            p.Apellidos = txtNewApellido.Text;
+            p.NumeroDocumento = txtNewCedula.Text;
+            p.Edad = int.Parse(txtNewEdad.Text);
+            p.Porcentaje = int.Parse(txtNewPorcentaje.Text);
+            p.Parentesco = ddlNewParentesco.SelectedValue.ToString();
+
+            DataRow row = dtBeneficiarioConyuge.NewRow();
+            row["NumeroDocumento"] = p.NumeroDocumento;
+            row["Apellidos"] = p.Apellidos;
+            row["Nombres"] = p.Nombres;
+            row["Edad"] = p.Edad;
+            row["Porcentaje"] = p.Porcentaje;
+            row["Parentesco"] = p.Parentesco;
+            dtBeneficiarioConyuge.Rows.Add(row);
+
+            grvBeneficiarioConyuge.DataSource = dtBeneficiarioConyuge;
+            grvBeneficiarioConyuge.DataBind();
+
+            if (dtBeneficiarioConyuge.Rows.Count == 0)
+            {
+                grvBeneficiarioConyuge.FooterRow.Visible = true;
+            }
+        }
+    }
+    protected void grvBeneficiarioConyuge_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        dtBeneficiarioConyuge.Rows.RemoveAt(e.RowIndex);
+        grvBeneficiarioConyuge.DataSource = dtBeneficiarioConyuge;
+        grvBeneficiarioConyuge.DataBind();
+        grvBeneficiarioConyuge.Attributes.Add("onclick", "localStorage.setItem('accIndex', 2);");
+        if (dtBeneficiarioConyuge.Rows.Count == 0)
+        {
+            DataTable dtBeneficiarioConyugeVacio = dtBeneficiarioConyuge.Clone();
+            DataRow drBeneficiarioConyugeVacio = dtBeneficiarioConyugeVacio.NewRow();
+            dtBeneficiarioConyugeVacio.Rows.Add(drBeneficiarioConyugeVacio);
+            grvBeneficiarioConyuge.DataSource = dtBeneficiarioConyugeVacio;
+            grvBeneficiarioConyuge.DataBind();
+            grvBeneficiarioConyuge.Rows[0].Visible = false;
+            grvBeneficiarioConyuge.Rows[0].Controls.Clear();
+        }
+
+        //if (dtBeneficiarioConyuge.Rows.Count > 0)
+        //{
+        //    if (dtBeneficiarioConyuge.Rows.Count == 1)
+        //    {
+        //        dtBeneficiarioConyuge = new DataTable();
+        //        DataColumn column = new DataColumn();
+        //        column = new DataColumn();
+        //        column.DataType = System.Type.GetType("System.String");
+        //        column.AllowDBNull = true;
+        //        column.Caption = "NumeroDocumento";
+        //        column.ColumnName = "NumeroDocumento";
+        //        dtBeneficiarioConyuge.Columns.Add(column);
+
+        //        column = new DataColumn();
+        //        column.DataType = System.Type.GetType("System.String");
+        //        column.AllowDBNull = true;
+        //        column.Caption = "Apellidos";
+        //        column.ColumnName = "Apellidos";
+        //        dtBeneficiarioConyuge.Columns.Add(column);
+
+        //        column = new DataColumn();
+        //        column.DataType = System.Type.GetType("System.String");
+        //        column.AllowDBNull = true;
+        //        column.Caption = "Nombres";
+        //        column.ColumnName = "Nombres";
+        //        dtBeneficiarioConyuge.Columns.Add(column);
+
+        //        column = new DataColumn();
+        //        column.DataType = System.Type.GetType("System.String");
+        //        column.AllowDBNull = true;
+        //        column.Caption = "Edad";
+        //        column.ColumnName = "Edad";
+        //        dtBeneficiarioConyuge.Columns.Add(column);
+
+        //        column = new DataColumn();
+        //        column.DataType = System.Type.GetType("System.String");
+        //        column.AllowDBNull = true;
+        //        column.Caption = "Porcentaje";
+        //        column.ColumnName = "Porcentaje";
+        //        dtBeneficiarioConyuge.Columns.Add(column);
+
+        //        column = new DataColumn();
+        //        column.DataType = System.Type.GetType("System.String");
+        //        column.AllowDBNull = true;
+        //        column.Caption = "Parentesco";
+        //        column.ColumnName = "Parentesco";
+        //        dtBeneficiarioConyuge.Columns.Add(column);
+
+        //        DataRow row1 = dtBeneficiarioConyuge.NewRow();
+        //        row1["NumeroDocumento"] = "";
+        //        row1["Apellidos"] = "";
+        //        row1["Nombres"] = "";
+        //        row1["Edad"] = "";
+        //        row1["Porcentaje"] = "";
+        //        row1["Parentesco"] = "";
+        //        dtBeneficiarioConyuge.Rows.Add(row1);
+
+        //        GridViewRow rowConyuge = grvBeneficiarioConyuge.Rows[0];
+        //        rowConyuge.Visible = false;
+        //    }
+        //    else
+        //    {
+        //        dtBeneficiarioConyuge.Rows.RemoveAt(e.RowIndex);
+        //    }
+        //}
+        //if (dtBeneficiarioConyuge.Rows.Count == 1)
+        //{
+        //    GridViewRow rowConyuge = grvBeneficiarioConyuge.Rows[0];
+        //    rowConyuge.Visible = false;
+        //}
+
+        //grvBeneficiarioConyuge.DataSource = dtBeneficiarioConyuge;
+        //grvBeneficiarioConyuge.DataBind();
+        //grvBeneficiarioConyuge.Enabled = true;
+        //grvBeneficiarioConyuge.Attributes.Add("onclick", "localStorage.setItem('accIndex', 2);");
+
+        //TextBox NombreBeneficiarioPrincipal = (TextBox)(grvBeneficiarioConyuge.FooterRow.FindControl("txtNewNombre"));
+        //Convert.ToString(NombreBeneficiarioPrincipal);
+        //if (NombreBeneficiarioPrincipal.Text == "")
+        //{
+        //    GridViewRow rowConyuge = grvBeneficiarioConyuge.Rows[0];
+        //    rowConyuge.Visible = false;
+
+        //    TableFooterRow footer = new TableFooterRow();
+        //    footer.Visible = true;
+        //}
+    }
+
+    /*-------------------------------------------------Fin beneficiario---------------------------------------------------*/
+
+    protected void grvAmparoPrincipal_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        // Para Plan Maestro Integral se debe verificar que el asegurado principal tenga todos los amparos para poder asegurar hijos
+        if (int.Parse(dtEncabezadoCertificado.Rows[0]["com_Id"].ToString()) == 1 && dtEncabezadoCertificado.Rows[0]["pro_Nombre"].ToString() == "EDUCADORES")
+        {
+            if (sePuedenHijosPMI == true)
+            {
+                DataTable dtParentesco, dtParentescoEspejo = new DataTable();
+                dtParentesco = AdministrarCertificados.consultarParentesco(int.Parse(AdministrarCertificados.certificadoPre.Producto));
+                dtParentesco.Rows.RemoveAt(0);
+                dtParentesco.Rows.RemoveAt(0);
+                ddlParentesoOtro.DataTextField = "par_Nombre";
+                ddlParentesoOtro.DataValueField = "par_Id";
+                ddlParentesoOtro.DataSource = dtParentesco;
+                ddlParentesoOtro.DataBind();
+                ddlParentesoOtro.Items.Insert(0, new ListItem("", ""));
+            }
+            sePuedenHijosPMI = false;
+        }
+
+        dtEliminarPrincipal.Rows.RemoveAt(e.RowIndex);
+        grvAmparoPrincipal.DataSource = dtEliminarPrincipal;
+        grvAmparoPrincipal.DataBind();
+
+        double totales = 0;
+        foreach (GridViewRow row in grvAmparoPrincipal.Rows)
+        {
+            totales += Convert.ToDouble(row.Cells[4].Text);
+        }
+        if (txtPrimaPrincipal.Text != "")
+            txtPrima.Text = (double.Parse(txtPrima.Text) - double.Parse(txtPrimaPrincipal.Text)).ToString();
+        txtPrimaPrincipal.Text = Convert.ToString(totales);
+        txtPrima.Text = (double.Parse(txtPrima.Text) + double.Parse(txtPrimaPrincipal.Text)).ToString();
+    }
+
+    protected void grvAmparoConyuge_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        dtEliminarConyuge.Rows.RemoveAt(e.RowIndex);
+        grvAmparoConyuge.DataSource = dtEliminarConyuge;
+        grvAmparoConyuge.DataBind();
+
+        double totales = 0;
+        foreach (GridViewRow row in grvAmparoConyuge.Rows)
+        {
+            totales += Convert.ToDouble(row.Cells[4].Text);
+        }
+        //txtPrimaConyuge.Text = Convert.ToString(totales);
+        if (txtPrimaConyuge.Text != "")
+            txtPrima.Text = (double.Parse(txtPrima.Text) - double.Parse(txtPrimaConyuge.Text)).ToString();
+        txtPrimaConyuge.Text = Convert.ToString(totales);
+        txtPrima.Text = (double.Parse(txtPrima.Text) + double.Parse(txtPrimaConyuge.Text)).ToString();
+    }
+
+    protected void limpiarConyuge_Click(object sender, EventArgs e)
+    {
+        txtCedulaConyuge.Text = "";
+        txtNombreConyuge.Text = "";
+        txtApellidoConyuge.Text = "";
+        txtEdadConyuge.Text = "";
+        txtPrimaConyuge.Text = "";
+        txtDocumentoConyugue.Text = "";
+
+        ddlPlanConyuge.Items.Insert(0, new ListItem("", ""));
+        ddlPlanConyuge.SelectedIndex = ddlPlanConyuge.Items.IndexOf(ddlPlanConyuge.Items.FindByText(" "));
+        ddlPlanConyuge.Enabled = false;
+
+        amparosConyuge.Visible = false;
+        dtEliminarConyuge.Clear();
+        grvAmparoConyuge.DataSource = dtEliminarConyuge;
+        grvAmparoConyuge.DataBind();
+
+        beneficiariosConyuge.Visible = false;
+        dtBeneficiarioConyuge.Clear();
+        grvBeneficiarioConyuge.DataSource = dtBeneficiarioConyuge;
+        grvBeneficiarioConyuge.DataBind();
+
+        txtPlanConyuge.Text = "";
+        txtEstatura.Text = "";
+        txtPeso.Text = "";
+        txtPlanConyuge.Enabled = false;
+
+        btnExtraPrima2.Visible = false;
+        btnLimpiar.Visible = false;
+        btnSiguienteConyuge.Enabled = true;
+
+    }
+
+    protected void btnAdicionarOtrosAsegurados_Click(object sender, EventArgs e)
+    {
+        movimientoOtrosAsegurados = "MODIFICA";
+
+        grvOtrosAsegurados.Visible = true;
+        btnAdicionarOtrosAsegurados.Enabled = false;
+        if (dtTemp.Rows.Count == 0)
+            dtTemp = otrosAsegurados.Clone();
+
+        DataRow row = otrosAsegurados.NewRow();
+        DataRow rowTemp = dtTemp.NewRow();
+        row["Cedula"] = txtDocumentoOtros.Text;
+        row["Nombre"] = txtNombreOtro.Text;
+        row["Apellidos"] = txtApellidoOtro.Text;
+        row["Fecha Nacimiento"] = txtFechaNacimiento.Text;
+        row["Parentesco"] = ddlParentesoOtro.SelectedItem.ToString();
+        row["Plan"] = ddlPlanOtros.SelectedItem.ToString();
+        row["Prima"] = txtPrimaOtros.Text;
+
+        rowTemp["Cedula"] = txtDocumentoOtros.Text;
+        rowTemp["Nombre"] = txtNombreOtro.Text;
+        rowTemp["Apellidos"] = txtApellidoOtro.Text;
+        rowTemp["Fecha Nacimiento"] = txtFechaNacimiento.Text;
+        rowTemp["Parentesco"] = ddlParentesoOtro.SelectedValue.ToString();
+        rowTemp["Plan"] = ddlPlanOtros.SelectedValue.ToString();
+        rowTemp["Prima"] = txtPrimaOtros.Text;
+
+        otrosAsegurados.Rows.Add(row);
+        dtTemp.Rows.Add(rowTemp);
+        grvOtrosAsegurados.DataSource = otrosAsegurados;
+        grvOtrosAsegurados.DataBind();
+        sumarPrima();
+
+        ConsultarAmparosPlanOtros(sender, e);
+        txtDocumentoOtros.Text = "";
+        txtCedulaOtro.Text = "";
+        txtNombreOtro.Text = "";
+        txtApellidoOtro.Text = "";
+        txtEdadOtro.Text = "";
+        txtFechaNacimiento.Text = "";
+        grvAmparoOtro.Visible = false;
+        btnAdicionarOtrosAsegurados.Enabled = false;
+
+    }
+    protected void grvOtrosAsegurados_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        movimientoOtrosAsegurados = "MODIFICA";
+
+        dtTemp.Rows.RemoveAt(e.RowIndex);
+        otrosAsegurados.Rows.RemoveAt(e.RowIndex);
+        grvOtrosAsegurados.DataSource = otrosAsegurados;
+        grvOtrosAsegurados.DataBind();
+    }
+    /*---------------------------------------------------------------*/
+    protected void botonRegistrarTercero_Click(object sender, EventArgs e)
+    {
+        AdministrarTercero.InsertarTercero(txtIdentificacion.Text, ddlTipoDocumentoTercero.SelectedValue, txtNombre.Text, txtApellido.Text, DateTime.Parse(txtNacimiento.Text), txtCorreo.Text, ddlGeneroTercero.SelectedValue, ddlDepartamento.SelectedValue, ddlCiudad.SelectedValue, txtCelular.Text, txtTelefono1.Text, txtDireccion.Text, txtTelefono2.Text, ddlOcupacionTercero.SelectedValue, ddlEstadoCivilTercero.SelectedValue);
+        limpiar();
+    }
+
+    //JC 
+    protected void ddlDepartamento_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        AdministrarTercero.ConsultarCiudad(ddlDepartamento.SelectedValue);
+
+        DataTable dt = new DataTable();
+        dt = AdministrarTercero.asegurado.sp_ConsultarCiudad();
+        ddlCiudad.DataTextField = "ciu_Nombre"; // Cargamos lo que aparece en el ddl
+        ddlCiudad.DataValueField = "ciu_Id"; // Cargamos lo que vale por debajo
+        ddlCiudad.DataSource = dt;
+        ddlCiudad.DataBind();
+    }
+
+    //Metodo limpiar. JC
+    private void limpiar()
+    {
+        txtIdentificacion.Text = "";
+        //ddlTipoDocumentoTercero.Text = "";
+        txtNombre.Text = "";
+        txtApellido.Text = "";
+        txtNacimiento.Text = "";
+        txtEdad.Text = "";
+        txtCorreo.Text = "";
+        ddlGeneroTercero.Text = "";
+        //ddlDepartamento.Text = "";
+        //ddlCiudad.Text = "";
+        txtCelular.Text = "";
+        txtTelefono1.Text = "";
+        txtDireccion.Text = "";
+        txtTelefono2.Text = "";
+    }
+
+    //Método que obtiene variable de sisión /Juan Camilo /27_07_2015
+    protected void PasarCertificado_Click(object sender, EventArgs e)
+    {
+        if ((string)Session["operacionCertificado"] == "modificar")
+        {
+            Response.Redirect("ModificarCertificado.aspx");
+        }
+        else
+        {
+            Response.Redirect("DigitarCertificado.aspx");
+        }
+    }
+
+    /*-----------------------------------------------------------------*/
+
+    protected void botonRegistrarTerceroOtros_Click(object sender, EventArgs e)
+    {
+        AdministrarTercero.InsertarTercero(txtIdentificacionOtros.Text, ddlTipoDocumentoOtros.SelectedValue, txtNombreOtros.Text, txtApellidoOtros.Text, DateTime.Parse(txtNacimientoOtros.Text), txtCorreoOtros.Text, ddlGeneroTerceroOtros.SelectedValue, ddlDepartamentoOtros.SelectedValue, ddlCiudadOtros.SelectedValue, txtCelularOtros.Text, txtTelefono1Otros.Text, txtDireccionOtros.Text, txtTelefono2Otros.Text, ddlOcupacionOtros.SelectedValue, ddlEstadoCivilOtros.SelectedValue);
+        limpiarOtros();
+    }
+
+    //JC 
+    protected void ddlDepartamentoOtros_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        AdministrarTercero.ConsultarCiudad(ddlDepartamentoOtros.SelectedValue);
+
+        DataTable dt = new DataTable();
+        dt = AdministrarTercero.asegurado.sp_ConsultarCiudad();
+        ddlCiudadOtros.DataTextField = "ciu_Nombre"; // Cargamos lo que aparece en el ddl
+        ddlCiudadOtros.DataValueField = "ciu_Id"; // Cargamos lo que vale por debajo
+        ddlCiudadOtros.DataSource = dt;
+        ddlCiudadOtros.DataBind();
+    }
+
+    //Metodo limpiar. JC
+    private void limpiarOtros()
+    {
+        txtIdentificacionOtros.Text = "";
+        //ddlTipoDocumentoTercero.Text = "";
+        txtNombreOtros.Text = "";
+        txtApellidoOtros.Text = "";
+        txtNacimientoOtros.Text = "";
+        txtEdadOtros.Text = "";
+        txtCorreoOtros.Text = "";
+        ddlGeneroTerceroOtros.Text = "";
+        //ddlDepartamento.Text = "";
+        //ddlCiudad.Text = "";
+        txtCelularOtros.Text = "";
+        txtTelefono1Otros.Text = "";
+        txtDireccionOtros.Text = "";
+        txtTelefono2Otros.Text = "";
+    }
+
+    protected void ConsultarAmparosPlanOtros(object sender, EventArgs e)
+    {
+        if ((string)Session["operacionCertificado"] == "modificar")
+        {
+            dt = AdministrarCertificados.consultarAmparosPorPlan(int.Parse(ddlPlanOtros.SelectedValue.ToString()), int.Parse(txtEdadOtro.Text), 0);
+            grvAmparoOtro.DataSource = dt;
+            grvAmparoOtro.DataBind();
+            if (dt.Rows.Count > 0)
+            {
+                btnAdicionarOtrosAsegurados.Enabled = true;
+                grvAmparoOtro.Visible = true;
+            }
+            else
+            {
+                ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "ESTE PLAN NO TIENE AMPAROS" + "');", true);
+            }
+        }
+        else
+        {
+            if (ddlPlanOtros.Text != "" && txtCedulaOtro.Text != "")
+            {
+                grvAmparoOtro.Visible = true;
+
+                dt = AdministrarCertificados.consultarAmparosPorPlan(int.Parse(ddlPlanOtros.SelectedValue.ToString()), int.Parse(txtEdadOtro.Text), 0);
+                grvAmparoOtro.DataSource = dt;
+                grvAmparoOtro.DataBind();
+                if (dt.Rows.Count > 0)
+                {
+                    btnAdicionarOtrosAsegurados.Enabled = true;
+                }
+                else
+                {
+                    ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "ESTE PLAN NO TIENE AMPAROS" + "');", true);
+                }
+            }
+        }
+
+        int contador = 0;
+        double total = 0;
+
+        foreach (GridViewRow row in grvAmparoOtro.Rows)
+        {
+            //total = double.Parse(row.Cells[1].Text);
+            //total = total * double.Parse(ddlPlanOtros.SelectedItem.ToString())/100;
+            //dt.Rows[contador]["Valor Asegurado"] = total.ToString();
+            //contador++;
+        }
+        double totales = 0;
+        foreach (GridViewRow row in grvAmparoOtro.Rows)
+        {
+            totales += Convert.ToDouble(row.Cells[3].Text);
+        }
+        txtPrimaOtros.Text = Convert.ToString(totales);
+
+        grvAmparoOtro.DataSource = dt;
+        grvAmparoOtro.DataBind();
+    }
+
+    protected void grvAmparoExtraPrima_RowEditing(object sender, GridViewEditEventArgs e)
+    {
+        grvAmparoExtraPrima.EditIndex = e.NewEditIndex;
+        grvAmparoExtraPrima.DataSource = dtEliminarPrincipal;
+        grvAmparoExtraPrima.DataBind();
+    }
+
+    protected void grvAmparoExtraPrima_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
+    {
+        grvAmparoExtraPrima.EditIndex = -1;
+        grvAmparoExtraPrima.DataSource = dtEliminarPrincipal;
+        grvAmparoExtraPrima.DataBind();
+    }
+
+    protected void grvAmparoExtraPrima_RowUpdating(object sender, GridViewUpdateEventArgs e)
+    {
+        if (((TextBox)this.grvAmparoExtraPrima.Rows[e.RowIndex].Cells[3].Controls[0]).Text != "")
+        {
+            if (dtEliminarPrincipal.Rows[e.RowIndex]["Tasa"].ToString() != "" && dtEliminarPrincipal.Rows[e.RowIndex]["Tasa"].ToString() != "0")
+                txtPrimaPrincipal.Text = (double.Parse(txtPrimaPrincipal.Text) - ((double.Parse(dtEliminarPrincipal.Rows[e.RowIndex]["Tasa"].ToString()) * double.Parse(dtEliminarPrincipal.Rows[e.RowIndex]["Prima"].ToString()))) / 100).ToString();
+            dtEliminarPrincipal.Rows[e.RowIndex]["Tasa"] = ((TextBox)this.grvAmparoExtraPrima.Rows[e.RowIndex].Cells[3].Controls[0]).Text;
+            txtPrimaPrincipal.Text = (double.Parse(txtPrimaPrincipal.Text) + ((double.Parse(dtEliminarPrincipal.Rows[e.RowIndex]["Tasa"].ToString()) * double.Parse(dtEliminarPrincipal.Rows[e.RowIndex]["Prima"].ToString()))) / 100).ToString();
+            grvAmparoExtraPrima.EditIndex = -1;
+            grvAmparoExtraPrima.DataSource = dtEliminarPrincipal;
+            grvAmparoExtraPrima.DataBind();
+        }
+    }
+
+    protected void grvExtraPrimaConyuge_RowUpdating(object sender, GridViewUpdateEventArgs e)
+    {
+        if (((TextBox)this.grvExtraPrimaConyuge.Rows[e.RowIndex].Cells[4].Controls[0]).Text != "")
+        {
+            if (dtEliminarConyuge.Rows[e.RowIndex]["Tasa"].ToString() != "")
+                txtPrimaConyuge.Text = (int.Parse(txtPrimaConyuge.Text) - ((int.Parse(dtEliminarConyuge.Rows[e.RowIndex]["Tasa"].ToString()) * int.Parse(dtEliminarConyuge.Rows[e.RowIndex]["Prima"].ToString()))) / 100).ToString();
+            dtEliminarConyuge.Rows[e.RowIndex]["Tasa"] = ((TextBox)this.grvExtraPrimaConyuge.Rows[e.RowIndex].Cells[4].Controls[0]).Text;
+            txtPrimaConyuge.Text = (int.Parse(txtPrimaConyuge.Text) + ((int.Parse(dtEliminarConyuge.Rows[e.RowIndex]["Tasa"].ToString()) * int.Parse(dtEliminarConyuge.Rows[e.RowIndex]["Prima"].ToString()))) / 100).ToString();
+            grvExtraPrimaConyuge.EditIndex = -1;
+            grvExtraPrimaConyuge.DataSource = dtEliminarConyuge;
+            grvExtraPrimaConyuge.DataBind();
+        }
+    }
+
+    protected void grvExtraPrimaConyuge_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
+    {
+        grvExtraPrimaConyuge.EditIndex = -1;
+        grvExtraPrimaConyuge.DataSource = dtEliminarConyuge;
+        grvExtraPrimaConyuge.DataBind();
+    }
+
+    protected void grvExtraPrimaConyuge_RowEditing(object sender, GridViewEditEventArgs e)
+    {
+        grvExtraPrimaConyuge.EditIndex = e.NewEditIndex;
+        grvExtraPrimaConyuge.DataSource = dtEliminarConyuge;
+        grvExtraPrimaConyuge.DataBind();
+    }
+
+    protected void txtPlanPrincipal_TextChanged(object sender, EventArgs e)
+    {
+        if (txtPlanPrincipal.Text != "")
+        {
+            DataTable dtCumuloValor = new DataTable();
+            double valorAsegurado = 0;
+            dtCumuloValor = AdministrarCertificados.spConsultarCumulo(int.Parse(dtEncabezadoCertificado.Rows[0]["com_Id"].ToString()));
+            valorAsegurado = AdministrarCertificados.spConsultarValoresAsegurado(int.Parse(dtEncabezadoCertificado.Rows[0]["com_Id"].ToString()), int.Parse(txtCedulaPrincipal.Text));
+            if ((valorAsegurado + double.Parse(txtPlanPrincipal.Text)) <= double.Parse(dtCumuloValor.Rows[0]["cum_Nombre"].ToString()))
+            {
+                if (txtPlanPrincipal.Text != "")
+                {
+                    if ((string)Session["operacionCertificado"] == "modificar")
+                        dtEliminarPrincipal = AdministrarCertificados.consultarAmparosPorPlanPermanencia(int.Parse(Session["plapol_Id"].ToString()), int.Parse(txtEdadPrincipal.Text), int.Parse(txtPlanPrincipal.Text));
+                    else
+                        dtEliminarPrincipal = AdministrarCertificados.consultarAmparosPorPlan(int.Parse(Session["plapol_Id"].ToString()), int.Parse(txtEdadPrincipal.Text), int.Parse(txtPlanPrincipal.Text));
+                    grvAmparoPrincipal.DataSource = dtEliminarPrincipal;
+                    grvAmparoPrincipal.DataBind();
+
+
+                    //// Eliminar Ceros
+                    //foreach (DataRow dr in dtEliminarPrincipal.Rows)
+                    //{
+                    //    dr["ampcer_ValAsegurado"] = decimal.Parse(dr["ampcer_ValAsegurado"].ToString());
+                    //}
+
+
+                    int contador = 0;
+                    double total = 0;
+
+                    double totales = 0;
+                    foreach (GridViewRow row in grvAmparoPrincipal.Rows)
+                    {
+                        totales += Convert.ToDouble(row.Cells[4].Text);
+                    }
+                    txtPrimaPrincipal.Text = Convert.ToString(totales);
+                    sumarPrima();
+
+                    grvAmparoPrincipal.DataSource = dtEliminarPrincipal;
+                    grvAmparoPrincipal.DataBind();
+
+                    // Cargar tabla de amparos para ingresar la extraprima
+                    grvAmparoExtraPrima.DataSource = dtEliminarPrincipal;
+                    grvAmparoExtraPrima.DataBind();
+                }
+                else
+                {
+                    dtEliminarPrincipal.Clear();
+                    grvAmparoPrincipal.DataSource = dtEliminarPrincipal;
+                    grvAmparoPrincipal.DataBind();
+                }
+            }
+            else
+            {
+                ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "EL VALOR DEL PLAN SUPERA EL ACEPTADO POR LA COMPAÑÍA PARA TODOS LOS PRODUCTOS" + "');", true);
+            }
+        }
+        else
+        {
+            dtEliminarPrincipal.Clear();
+            grvAmparoPrincipal.DataSource = dtEliminarPrincipal;
+            grvAmparoPrincipal.DataBind();
+        }
+    }
+    protected void txtPlanConyuge_TextChanged(object sender, EventArgs e)
+    {
+        if (txtPlanConyuge.Text != "")
+        {
+            DataTable dtCumuloValor = new DataTable();
+            double valorAsegurado = 0;
+            dtCumuloValor = AdministrarCertificados.spConsultarCumulo(int.Parse(dtEncabezadoCertificado.Rows[0]["com_Id"].ToString()));
+            valorAsegurado = AdministrarCertificados.spConsultarValoresAsegurado(int.Parse(dtEncabezadoCertificado.Rows[0]["com_Id"].ToString()), int.Parse(txtCedulaConyuge.Text));
+            if ((valorAsegurado + double.Parse(txtPlanConyuge.Text)) <= double.Parse(dtCumuloValor.Rows[0]["cum_Nombre"].ToString()))
+            {
+                if ((string)Session["operacionCertificado"] == "modificar")
+                    dtEliminarConyuge = AdministrarCertificados.consultarAmparosPorPlanPermanencia(int.Parse(Session["plapol_Id"].ToString()), int.Parse(txtEdadConyuge.Text), int.Parse(txtPlanConyuge.Text));
+                else
+                    dtEliminarConyuge = AdministrarCertificados.consultarAmparosPorPlan(int.Parse(Session["plapol_Id"].ToString()), int.Parse(txtEdadConyuge.Text), int.Parse(txtPlanConyuge.Text));
+
+                grvAmparoConyuge.DataSource = dtEliminarConyuge;
+                grvAmparoConyuge.DataBind();
+
+                int contador = 0;
+                double total = 0;
+
+                foreach (GridViewRow row in grvAmparoConyuge.Rows)
+                {
+                }
+                double totales = 0;
+                foreach (GridViewRow row in grvAmparoConyuge.Rows)
+                {
+                    totales += Convert.ToDouble(row.Cells[4].Text);
+                }
+                txtPrimaConyuge.Text = Convert.ToString(totales);
+                sumarPrima();
+
+                grvAmparoConyuge.DataSource = dtEliminarConyuge;
+                grvAmparoConyuge.DataBind();
+                // Extra Prima
+                grvExtraPrimaConyuge.DataSource = dtEliminarConyuge;
+                grvExtraPrimaConyuge.DataBind();
+            }
+            else
+            {
+                ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "EL VALOR DEL PLAN SUPERA EL ACEPTADO POR LA COMPAÑÍA PARA TODOS LOS PRODUCTOS" + "');", true);
+            }
+        }
+        else
+        {
+            dtEliminarConyuge.Clear();
+            grvAmparoConyuge.DataSource = dtEliminarConyuge;
+            grvAmparoConyuge.DataBind();
+        }
+    }
+
+    protected void btnSiguienteCertificado_Click(object sender, EventArgs e)
+    {
+
+    }
+    protected void btnAtrasPrincipal_Click(object sender, EventArgs e)
+    {
+        btnSiguienteCertificado.Enabled = false;
+        ddlLocalidadCertificado.Enabled = true;
+        ddlPoliza.Enabled = true;
+        txtDeclaracionEG.Enabled = true;
+        txtDeclaracionAsegurado.Enabled = true;
+        ddlperiodoPagoCertificado.Enabled = true;
+    }
+    protected void btnSiguientePrincipal_Click(object sender, EventArgs e)
+    {
+        btnExtraPrima2.Visible = false;
+        btnLimpiar.Visible = false;
+        btnValidarConyuge.Visible = false;
+
+        if (txtCedulaConyuge.Text != "")
+        {
+            btnLimpiar.Visible = true;
+        }
+
+    }
+    protected void btnAtrasConyuge_Click(object sender, EventArgs e)
+    {
+        txtCedulaConyuge.Text = "";
+        txtNombreConyuge.Text = "";
+        txtApellidoConyuge.Text = "";
+        txtEdadConyuge.Text = "";
+        txtPrimaConyuge.Text = "";
+
+        ddlPlanConyuge.Items.Insert(0, new ListItem("", ""));
+        ddlPlanConyuge.SelectedIndex = ddlPlanConyuge.Items.IndexOf(ddlPlanConyuge.Items.FindByText(" "));
+        ddlPlanConyuge.Enabled = false;
+
+        amparosConyuge.Visible = false;
+        dtEliminarConyuge.Clear();
+        grvAmparoConyuge.DataSource = dtEliminarConyuge;
+        grvAmparoConyuge.DataBind();
+
+        beneficiariosConyuge.Visible = false;
+        dtBeneficiarioConyuge.Clear();
+        grvBeneficiarioConyuge.DataSource = dtBeneficiarioConyuge;
+        grvBeneficiarioConyuge.DataBind();
+
+        otrosAsegurados.Clear();
+        dtTemp.Clear();
+        grvOtrosAsegurados.DataSource = otrosAsegurados;
+        grvOtrosAsegurados.DataBind();
+
+        btnSiguientePrincipal.Enabled = false;
+        ddlPlanConyuge.Enabled = true;
+
+        if (AdministrarCertificados.certificadoPre.Producto == "1")
+        {
+            ddlConvenioPrincipal.Enabled = true;
+            txtPlanPrincipal.Enabled = true;
+        }
+
+        if (AdministrarCertificados.certificadoPre.Producto == "99" ||
+            AdministrarCertificados.certificadoPre.Producto == "98" || AdministrarCertificados.certificadoPre.Producto == "2")
+        {
+            ddlConvenioPrincipal.Enabled = true;
+            ddlPlanPrincipal.Enabled = true;
+        }
+        if (AdministrarCertificados.certificadoPre.Producto == "3" || AdministrarCertificados.certificadoPre.Producto == "4"
+                || AdministrarCertificados.certificadoPre.Producto == "9" || AdministrarCertificados.certificadoPre.Producto == "21")
+        {
+            ddlConvenioPrincipal.Enabled = true;
+            ddlPlanPrincipal.Enabled = true;
+            txtpesoPrincipal.Enabled = true;
+            txtestaturaPrincipal.Enabled = true;
+        }
+    }
+    protected void btnSiguienteConyuge_Click(object sender, EventArgs e)
+    {
+
+    }
+    protected void btnAtrasOtroAsegurado_Click(object sender, EventArgs e)
+    {
+        if (AdministrarCertificados.certificadoPre.Producto == "1")
+        {
+            if (txtCedulaConyuge.Text != "")
+            {
+                txtPlanConyuge.Enabled = true;
+            }
+        }
+
+        if (AdministrarCertificados.certificadoPre.Producto == "99" ||
+        AdministrarCertificados.certificadoPre.Producto == "98" || AdministrarCertificados.certificadoPre.Producto == "2")
+        {
+            if (txtCedulaConyuge.Text != "")
+            {
+                ddlPlanConyuge.Enabled = true;
+            }
+        }
+        if (AdministrarCertificados.certificadoPre.Producto == "3" || AdministrarCertificados.certificadoPre.Producto == "4"
+                || AdministrarCertificados.certificadoPre.Producto == "9" || AdministrarCertificados.certificadoPre.Producto == "21")
+        {
+            ddlPlanConyuge.Enabled = true;
+            txtPeso.Enabled = true;
+            txtEstatura.Enabled = true;
+        }
+    }
+    protected void btnValidarCertificado_Click(object sender, EventArgs e)
+    {
+        if (ddlLocalidadCertificado.SelectedValue != "" && ddlperiodoPagoCertificado.SelectedValue != "" && txtDeclaracionAsegurado.Text
+           != "" && txtDeclaracionEG.Text != "")
+        {
+            btnSiguienteCertificado.Enabled = true;
+            ddlLocalidadCertificado.Enabled = false;
+            ddlPoliza.Enabled = false;
+            txtDeclaracionEG.Enabled = false;
+            txtDeclaracionAsegurado.Enabled = false;
+            ddlperiodoPagoCertificado.Enabled = false;
+            btnSiguientePrincipal.Enabled = false;
+        }
+        else
+        {
+            ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "FALTAN CAMPOS POR LLENAR" + "');", true);
+        }
+
+
+    }
+    protected void btnValidarPrincipal_Click(object sender, EventArgs e)
+    {
+        if (AdministrarCertificados.certificadoPre.Producto == "1")
+        {
+            int total = 0;
+            foreach (DataRow row in dtBeneficiario.Rows)
+            {
+                total = total + int.Parse(row["Porcentaje"].ToString());
+            }
+            if (total == 100)
+            {
+                if ((string)Session["operacionCertificado"] != "modificar")
+                {
+
+                    if (ddlConvenioPrincipal.SelectedValue != "" && txtPlanPrincipal.Text != "")
+                    {
+                        btnSiguientePrincipal.Enabled = true;
+                        ddlConvenioPrincipal.Enabled = false;
+                        txtPlanPrincipal.Enabled = false;
+                    }
+                    else
+                    {
+                        ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "FALTAN CAMPOS POR LLENAR" + "');", true);
+                    }
+                }
+                else
+                {
+                    btnSiguientePrincipal.Enabled = true;
+                    ddlConvenioPrincipal.Enabled = false;
+                    txtPlanPrincipal.Enabled = false;
+                }
+            }
+
+            else
+            {
+                ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "LOS BENEFICIARIOS DEL ASEGURADO PRINCIPAL NO SUMAN EL 100%" + "');", true);
+            }
+        }
+
+        if (AdministrarCertificados.certificadoPre.Producto == "99" || AdministrarCertificados.certificadoPre.Producto == "4"
+            || AdministrarCertificados.certificadoPre.Producto == "98" || AdministrarCertificados.certificadoPre.Producto == "2" || AdministrarCertificados.certificadoPre.Producto == "21")
+        {
+            int total = 0;
+            foreach (DataRow row in dtBeneficiario.Rows)
+            {
+                total = total + int.Parse(row["Porcentaje"].ToString());
+            }
+            if (total == 100)
+            {
+                if ((string)Session["operacionCertificado"] != "modificar")
+                {
+
+                    if (ddlConvenioPrincipal.SelectedValue != "" && ddlPlanPrincipal.SelectedValue != "")
+                    {
+                        btnSiguientePrincipal.Enabled = true;
+                        ddlConvenioPrincipal.Enabled = false;
+                        ddlPlanPrincipal.Enabled = false;
+                    }
+                    else
+                    {
+                        ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "FALTAN CAMPOS POR LLENAR" + "');", true);
+                    }
+                }
+                else
+                {
+                    btnSiguientePrincipal.Enabled = true;
+                    ddlConvenioPrincipal.Enabled = false;
+                    ddlPlanPrincipal.Enabled = false;
+                }
+            }
+            else
+            {
+                ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "LOS BENEFICIARIOS DEL ASEGURADO PRINCIPAL NO SUMAN EL 100%" + "');", true);
+            }
+        }
+
+        if (AdministrarCertificados.certificadoPre.Producto == "3" || AdministrarCertificados.certificadoPre.Producto == "9")
+        {
+            int total = 0;
+            foreach (DataRow row in dtBeneficiario.Rows)
+            {
+                total = total + int.Parse(row["Porcentaje"].ToString());
+            }
+            if (total == 100)
+            {
+                if ((string)Session["operacionCertificado"] != "modificar")
+                {
+                    if (ddlConvenioPrincipal.SelectedValue != "" && txtPlanPrincipal.Text != "" && txtpesoPrincipal.Text != ""
+                        && txtestaturaPrincipal.Text != "")
+                    {
+                        btnSiguientePrincipal.Enabled = true;
+                        ddlConvenioPrincipal.Enabled = false;
+                        txtPlanPrincipal.Enabled = false;
+                        txtpesoPrincipal.Enabled = false;
+                        txtestaturaPrincipal.Enabled = false;
+                    }
+                    else
+                    {
+                        ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "FALTAN CAMPOS POR LLENAR" + "');", true);
+                    }
+                }
+                else
+                {
+                    btnSiguientePrincipal.Enabled = true;
+                    ddlConvenioPrincipal.Enabled = false;
+                    txtPlanPrincipal.Enabled = false;
+                    txtpesoPrincipal.Enabled = false;
+                    txtestaturaPrincipal.Enabled = false;
+                }
+            }
+            else
+            {
+                ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "LOS BENEFICIARIOS DEL ASEGURADO PRINCIPAL NO SUMAN EL 100%" + "');", true);
+            }
+        }
+    }
+
+    protected void btnValidarConyuge_Click(object sender, EventArgs e)
+    {
+        if (AdministrarCertificados.certificadoPre.Producto == "1")
+        {
+            int totalBeneficiarioConyuge = 0;
+            foreach (DataRow row in dtBeneficiarioConyuge.Rows)
+            {
+                if (row["Porcentaje"].ToString() != "")
+                    totalBeneficiarioConyuge = totalBeneficiarioConyuge + int.Parse(row["Porcentaje"].ToString());
+            }
+
+            if (totalBeneficiarioConyuge == 100)
+            {
+                if ((string)Session["operacionCertificado"] != "modificar")
+                {
+                    if (txtCedulaConyuge.Text != "")
+                    {
+                        if (txtPlanConyuge.Text != "")
+                        {
+                            btnSiguienteConyuge.Enabled = true;
+                            txtPlanConyuge.Enabled = false;
+                        }
+                        else
+                        {
+                            ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "FALTAN CAMPOS POR LLENAR" + "');", true);
+                        }
+                    }
+                }
+                else
+                {
+                    btnSiguienteConyuge.Enabled = true;
+                    txtPlanConyuge.Enabled = false;
+                }
+            }
+            else
+            {
+                ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "LOS BENEFICIARIOS DEL ASEGURADO CONYUGE NO SUMAN EL 100%" + "');", true);
+            }
+        }
+        if (AdministrarCertificados.certificadoPre.Producto == "99" || AdministrarCertificados.certificadoPre.Producto == "4" ||
+            AdministrarCertificados.certificadoPre.Producto == "98" || AdministrarCertificados.certificadoPre.Producto == "2" || AdministrarCertificados.certificadoPre.Producto == "21")
+        {
+            int totalBeneficiarioConyuge = 0;
+            foreach (DataRow row in dtBeneficiarioConyuge.Rows)
+            {
+                if (row["Porcentaje"].ToString() != "")
+                    totalBeneficiarioConyuge = totalBeneficiarioConyuge + int.Parse(row["Porcentaje"].ToString());
+            }
+
+            if (totalBeneficiarioConyuge == 100)
+            {
+                if ((string)Session["operacionCertificado"] != "modificar")
+                {
+                    if (txtCedulaConyuge.Text != "")
+                    {
+                        if (ddlPlanConyuge.SelectedValue != "")
+                        {
+                            btnSiguienteConyuge.Enabled = true;
+                            ddlPlanConyuge.Enabled = false;
+                        }
+                        else
+                        {
+                            ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "FALTAN CAMPOS POR LLENAR" + "');", true);
+                        }
+                    }
+                }
+                else
+                {
+                    btnSiguienteConyuge.Enabled = true;
+                    ddlPlanConyuge.Enabled = false;
+                }
+            }
+            else
+            {
+                ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "LOS BENEFICIARIOS DEL ASEGURADO CONYUGE NO SUMAN EL 100%" + "');", true);
+            }
+        }
+
+        if (AdministrarCertificados.certificadoPre.Producto == "3" || AdministrarCertificados.certificadoPre.Producto == "9")
+        {
+            int totalBeneficiarioConyuge = 0;
+            foreach (DataRow row in dtBeneficiarioConyuge.Rows)
+            {
+                if (row["Porcentaje"].ToString() != "")
+                    totalBeneficiarioConyuge = totalBeneficiarioConyuge + int.Parse(row["Porcentaje"].ToString());
+            }
+
+            if (totalBeneficiarioConyuge == 100)
+            {
+                if ((string)Session["operacionCertificado"] != "modificar")
+                {
+                    if (txtCedulaConyuge.Text != "")
+                    {
+                        if (ddlPlanConyuge.SelectedValue != "" && txtPeso.Text != "" && txtEstatura.Text != "")
+                        {
+                            btnSiguienteConyuge.Enabled = true;
+                            ddlPlanConyuge.Enabled = false;
+                            txtPeso.Enabled = false;
+                            txtEstatura.Enabled = false;
+                        }
+                        else
+                        {
+                            ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "FALTAN CAMPOS POR LLENAR" + "');", true);
+                        }
+                    }
+                }
+                else
+                {
+                    btnSiguienteConyuge.Enabled = true;
+                    ddlPlanConyuge.Enabled = false;
+                    txtPeso.Enabled = false;
+                    txtEstatura.Enabled = false;
+                }
+            }
+            else
+            {
+                ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "LOS BENEFICIARIOS DEL ASEGURADO CONYUGE NO SUMAN EL 100%" + "');", true);
+            }
+        }
+    }
+    protected void btnValidarOtroAsegurado_Click(object sender, EventArgs e)
+    {
+        if ((string)Session["operacionCertificado"] != "modificar")
+        {
+            if (txtCedulaOtro.Text != "")
+            {
+                if (ddlPlanOtros.SelectedValue != "" && ddlParentesoOtro.SelectedValue != "")
+                {
+                    ddlPlanOtros.Enabled = false;
+                    ddlParentesoOtro.Enabled = true;
+                }
+                else
+                {
+                    ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "FALTAN CAMPOS POR LLENAR" + "');", true);
+                }
+            }
+        }
+    }
+    protected void btnCambiosPreCargue_Click(object sender, EventArgs e)
+    {
+        if (txtAnexoConversion.Text != "")
+            txtAnexoConversion.Enabled = true;
+
+        if (txtHServicio1.Text != "")
+            txtHServicio1.Enabled = true;
+
+        if (txtHServicio2.Text != "")
+            txtHServicio2.Enabled = true;
+
+        if (txtHServicio3.Text != "")
+            txtHServicio3.Enabled = true;
+
+        if (txtAnexoConversion.Text != "" || txtHServicio1.Text != "" || txtHServicio2.Text != "" || txtHServicio3.Text != "")
+            btnGuardarCambios.Enabled = true;
+
+        ////////////////////////////////////////////////////////Validacion de campos pre cargue/////////////////////////////////
+
+        int hojaServicio1 = 0;
+        int hojaServicio2 = 0;
+        int hojaServicio3 = 0;
+        int anexoConversion = 0;
+
+        if (txtHServicio1.Text != "")
+            hojaServicio1 = int.Parse(txtHServicio1.Text);
+
+        if (txtHServicio2.Text != "")
+            hojaServicio2 = int.Parse(txtHServicio2.Text);
+
+        if (txtHServicio3.Text != "")
+            hojaServicio3 = int.Parse(txtHServicio3.Text);
+
+        if (txtAnexoConversion.Text != "")
+            anexoConversion = int.Parse(txtAnexoConversion.Text);
+
+        if (anexoConversion == 0)
+            reqtxtAnexoConversion.Enabled = false;
+
+        if (hojaServicio1 == 0)
+            ReqtxtHServicio1.Enabled = false;
+
+        if (hojaServicio2 == 0)
+            ReqtxtHServicio1.Enabled = false;
+
+        if (hojaServicio3 == 0)
+            ReqtxtHServicio1.Enabled = false;
+
+        if (btnGuardarCambios.Enabled == true)
+            btnValidarCertificado.Enabled = false;
+    }
+    protected void btnGuardarCambios_Click(object sender, EventArgs e)
+    {
+        txtAnexoConversion.Enabled = false;
+        txtHServicio1.Enabled = false;
+        txtHServicio2.Enabled = false;
+        txtHServicio3.Enabled = false;
+        btnGuardarCambios.Enabled = false;
+
+        if (btnGuardarCambios.Enabled == false)
+            btnValidarCertificado.Enabled = true;
+    }
+
+    protected int CanceladoPorFechaRetiro()
+    {
+        //DateTime fechaRecuperacion = AdministrarCertificados.CertificadoRecuperado(dtCertificadoFull, int.Parse(Session["pro_Id"].ToString()));        
+        DateTime vigenciaFechaRetiro = DateTime.Parse(dtCertificadoFull.Rows[0]["FechaCartaRetiro"].ToString());
+        int estado = 0;
+        if (vigenciaFechaRetiro != null)
+        {
+            if (DateTime.Parse(txtFechaExpedicionCertificado.Text) < vigenciaFechaRetiro)
+            {
+                // Está Cancelado
+                estado = 1;
+            }
+        }
+        return estado;
+    }
+
+    protected int CertificadoRecuperado()
+    {
+        DateTime fechaMaximaRecuperacion = DateTime.Parse(dtCertificadoFull.Rows[0]["FechaMaximaRecuperacion"].ToString());
+        int estado = 0;
+        if (fechaMaximaRecuperacion != null)
+        {
+            if (DateTime.Parse(txtFechaExpedicionCertificado.Text) < fechaMaximaRecuperacion)
+            {
+                // Certificado Recuperado
+                estado = 1;
+            }
+        }
+        return estado;
+    }
+}

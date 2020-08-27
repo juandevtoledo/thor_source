@@ -1,0 +1,384 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Data;
+using System.Globalization;
+
+/// <summary>
+/// Descripción breve de AdministrarPagosCompanias
+/// </summary>
+public class AdministrarPagosCompanias
+{
+    // OTRAS COMPAÑÍAS
+
+    // Se consultan los recibos que han sido pagados a Torres Guarín
+    // Método principal para generar la carta de pago para pagos a Otras Compañías
+	public static DataTable RecibosCuentasTorresGuarin(DateTime fechaFin, int compania)
+    {
+        // Variable que almacena lo que se ha transferido directo a la compañía desde las pagadurías
+        long valorDirectoCompania;
+        // Definición de los datatables
+        DataTable dtRecibos, dtPolizas, dtCarta, dtRecibosCompletos, dtRecibosSumatoria = new DataTable();
+        dtRecibos = DAOAdministrarPagosCompanias.RecibosCuentasTorresGuarin(fechaFin, compania);
+
+        dtRecibosSumatoria = SumatoriaPagos(dtRecibos);
+
+        dtRecibosCompletos = ExtraerRecibosPrimasCompletas(dtRecibosSumatoria);
+        valorDirectoCompania = ValorPagoDirectoCompania(dtRecibosCompletos);
+        dtPolizas = PolizasPorProductos(compania);
+
+        // Creación de los cargues
+        ExtraerTodosClientes(compania, dtPolizas, fechaFin);
+
+        dtCarta = CartaPago();
+        dtPolizas = TotalizarPolizas(dtPolizas, dtRecibosCompletos);
+        // Actualizar las aplicaciones de pagos ya pagadas
+        DAOAdministrarPagosCompanias.ActualizarAplicacionesPagosUsadas(dtRecibosCompletos);
+        dtCarta = CrearCartaPago(dtCarta, dtPolizas, dtRecibosCompletos, fechaFin, valorDirectoCompania, compania);
+        return dtCarta;
+    }
+
+
+
+    // Sumatoria de todos los recibos del mes
+    public static DataTable SumatoriaPagos(DataTable dtRecibos)
+    {
+        DataTable dtRecibosSumatoria = new DataTable();
+        dtRecibosSumatoria = dtRecibos.Clone();
+        foreach (DataRow drRecibo in dtRecibos.Rows)
+        {
+            DataRow[] rows = dtRecibosSumatoria.Select("ter_Id = " + drRecibo["ter_Id"].ToString() + " and aplPago_Vigencia = " + "'" + drRecibo["aplPago_Vigencia"].ToString() + "'");            
+            if (rows.Count() == 0)
+            {
+                DataRow drRecibosCompletos = dtRecibosSumatoria.NewRow();
+                drRecibosCompletos = dtRecibosSumatoria.NewRow();
+                drRecibosCompletos.ItemArray = drRecibo.ItemArray;
+                dtRecibosSumatoria.Rows.Add(drRecibosCompletos);
+            }
+            else
+                rows[0]["aplPago_Valor"] = double.Parse(rows[0]["aplPago_Valor"].ToString()) + double.Parse(drRecibo["aplPago_Valor"].ToString());
+        }
+        return dtRecibosSumatoria;
+    }
+
+
+
+    public static void ExtraerTodosClientes(int compania, DataTable dtPolizas, DateTime fechaFin)
+    {
+        DataSet dsClientesPoliza = new DataSet();
+        foreach(DataRow drPoliza in dtPolizas.Rows)
+        {
+            DataTable dtClientes = new DataTable();
+            dtClientes.TableName = drPoliza["pol_Id"].ToString();
+            dtClientes = DAOAdministrarPagosCompanias.ConsultarClientesPorPoliza(compania, int.Parse(drPoliza["pol_Id"].ToString()));
+            
+            // Crear columna para el tipo de novedad
+            DataColumn estadoCliente = new DataColumn();
+            estadoCliente.DataType = System.Type.GetType("System.String");
+            estadoCliente.AllowDBNull = true;
+            estadoCliente.Caption = "Estado";
+            estadoCliente.ColumnName = "Estado";
+            dtClientes.Columns.Add(estadoCliente); 
+           
+            foreach(DataRow drCliente in dtClientes.Rows)
+            {
+                DateTime fechaExpedicion = DateTime.Parse(drCliente["cer_FechaExpedicion"].ToString());
+                if (fechaExpedicion.Month == fechaFin.Month)
+                    drCliente["Estado"] = "INGRESO";
+                else
+                    if (drCliente["cer_EstadoNegocio"].ToString() == "VIGENTE")
+                        drCliente["Estado"] = "AL DIA";
+                    else
+                        if (drCliente["cer_EstadoNegocio"].ToString() == "CANCELACION POR CARTA DE RETIRO")
+                            drCliente["Estado"] = "RETIRO";
+            }
+            dsClientesPoliza.Tables.Add(dtClientes);
+        }
+    }
+
+    
+
+    public static DataTable ExtraerRecibosPrimasCompletas(DataTable dtRecibos)
+    {
+        DataTable dtRecibosCompletos = new DataTable();
+        dtRecibosCompletos = dtRecibos.Clone();
+        DataRow drRecibosCompletos = dtRecibosCompletos.NewRow();
+        foreach (DataRow dr in dtRecibos.Rows)
+        {
+            DataTable dtPrimaTotal = DAOAdministrarPagosCompanias.ConsultarPrimaCliente(double.Parse(dr["ter_Id"].ToString()), int.Parse(dr["pro_Id"].ToString()));
+            double valorPrimaTotal = double.Parse(dtPrimaTotal.Rows[0]["cer_PrimaTotal"].ToString());
+            if (double.Parse(dr["aplPago_Valor"].ToString()) >= valorPrimaTotal)
+            {
+                drRecibosCompletos = dtRecibosCompletos.NewRow();
+                drRecibosCompletos.ItemArray = dr.ItemArray;
+                dtRecibosCompletos.Rows.Add(drRecibosCompletos);
+            }
+        }
+        return dtRecibosCompletos;
+    }
+
+
+
+    // Se consultan todos lo grs asociados a la compañía que fue seleccionada, se le adiciona una columna de valor total
+    public static DataTable PolizasPorProductos(int compania)
+    {
+        DataTable dtPolizas = new DataTable();
+        dtPolizas = DAOAdministrarPagosCompanias.PolizasPorProducto(compania);
+
+        DataColumn column = new DataColumn();
+        column.DataType = System.Type.GetType("System.Int32");
+        column.AllowDBNull = true;
+        column.Caption = "ValorTotal";
+        column.ColumnName = "ValorTotal";
+        column.DefaultValue = 0;
+        dtPolizas.Columns.Add(column);
+
+        return dtPolizas;
+    }
+
+    // Creación dt definitivo (estructura, vacío) para crear cartas de pago
+    public static DataTable CartaPago()
+    {
+        DataTable dtCarta = new DataTable();
+
+        DataColumn column = new DataColumn();
+        column.DataType = System.Type.GetType("System.String");
+        column.AllowDBNull = true;
+        column.Caption = "Ciudad";
+        column.ColumnName = "Ciudad";
+        dtCarta.Columns.Add(column);
+
+        column = new DataColumn();
+        column.DataType = System.Type.GetType("System.String");
+        column.AllowDBNull = true;
+        column.Caption = "GR";
+        column.ColumnName = "GR";
+        dtCarta.Columns.Add(column);
+
+        column = new DataColumn();
+        column.DataType = System.Type.GetType("System.String");
+        column.AllowDBNull = true;
+        column.Caption = "Vigencia";
+        column.ColumnName = "Vigencia";
+        dtCarta.Columns.Add(column);
+
+        column = new DataColumn();
+        column.DataType = System.Type.GetType("System.String");
+        column.AllowDBNull = true;
+        column.Caption = "Valor";
+        column.ColumnName = "Valor";
+        dtCarta.Columns.Add(column);
+
+        return dtCarta;
+    }
+
+    // Método que recorre los recibos por cada gr para totalizar los grs
+    public static DataTable TotalizarPolizas(DataTable dtPolizas, DataTable dtRecibos)
+    {
+        foreach(DataRow rowPoliza in dtPolizas.Rows)
+        {
+            foreach(DataRow rowRecibo in dtRecibos.Rows)
+            {
+                //if (rowRecibo["pol_Id"].ToString() == rowPoliza["pol_Id"].ToString() && rowRecibo["Localidad"].ToString() == rowPoliza["dep_Id"].ToString())
+                if (rowRecibo["pol_Id"].ToString() == rowPoliza["pol_Id"].ToString())
+                    rowPoliza["ValorTotal"] = double.Parse(rowPoliza["ValorTotal"].ToString()) + double.Parse(rowRecibo["aplPago_Valor"].ToString());
+            }
+        }
+        return dtPolizas;
+    }
+
+    // Se identifica el total de lo pagado directamente a la compañía
+    public static long ValorPagoDirectoCompania(DataTable dtRecibos)
+    {
+        // Definición de variables
+        long valorDirectoCompania = 0;
+        DataTable dtDetallesSoportesUnicos = new DataTable();
+        DataTable dtRecibosUnicos = new DataTable();
+        DataTable dtSoportesUnicos = new DataTable();
+        DataSet dsDetallesSoportes = new DataSet();
+        DataSet dsSoportes = new DataSet();
+
+        // Creación estructura (columnas) dtRecibosUnicos
+        DataColumn column = new DataColumn();
+        column.DataType = System.Type.GetType("System.String");
+        column.AllowDBNull = true;
+        column.Caption = "IdentificadorRecibo";
+        column.ColumnName = "IdentificadorRecibo";
+        column.DefaultValue = 0;
+        dtRecibosUnicos.Columns.Add(column);
+
+        // Creación estructura (columnas) dtDetallesSoportesUnicos
+        column = new DataColumn();
+        column.DataType = System.Type.GetType("System.String");
+        column.AllowDBNull = true;
+        column.Caption = "IdentificadorDetalleSoporte";
+        column.ColumnName = "IdentificadorDetalleSoporte";
+        column.DefaultValue = 0;
+        dtDetallesSoportesUnicos.Columns.Add(column);
+
+        // Creación estructura (columnas) dtSoportesUnicos
+        column = new DataColumn();
+        column.DataType = System.Type.GetType("System.String");
+        column.AllowDBNull = true;
+        column.Caption = "IdentificadorSoporte";
+        column.ColumnName = "IdentificadorSoporte";
+        column.DefaultValue = 0;
+        dtSoportesUnicos.Columns.Add(column);
+
+        column = new DataColumn();
+        column.DataType = System.Type.GetType("System.String");
+        column.AllowDBNull = true;
+        column.Caption = "Valor";
+        column.ColumnName = "Valor";
+        column.DefaultValue = 0;
+        dtSoportesUnicos.Columns.Add(column);
+        
+        // Se extrae desde base de datos todos los recibos asociados
+        foreach(DataRow row in dtRecibos.Rows)
+        {
+            DataRow[] test = dtRecibosUnicos.Select("IdentificadorRecibo = " + row["pago_Recibo"].ToString());
+            if (test.Length == 0)
+            {
+                DataRow rowRecibo = dtRecibosUnicos.NewRow();
+                rowRecibo["IdentificadorRecibo"] = row["pago_Recibo"];
+                dtRecibosUnicos.Rows.Add(rowRecibo);
+            }
+        }
+
+        // A partir de los recibos se extraen los detalles soportes almacenados en un DataSet
+        dsDetallesSoportes = DAOAdministrarPagosCompanias.BuscarDetalleSoporteBancario(dtRecibosUnicos);        
+        foreach (DataTable dtDetallesSoportes in dsDetallesSoportes.Tables)
+        {
+            foreach (DataRow row in dtDetallesSoportes.Rows)
+            {
+                DataRow[] test = dtDetallesSoportesUnicos.Select("IdentificadorDetalleSoporte = " + row["sopdet_Id"].ToString());
+               if (test.Length == 0)
+               {
+                   DataRow rowDetalles = dtDetallesSoportesUnicos.NewRow();
+                   rowDetalles["IdentificadorDetalleSoporte"] = row["sopdet_Id"];
+                   dtDetallesSoportesUnicos.Rows.Add(rowDetalles);
+               }
+            }
+        }
+
+        // A partir de los detalles de los soportes se extraen los Soportes Bancarios
+        dsSoportes = DAOAdministrarPagosCompanias.BuscarSoporteBancario(dtDetallesSoportesUnicos);
+        foreach (DataTable dtSoportes in dsSoportes.Tables)
+        {
+            foreach (DataRow row in dtSoportes.Rows)
+            {
+                DataRow[] test = dtSoportesUnicos.Select("IdentificadorSoporte = " + row["sop_Id"].ToString());
+                if (test.Length == 0)
+                {
+                    if (int.Parse(row["sop_TipoSoporteBancario"].ToString()) == 2)
+                    {
+                        DataRow rowDetalles = dtSoportesUnicos.NewRow();
+                        rowDetalles["IdentificadorSoporte"] = row["sop_Id"];
+                        rowDetalles["Valor"] = row["sop_Valor"];
+                        dtSoportesUnicos.Rows.Add(rowDetalles);
+                        valorDirectoCompania += long.Parse(row["sop_Valor"].ToString());
+                    }
+                }
+            }
+        }
+
+        // Se retorna el valor de los soportes consignados a la compañía
+        return valorDirectoCompania;
+    }
+
+    // Crea el dt que posteriormente se incluirá en la carta de pago
+    public static DataTable CrearCartaPago(DataTable dtCarta, DataTable dtPoliza, DataTable dtRecibo, DateTime fecha, long valorCompania, int compania)
+    {
+        // Acumulador que almacena el valor total de los pagos realizados
+        long valorTotal = 0;
+        DataTable dtComisiones = new DataTable();
+        DataRow row;        
+        TextInfo myTI = new CultureInfo("en-US", false).TextInfo;
+        foreach (DataRow rowPoliza in dtPoliza.Rows)
+        {
+            if (int.Parse(rowPoliza["ValorTotal"].ToString()) != 0)
+            {
+                // Se crea la nueva fila de la carta y se llena con información
+                row = dtCarta.NewRow();
+                row["Ciudad"] = rowPoliza["dep_Nombre"].ToString();
+                row["GR"] = rowPoliza["pol_Numero"];
+                row["Vigencia"] = myTI.ToUpper(CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(fecha.Month));
+                row["Valor"] = rowPoliza["ValorTotal"];
+                dtCarta.Rows.Add(row);
+                valorTotal += long.Parse(rowPoliza["ValorTotal"].ToString());
+            }
+        }
+
+        // Sumatoria total de los pagos realizados
+        row = dtCarta.NewRow();
+        row["Ciudad"] = "";
+        row["GR"] = "VALOR TOTAL";
+        row["Vigencia"] = "";
+        row["Valor"] = valorTotal;
+        dtCarta.Rows.Add(row);
+
+        // Sumatoria total menos los pagos directos a la compañía
+        // COMPAÑÍA
+        row = dtCarta.NewRow();
+        row["Ciudad"] = "";
+        row["GR"] = "VALOR PAGADO A LA COMPAÑÍA";
+        row["Vigencia"] = "";
+        row["Valor"] = valorCompania;
+        dtCarta.Rows.Add(row);
+
+        dtComisiones = DAOAdministrarPagosCompanias.ComisionesRetencionesPorCompania(compania);
+        long comision = (valorTotal * long.Parse(dtComisiones.Rows[0]["compro_Comision"].ToString())) / 100;
+        // Sumatoria total menos la comisión y rete fuente
+        row = dtCarta.NewRow();
+        row["Ciudad"] = "";
+        row["GR"] = "VALOR DE LA COMISIONES";
+        row["Vigencia"] = "";
+        row["Valor"] = comision;
+        dtCarta.Rows.Add(row);
+
+        long reteFuente = (comision * long.Parse(dtComisiones.Rows[0]["compro_ReteFuente"].ToString())) / 100;
+        row = dtCarta.NewRow();
+        row["Ciudad"] = "";
+        row["GR"] = "VALOR DE LA RETE FUENTE";
+        row["Vigencia"] = "";
+        row["Valor"] = reteFuente;
+        dtCarta.Rows.Add(row);
+
+        long cooperativa = 0;
+        foreach (DataRow rowRecibo in dtRecibo.Rows)
+        {
+            if (int.Parse(rowRecibo["con_PagoCooperativa"].ToString()) == 1)
+            {
+                cooperativa += long.Parse(rowRecibo["aplPago_Valor"].ToString());
+            }
+        }
+        row = dtCarta.NewRow();
+        row["Ciudad"] = "";
+        row["GR"] = "COOPERATIVA";
+        row["Vigencia"] = "";
+        row["Valor"] = cooperativa;
+        dtCarta.Rows.Add(row);
+
+        return dtCarta;
+    }
+
+
+    // SEGUROS BOLÍVAR
+
+    // Método principal para generar los certificados y los pagos para Seguros Bolívar
+    public static DataTable RecibosCuentasTorresGuarinSegurosBolivar(DateTime fechaInicio, DateTime fechaFin, int compania)
+    {
+        // Variable que almacena lo que se ha transferido directo a la compañía desde las pagadurías
+        long valorDirectoCompania;
+        // Definición de los datatables
+        DataTable dtRecibos, dtPolizas = new DataTable();
+        dtRecibos = DAOAdministrarPagosCompanias.RecibosCuentasTorresGuarin(fechaFin, compania);
+        valorDirectoCompania = ValorPagoDirectoCompania(dtRecibos);
+        dtPolizas = PolizasPorProductos(compania);
+        //dtCarta = CartaPago();
+        dtPolizas = TotalizarPolizas(dtPolizas, dtRecibos);
+        //dtCarta = CrearCartaPago(dtCarta, dtPolizas, dtRecibos, fechaInicio, valorDirectoCompania, compania);
+        return dtPolizas;
+    }
+}

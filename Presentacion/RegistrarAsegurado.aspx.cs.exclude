@@ -1,0 +1,252 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class Presentacion_RegistrarAsegurado : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            btnEliminar.Visible = false;
+            if (Asegurado.asegurado.NumeroIdentificacion != "-1")
+            {
+                btnProducto.Visible = true;
+                btnActualizar.Visible = false;
+                btnRegistrar.Visible = false;
+                //btnEliminar.Visible = true;
+                btnCancelar.Visible = false;
+                txtTipoDocumento.Text = Asegurado.asegurado.TipoDocumento.ToString();
+                txtIdentificacion.Text = Asegurado.asegurado.NumeroIdentificacion;
+                txtNombre.Text = Asegurado.asegurado.Nombres;
+                txtApellido.Text = Asegurado.asegurado.Apellidos;
+                txtNacimiento.Text = Asegurado.asegurado.FechaNacimiento.ToString();
+                txtEdad.Text = Asegurado.asegurado.Edad.ToString();
+                txtCorreo.Text = Asegurado.asegurado.CorreoElectronico;
+                txtSexo.Text = Asegurado.asegurado.Sexo;
+                txtDepartamento.Text = Asegurado.asegurado.Departamento.ToString();
+                txtCiudad.Text = Asegurado.asegurado.Ciudad.ToString();
+                txtCelular.Text = Asegurado.asegurado.Celular;
+                txtTelefono1.Text = Asegurado.asegurado.Telefono1;
+                txtTelefono2.Text = Asegurado.asegurado.Telefono2;
+                txtDireccion.Text = Asegurado.asegurado.Direccion;
+                txtTrabajo.Text = Asegurado.asegurado.LugarTrabajo.ToString();
+                txtOcupacion.Text = Asegurado.asegurado.Ocupacion.ToString();
+            }
+            else
+            {
+                btnProducto.Visible = false;
+                btnActualizar.Visible = false;
+                btnRegistrar.Visible = true;
+                //btnEliminar.Visible = false;
+                ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "EL CLIENTE NO SE ENCUENTRA REGISTRADO EN EL SISTEMA" + "');", true);
+                txtTipoDocumento.Text = string.Empty;
+                txtIdentificacion.Text = string.Empty;
+                txtNombre.Text = string.Empty;
+                txtApellido.Text = string.Empty;
+                txtNacimiento.Text = string.Empty;
+                txtEdad.Text = string.Empty;
+                txtCorreo.Text = string.Empty;
+                txtSexo.Text = string.Empty;
+                txtDepartamento.Text = string.Empty;
+                txtCiudad.Text = string.Empty;
+                txtCelular.Text = string.Empty;
+                txtTelefono1.Text = string.Empty;
+                txtTelefono2.Text = string.Empty;
+                txtDireccion.Text = string.Empty;
+                txtTrabajo.Text = string.Empty;
+                txtOcupacion.Text = string.Empty;
+            }
+        }
+    }
+
+
+    public void btnIngresar_Click(object sender, EventArgs e)
+    {
+        btnEliminar.Visible = false;
+        RegistrarProduccion.ExisteCliente(txtDocumento.Text);
+        if (Asegurado.asegurado.NumeroIdentificacion != "-1")
+        {
+            btnProducto.Visible = false;
+            btnActualizar.Visible = false;
+            btnRegistrar.Visible = true;
+            //btnEliminar.Visible = false;
+            txtTipoDocumento.Text = Asegurado.asegurado.TipoDocumento.ToString();
+            txtIdentificacion.Text = Asegurado.asegurado.NumeroIdentificacion;
+            txtNombre.Text = Asegurado.asegurado.Nombres;
+            txtApellido.Text = Asegurado.asegurado.Apellidos;
+            txtNacimiento.Text = Asegurado.asegurado.FechaNacimiento.ToString();
+            txtEdad.Text = Asegurado.asegurado.Edad.ToString();
+            txtCorreo.Text = Asegurado.asegurado.CorreoElectronico;
+            txtSexo.Text = Asegurado.asegurado.Sexo;
+            txtDepartamento.Text = Asegurado.asegurado.Departamento.ToString();
+            txtCiudad.Text = Asegurado.asegurado.Ciudad.ToString();
+            txtCelular.Text = Asegurado.asegurado.Celular;
+            txtTelefono1.Text = Asegurado.asegurado.Telefono1;
+            txtTelefono2.Text = Asegurado.asegurado.Telefono2;
+            txtDireccion.Text = Asegurado.asegurado.Direccion;
+            txtTrabajo.Text = Asegurado.asegurado.LugarTrabajo.ToString();
+            txtOcupacion.Text = Asegurado.asegurado.Ocupacion.ToString();
+        }
+        else
+        {
+            btnProducto.Visible = false;
+            btnActualizar.Visible = false;
+            btnRegistrar.Visible = true;
+            //btnEliminar.Visible = false;
+            ClientScript.RegisterStartupScript(GetType(), "alert", "alert('" + "EL CLIENTE NO SE ENCUENTRA REGISTRADO EN EL SISTEMA" + "');", true);
+            txtTipoDocumento.Text = string.Empty;
+            txtIdentificacion.Text = string.Empty;
+            txtNombre.Text = string.Empty;
+            txtApellido.Text = string.Empty;
+            txtNacimiento.Text = string.Empty;
+            txtEdad.Text = string.Empty;
+            txtCorreo.Text = string.Empty;
+            txtSexo.Text = string.Empty;
+            txtDepartamento.Text = string.Empty;
+            txtCiudad.Text = string.Empty;
+            txtCelular.Text = string.Empty;
+            txtTelefono1.Text = string.Empty;
+            txtTelefono2.Text = string.Empty;
+            txtDireccion.Text = string.Empty;
+            txtTrabajo.Text = string.Empty;
+            txtOcupacion.Text = string.Empty;
+        }
+    }
+
+    public void btnProducto_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    public void btnActualizar_Click(object sender, EventArgs e)
+    {
+        btnEliminar.Visible = false;
+
+        btnProducto.Visible = true;
+        btnActualizar.Visible = false;
+        btnRegistrar.Visible = true;
+        //btnEliminar.Visible = true;
+        btnEditar.Visible = true;
+        btnCancelar.Visible = false;
+        txtTipoDocumento.Enabled = false;
+        txtIdentificacion.Enabled = false;
+        txtNombre.Enabled = false;
+        txtApellido.Enabled = false;
+        txtNacimiento.Enabled = false;
+        txtEdad.Enabled = false;
+        txtCorreo.Enabled = false;
+        txtSexo.Enabled = false;
+        txtDepartamento.Enabled = false;
+        txtCiudad.Enabled = false;
+        txtCelular.Enabled = false;
+        txtTelefono1.Enabled = false;
+        txtTelefono2.Enabled = false;
+        txtDireccion.Enabled = false;
+        txtTrabajo.Enabled = false;
+        txtOcupacion.Enabled = false;
+
+        Asegurado.asegurado.TipoDocumento = int.Parse(txtTipoDocumento.Text);
+        Asegurado.asegurado.NumeroIdentificacion = txtIdentificacion.Text;
+        Asegurado.asegurado.Nombres = txtNombre.Text;
+        Asegurado.asegurado.Apellidos = txtApellido.Text;
+        Asegurado.asegurado.FechaNacimiento = Convert.ToDateTime(txtNacimiento.Text);
+        Asegurado.asegurado.Edad = int.Parse(txtEdad.Text);
+        Asegurado.asegurado.CorreoElectronico = txtCorreo.Text;
+        Asegurado.asegurado.Sexo = txtSexo.Text;
+        Asegurado.asegurado.Departamento = int.Parse(txtDepartamento.Text);
+        Asegurado.asegurado.Ciudad = int.Parse(txtCiudad.Text);
+        Asegurado.asegurado.Celular = txtCelular.Text;
+        Asegurado.asegurado.Telefono1 = txtTelefono1.Text;
+        Asegurado.asegurado.Telefono2 = txtTelefono2.Text;
+        Asegurado.asegurado.Direccion = txtDireccion.Text;
+        Asegurado.asegurado.LugarTrabajo = int.Parse(txtTrabajo.Text);
+        Asegurado.asegurado.Ocupacion = int.Parse(txtOcupacion.Text);
+        RegistrarProduccion.ActualizarCliente();
+    }
+
+    public void btnRegistrar_Click(object sender, EventArgs e)
+    {
+        Asegurado.asegurado.TipoDocumento = int.Parse(txtTipoDocumento.Text);
+        Asegurado.asegurado.NumeroIdentificacion = txtIdentificacion.Text;
+        Asegurado.asegurado.Nombres = txtNombre.Text;
+        Asegurado.asegurado.Apellidos = txtApellido.Text;
+        Asegurado.asegurado.FechaNacimiento = Convert.ToDateTime(txtNacimiento.Text);
+        Asegurado.asegurado.Edad = int.Parse(txtEdad.Text);
+        Asegurado.asegurado.CorreoElectronico = txtCorreo.Text;
+        Asegurado.asegurado.Sexo = txtSexo.Text;
+        Asegurado.asegurado.Departamento = int.Parse(txtDepartamento.Text);
+        Asegurado.asegurado.Ciudad = int.Parse(txtCiudad.Text);
+        Asegurado.asegurado.Celular = txtCelular.Text;
+        Asegurado.asegurado.Telefono1 = txtTelefono1.Text;
+        Asegurado.asegurado.Telefono2 = txtTelefono2.Text;
+        Asegurado.asegurado.Direccion = txtDireccion.Text;
+        Asegurado.asegurado.LugarTrabajo = int.Parse(txtTrabajo.Text);
+        Asegurado.asegurado.Ocupacion = int.Parse(txtOcupacion.Text);
+        RegistrarProduccion.RegistrarCliente();
+    }
+
+    public void btnEliminar_Click(object sender, EventArgs e)
+    {
+        //Asegurado.asegurado.NumeroIdentificacion = txtIdentificacion.Text;
+        //Regis
+    }
+    public void btnEditar_Click(object sender, EventArgs e)
+    {
+        btnEliminar.Visible = false;
+
+        btnProducto.Visible = false;
+        btnActualizar.Visible = true;
+        btnRegistrar.Visible = false;
+        //btnEliminar.Visible = false;
+        btnEditar.Visible = false;
+        btnCancelar.Visible = true;
+        txtTipoDocumento.Enabled = true;
+        txtIdentificacion.Enabled = true;
+        txtNombre.Enabled = true;
+        txtApellido.Enabled = true;
+        txtNacimiento.Enabled = true;
+        txtEdad.Enabled = true;
+        txtCorreo.Enabled = true;
+        txtSexo.Enabled = true;
+        txtDepartamento.Enabled = true;
+        txtCiudad.Enabled = true;
+        txtCelular.Enabled = true;
+        txtTelefono1.Enabled = true;
+        txtTelefono2.Enabled = true;
+        txtDireccion.Enabled = true;
+        txtTrabajo.Enabled = true;
+        txtOcupacion.Enabled = true;
+    }
+
+    public void btnCancelar_Click(object sender, EventArgs e)
+    {
+        btnEliminar.Visible = false;
+
+        btnProducto.Visible = true;
+        btnActualizar.Visible = false;
+        btnRegistrar.Visible = true;
+        //btnEliminar.Visible = true;
+        btnEditar.Visible = true;
+        btnCancelar.Visible = false;
+        txtTipoDocumento.Enabled = false;
+        txtIdentificacion.Enabled = false;
+        txtNombre.Enabled = false;
+        txtApellido.Enabled = false;
+        txtNacimiento.Enabled = false;
+        txtEdad.Enabled = false;
+        txtCorreo.Enabled = false;
+        txtSexo.Enabled = false;
+        txtDepartamento.Enabled = false;
+        txtCiudad.Enabled = false;
+        txtCelular.Enabled = false;
+        txtTelefono1.Enabled = false;
+        txtTelefono2.Enabled = false;
+        txtDireccion.Enabled = false;
+        txtTrabajo.Enabled = false;
+        txtOcupacion.Enabled = false;
+    }
+}

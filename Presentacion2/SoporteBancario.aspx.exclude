@@ -1,0 +1,245 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="SoporteBancario.aspx.cs" Inherits="Presentacion2_SoporteBancario" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+    <link href="../Content/bootstrap.min.css" rel="stylesheet"/>
+    <script src="../Scripts/jquery-1.11.2.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+
+    <center><h3>Soporte Bancario</h3></center>
+    
+       <br />
+      <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1">Cargar Soporte Desde Archivo</a></li>
+            <li><a href="#tabs-2">Ingresar Soporte Uno A Uno</a></li>
+            <li><a href="#tabs-3">Distribuir Soportes Por Pagadurías</a></li>
+       </ul>
+        
+       <div id="tabs-1">
+            <div class="row">
+                <div class="col-md-12 ">  
+                    <fieldset>
+                        <legend>Información Preliminar</legend>                    
+                            <div class="col-md-4">
+                                <asp:Label runat="server" ID="Label2" cssClass="labels" Font-Bold="true" Text="Forma de pago"></asp:Label>
+                                <asp:FileUpload ID="filArchivo" runat="server" />                                                        
+                            </div>                                                
+                    </fieldset>             
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12">  
+                            <fieldset>
+                                <div class="col-md-4">
+                                    <asp:Label runat="server" ID="Label5" cssClass="labels" Font-Bold="true" Text="Banco"></asp:Label>
+                                    <asp:DropDownList ID="ddlBancoArchivo" AutoPostBack="true" OnSelectedIndexChanged="CargarTipoCuentasPorBancos" CssClass="ddl" runat="server"></asp:DropDownList>
+                                </div>
+                            </fieldset>
+
+
+         </div>
+         </div>
+            <br />
+
+
+                                <div class="row">
+                                    <div class="col-md-12">  
+                                        <fieldset>
+                                            <div class="col-md-4">
+                                                <asp:Label runat="server" ID="Label1" cssClass="labels" Font-Bold="true" Text="Tipo de Cuenta"></asp:Label>
+                                                <asp:DropDownList ID="ddlCuentasArchivo" AutoPostBack="true" OnSelectedIndexChanged="CargarCuentasPorBancos" CssClass="ddl" runat="server"></asp:DropDownList>
+                                                <asp:Label ID="Label4" runat="server" cssClass="labels" Text=""></asp:Label>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-12">  
+                                        <fieldset>
+                                            <div class="col-md-4">
+                                                <asp:Label runat="server" ID="Label3" cssClass="labels" Font-Bold="true" Text="No. Cuenta"></asp:Label>
+                                                <asp:DropDownList ID="ddlCuentaArchivo" CssClass="ddl" runat="server"></asp:DropDownList>
+                                                <asp:Label ID="lbl1" runat="server" cssClass="labels" Text=""></asp:Label>
+                                            </div>
+                                            <br />
+                                            <div class="col-md-4">                             
+                                                 <asp:Button ID="btnCargarDatos" CssClass="btn btn-primary btnSoporteBancario" runat="server" Text="Cargar datos" OnClick="btnCargarDatos_Click" />                    
+                                            </div>
+                                        </fieldset>             
+                                    </div>
+                                </div>
+                </div>
+
+
+
+
+
+
+        <div id="tabs-2">
+            <div class="row">
+                <div class="col-md-12">  
+                            <fieldset>
+                                <legend>Información Preliminar</legend> 
+                                <div class="row">    
+                                <div class="col-md-12">               
+                                <div class="col-md-4">
+                                    <asp:Label runat="server" ID="lblFormaDePago" cssClass="labels" Font-Bold="true" Text="Forma de pago"></asp:Label>
+                                    <asp:DropDownList ID="ddlFormarDePago" CssClass="ddl" AutoPostBack="true" runat="server" OnSelectedIndexChanged="ddlFormarDePago_SelectedIndexChanged"></asp:DropDownList>
+                                </div>
+                                <div class="col-md-4">
+                                    <asp:Label runat="server" ID="lblNoCheque" cssClass="labels" Font-Bold="true" Text="No. Cheque o consignación"></asp:Label>
+                                    <asp:TextBox ID="txtNoCheque" CssClass="form-control" runat="server"></asp:TextBox>
+                                </div>
+                                <div class="col-md-4">
+                                    <asp:Label runat="server" ID="lblTransferido" cssClass="labels" Font-Bold="true" Text="Transferido a"></asp:Label>
+                                    <asp:DropDownList ID="ddlTransferido" CssClass="ddl" runat="server"></asp:DropDownList>
+                                </div>
+                                </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-4">
+                                            <asp:Label runat="server" ID="lblReciboProvicional" cssClass="labels" Font-Bold="true" Text="Recibo provisional"></asp:Label>
+                                            <asp:TextBox ID="txtReciboProvicional" CssClass="form-control" runat="server"></asp:TextBox>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <asp:Label runat="server" ID="lblBanco" cssClass="labels" Font-Bold="true" Text="Banco"></asp:Label>
+                                            <asp:DropDownList ID="ddlBanco" CssClass="ddl" AutoPostBack="true" runat="server" OnSelectedIndexChanged="ddlBanco_SelectedIndexChanged"></asp:DropDownList>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <asp:Label runat="server" ID="lblTipoCuenta" cssClass="labels" Font-Bold="true" Text="Tipo cuenta"></asp:Label>
+                                            <asp:DropDownList ID="ddlTipoCuenta" CssClass="ddl" runat="server" OnSelectedIndexChanged="ddlTipoCuenta_SelectedIndexChanged"></asp:DropDownList>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-4">
+                                            <asp:Label runat="server" ID="lblNoCuenta" cssClass="labels" Font-Bold="true" Text="No. Cuenta"></asp:Label>
+                                            <asp:DropDownList ID="ddlNoCuenta" CssClass="ddl" runat="server"></asp:DropDownList>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <asp:Label runat="server" ID="lblFecha" cssClass="labels" Font-Bold="true" Text="Fecha"></asp:Label>
+                                            <asp:TextBox ID="txtFecha" CssClass="form-control" runat="server"></asp:TextBox>
+                                        </div>
+                                        <div class="col-md-4">
+                                             <asp:Label runat="server" ID="lblNoTablon" cssClass="labels" Font-Bold="true" Text="No. Tablon"></asp:Label>
+                                             <asp:TextBox ID="txtNoTablon" CssClass="form-control" runat="server"></asp:TextBox>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-4">
+                                            <asp:Label runat="server" ID="lblValor" cssClass="labels" Font-Bold="true" Text="Valor $"></asp:Label>
+                                            <asp:TextBox ID="txtValor" CssClass="form-control" runat="server"></asp:TextBox>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <asp:Label runat="server" ID="lblLocalidadUnoAUno" cssClass="labels" Font-Bold="true" Text="Localidad"></asp:Label>
+                                            <asp:DropDownList ID="ddlLocalidadUnoAUno" AutoPostBack="true" OnSelectedIndexChanged="PagaduriaPorLocalidadUnoAUno" CssClass="ddl" runat="server"></asp:DropDownList>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <asp:Label runat="server" ID="lblPagaduriaUnoAUno" cssClass="labels" Font-Bold="true" Text="Pagaduria"></asp:Label>
+                                            <asp:DropDownList ID="ddlPagaduriaUnoAUno" AutoPostBack="true" CssClass="ddl" runat="server"></asp:DropDownList>
+                                        </div>                                                
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="col-md-2">
+                                    <asp:Button ID="btnGuardar" CssClass="btn btn-primary btnSoporteBancario" runat="server" Text="Guardar" OnClick="btnGuardar_Click" />
+                                </div>
+         
+                            </fieldset>
+                </div>
+            </div>
+        </div>
+
+        <div id="tabs-3">
+            <div class="row">
+                <div class="col-md-12"> 
+                            <fieldset>
+                                <legend>Información Preliminar</legend>                    
+                                 <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-4">
+                                            <asp:Label runat="server" ID="lblLocalidad" cssClass="labels" Font-Bold="true" Text="Localidad"></asp:Label>
+                                            <asp:DropDownList ID="ddlLocalidad" AutoPostBack="true" OnSelectedIndexChanged="PagaduriaPorLocalidad" CssClass="ddl" runat="server"></asp:DropDownList>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <asp:Label runat="server" ID="lblPagaduria" cssClass="labels" Font-Bold="true" Text="Pagaduria"></asp:Label>
+                                            <asp:DropDownList ID="ddlPagaduria" AutoPostBack="true" OnSelectedIndexChanged="ddlPagaduria_SelectedIndexChanged" CssClass="ddl" runat="server"></asp:DropDownList>
+                                        </div>                                                
+                                    </div>
+                                 </div>
+                                 <br />
+                                 <div class="col-md-4">
+                                    <asp:Label runat="server" Visible="false" ID="lblPagaduriaSeleccionada" cssClass="labels" Font-Bold="true" Text="Pagaduría"></asp:Label>
+                                    <asp:DropDownList ID="ddlPagaduriaSeleccionada" Enabled="false" Visible="false" CssClass="ddl" runat="server"></asp:DropDownList>
+                                 </div>
+
+                                 <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-4">
+                                            <asp:Label runat="server" Visible="false" ID="lblValorSoporte" cssClass="labels" Font-Bold="true" Text="Valor Soporte"></asp:Label>
+                                            <asp:TextBox ID="txtValorSoporte" Visible="false" Enabled="false" CssClass="form-control" runat="server"></asp:TextBox>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+
+                                <div class="col-md-4">
+                                    <asp:Label runat="server" Visible="false" ID="lblConvenio" cssClass="labels" Font-Bold="true" Text="Convenio"></asp:Label>
+                                    <asp:DropDownList ID="ddlConvenio" Visible="false" CssClass="ddl" runat="server"></asp:DropDownList>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-4">
+                                            <asp:Label runat="server" Visible="false" ID="lblValorConvenio" cssClass="labels" Font-Bold="true" Text="Valor Convenio"></asp:Label>
+                                            <asp:TextBox ID="txtValorConvenio" Visible="false" CssClass="form-control" runat="server"></asp:TextBox>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <br />
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <asp:GridView ID="grvSoporteBancario" OnRowCommand="grvSoporteBancario_RowCommand" OnPageIndexChanging="grvSoporteBancario_PageIndexChanging" AllowPaging="True" PageSize="20" CssClass="table table-bordered table-hover table-striped" runat="server">
+                                        <Columns>
+                                            <asp:TemplateField>
+                                                <ItemTemplate>
+                                                    <asp:Button runat="server" CommandArgument='<%# ((GridViewRow) Container).RowIndex %>' data-toggle="tooltip" data-placement="right" title="Digitar Certificado" CommandName="Digitar_Click"  CssClass="btn btn-primary botonDigitar" />
+                                                </ItemTemplate>
+                                            </asp:TemplateField>                                                   
+                                        </Columns>
+                                        </asp:GridView>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="col-md-5"></div>
+                                            <div class="col-md-2">
+                                                <asp:Button ID="btnAdicionar" Visible="false" CssClass="btn btn-primary btnSoporteBancario" runat="server" Text="ADICIONAR" OnClick="btnAdicionar_Click" />
+                                            </div>
+                                            <div class="col-md-5"></div>
+                                    </div>
+                                </div>
+                            </fieldset>       
+                </div>
+            </div>
+         </div>
+
+            
+                
+      </div>
+
+
+            
+</asp:Content>

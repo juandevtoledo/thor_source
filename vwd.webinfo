@@ -1,0 +1,14 @@
+﻿<?xml version="1.0"?>
+<!-- 
+  Visual Studio global web project settings.
+-->
+<VisualWebDeveloper>
+
+  <comReferences>
+    <reference Name="interop.microsoft.office.core" ID="{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}\2.7\0"/>
+    <reference Name="interop.microsoft.office.interop.access.dao" ID="{4AC9E1DA-5BAD-4AC7-86E3-24F4CDCECA28}\12.0\0"/>
+    <reference Name="interop.jetes" ID="{2358C810-62BA-11D1-B3DB-00600832C573}\4.0\0"/>
+    <reference Name="interop.jro" ID="{AC3B8B4C-B6CA-11D1-9F31-00C04FC29D52}\2.6\0"/>
+    <reference Name="interop.adodb" ID="{2A75196C-D9EB-4129-B803-931327F72D5C}\2.8\0"/>
+  </comReferences>
+</VisualWebDeveloper>

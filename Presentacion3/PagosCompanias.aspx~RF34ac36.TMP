@@ -1,0 +1,131 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="PagosCompanias.aspx.cs" Inherits="Presentacion3_PagosCompanias" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+    <link href="..content/bootstrap.min.css" rel="stylesheet"/>
+      <script src="..scripts/jquery-1.11.2.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+
+    <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager> 
+         <h3>Pagos a las Compañías</h3>
+         <br />
+
+        <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1">Realizar Solicitud de Cheques, Facturación y Pagos</a></li>
+            <li><a href="#tabs-2">Ingresar Número de Talón</a></li>
+            <li><a href="#tabs-3">Distribuir Soportes Por Pagadurías</a></li>
+       </ul>
+        
+       <div id="tabs-1">
+            <div class="row">
+                <div class="col-md-12 ">  
+                    <fieldset>
+                        <legend>Solicitud de Cheques, Facturación y Pagos</legend>                    
+                            <div class="col-md-5">
+                                 <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+                                        <ContentTemplate>
+                                            <div class="row">                     
+                                                <div class="col-md-12">
+                                                    <label>Fecha Fin</label>
+                                                    <asp:TextBox AutoPostBack="true" runat="server" type="date" ID="txtFechaFinPago" CssClass="form-control"></asp:TextBox>
+                                                    <asp:RequiredFieldValidator ID="reqFechaFinPago" runat="server" ErrorMessage="** Campo obligatorio" ControlToValidate="txtFechaFinPago"  ValidationGroup="grpValidacionPreCargue" ForeColor="Red" SetFocusOnError="True"></asp:RequiredFieldValidator>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <label>Compañía</label>
+                                                    <asp:DropDownList AutoPostBack="true" OnSelectedIndexChanged="ddlCompania_SelectedIndexChanged" ID="ddlCompania" CssClass="form-control" runat="server"></asp:DropDownList>
+                                                </div>
+                                                <div class="col-md-12" id="localidad" runat="server" visible="false">
+                                                    <label>Localidad</label>
+                                                    <asp:DropDownList ID="ddlLocalidad" CssClass="form-control" runat="server"></asp:DropDownList>
+                                                </div>
+                                            </div>
+                                            <div>
+                    
+                                            </div>
+                                        </ContentTemplate>
+                                     </asp:UpdatePanel>
+                                    <div class="col-md-12" id="Div1" runat="server">
+                                        <asp:Button ID="btnRealizarPagoCompania" OnClick="btnRealizarPagoCompania_Click" cssclass="btn btn-primary" runat="server" Text="Pagar"/>                                                                                    
+                                    </div>
+                            </div>                                                
+                    </fieldset>             
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-md-12">  
+                            <fieldset>
+                                <div class="col-md-4">
+                                    
+                                </div>
+                            </fieldset>
+
+
+         </div>
+         </div>
+            <br />
+
+
+                                <div class="row">
+                                    <div class="col-md-12">  
+                                        <fieldset>
+                                            <div class="col-md-4">
+                                                
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-12">  
+                                        <fieldset>
+                                            <div class="col-md-4">
+                                                
+                                            </div>
+                                            <br />
+                                            <div class="col-md-4">                             
+                                                 
+                                            </div>
+                                        </fieldset>             
+                                    </div>
+                                </div>
+                </div>
+
+
+
+
+
+
+        <div id="tabs-2">
+            <div class="row">
+                <div class="col-md-12">  
+                            <fieldset>
+                                <legend>Información Preliminar</legend> 
+                                
+         
+                            </fieldset>
+                </div>
+            </div>
+        </div>
+
+        <div id="tabs-3">
+            <div class="row">
+                <div class="col-md-12"> 
+                            <fieldset>
+                                
+                            </fieldset>       
+                </div>
+            </div>
+         </div>
+
+            
+                
+      </div>
+
+
+
+         
+</asp:Content>
+

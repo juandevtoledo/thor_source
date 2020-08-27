@@ -1,0 +1,99 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Data;
+using System.IO;
+using System.Text;
+
+/// <summary>
+/// Descripción breve de ConectorKardexPapeleria
+/// </summary>
+public class ConectorKardexPapeleria
+{
+	public static void ActualizarPolizaUtilizada(double numeroCertificado)
+    {
+        DataTable certificado = DAOConKardexPapeleria.ConsultarCertificadoDigitado(numeroCertificado);
+        DataTable archivo = CrearEstructuraDataTable();
+        archivo = CrearEncabezadoArchivo(archivo);
+    }
+
+    public static DataTable CrearSegundaLinea(DataTable archivo, DataTable certificado)
+    {
+        DataRow segundaLinea = archivo.NewRow();
+        string primerCampo, segundoCampo, tercerCampo, cuartoCampo, quintoCampo, sextoCampo, septimoCampo, octavoCampo, 
+            novenoCampo, decimoCampo, decimoPrimerCampo, decimoSegundoCampo, decimoTercerCampo, decimoCuartoCampo, 
+            decimoQuintoCampo, decimoSextoCampo, decimoSeptimoCampo, decimoOctavoCampo, decimoNovenoCampo, vigesimoPrimerCampo, 
+            vigesimoSegundoCampo, vigesimoTercerCampo, vigesimoCuartoCampo, vigesimoQuintoCampo, vigesimoSextoCampo, 
+            vigesimoSeptimoCampo, vigesimoOctavoCampo, vigesimoNovenoCampo, vigesimoDecimoCampo, vigesimo;
+        primerCampo = "0000002";
+        segundoCampo = "0450";
+        tercerCampo = "00";
+        cuartoCampo = "02";
+        quintoCampo = "001";
+        sextoCampo = "1";
+        // Centro de Operaciones(APOLO) - Agencia(THOR): Se debe consultar en las tablas espejo lo equivalente
+        int agencia = int.Parse(certificado.Rows[0]["age_Id"].ToString());
+        septimoCampo = DAOConKardexPapeleria.ConsultarCentroOperaciones(agencia).Rows[0]["cenOpe_id"].ToString();
+        octavoCampo = "SAP";
+        novenoCampo = "00000001";
+        decimoCampo = "20161010";
+        decimoPrimerCampo = "890803304";
+        decimoSegundoCampo = "62";
+        decimoTercerCampo = "0";
+        decimoCuartoCampo = "0";
+        decimoQuintoCampo = "PRUEBAS DE SALIDAS";
+        decimoSextoCampo = "     "; // 5
+        decimoSeptimoCampo = "     "; // 5
+        decimoOctavoCampo = "               "; // 15
+        decimoNovenoCampo = "   "; // 3
+        vigesimoPrimerCampo = "   "; // 3
+        vigesimoSegundoCampo = "00000000";
+        vigesimoTercerCampo = "          "; // 10
+        vigesimoCuartoCampo = "               "; // 15
+        vigesimoQuintoCampo = "   "; // 3
+        vigesimoSextoCampo = "               "; // 15
+        vigesimoSeptimoCampo = "                                                  "; // 50
+        vigesimoOctavoCampo = "";
+        
+        segundaLinea["CertificadosUtilizados"] = primerCampo + segundoCampo + tercerCampo + cuartoCampo + quintoCampo + 
+            sextoCampo + septimoCampo + octavoCampo + novenoCampo + decimoCampo + decimoPrimerCampo + decimoSegundoCampo + 
+            decimoTercerCampo + decimoCuartoCampo + decimoQuintoCampo + decimoSextoCampo + decimoSeptimoCampo + decimoOctavoCampo +
+            decimoNovenoCampo + vigesimoPrimerCampo + vigesimoSegundoCampo + vigesimoTercerCampo + vigesimoCuartoCampo + 
+            vigesimoQuintoCampo + vigesimoSextoCampo + vigesimoSeptimoCampo;
+    }
+
+    public static DataTable CrearEncabezadoArchivo(DataTable archivo)
+    {
+        DataRow primeraLinea = archivo.NewRow();
+        primeraLinea["CertificadosUtilizados"] = "0000001 00000001 002";
+        archivo.Rows.Add(primeraLinea);
+        return archivo;
+    }
+
+    public static DataTable CrearEstructuraDataTable()
+    {
+        DataTable archivo = new DataTable();
+        DataColumn columna = new DataColumn();
+        columna.DataType = System.Type.GetType("System.String");
+        columna.AllowDBNull = true;
+        columna.Caption = "CertificadosUtilizados";
+        columna.ColumnName = "CertificadosUtilizados";
+        archivo.Columns.Add(columna);
+        return archivo;
+    }
+
+    public static void CrearArchivo(DataTable contenido)
+    {
+        string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+        //Directory.CreateDirectory(path);
+        using (FileStream file = File.Create(path))
+        {
+            foreach(DataRow linea in contenido.Rows)
+            {
+                byte[] info = new UTF8Encoding(true).GetBytes(linea[0].ToString());
+                file.Write(info, 0, info.Length);
+            }
+        }
+    }
+}

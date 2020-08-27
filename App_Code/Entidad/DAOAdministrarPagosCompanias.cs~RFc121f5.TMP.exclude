@@ -1,0 +1,210 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Data.SqlClient;
+using System.Data;
+using System.Configuration;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Collections.Generic;
+
+/// <summary>
+/// Descripción breve de DAOAdministrarPagosCompanias
+/// </summary>
+public class DAOAdministrarPagosCompanias
+{
+    // se consultan lo recibos de cada compañía
+    public static DataTable RecibosCuentasTorresGuarin(DateTime fechaFin, int compania)
+    {
+        DataTable dt = new DataTable();
+        SqlDataAdapter da = new SqlDataAdapter();
+        FrameworkEntidades.cnx = new SqlConnection(FrameworkEntidades.Conexion("ConexionBD"));
+        FrameworkEntidades.cnx.Open();
+        SqlCommand cmd = new SqlCommand("sp_ConsultarRecibosPorCompania", FrameworkEntidades.cnx);
+        cmd.Parameters.Add(new SqlParameter("@fechaFin", fechaFin));
+        cmd.Parameters.Add(new SqlParameter("@compania", compania));
+        cmd.CommandType = CommandType.StoredProcedure;
+        da = new SqlDataAdapter(cmd);
+        da.Fill(dt);
+        FrameworkEntidades.cnx.Close();
+        return dt;
+    }
+
+    // Se consultan las pólizas por cada uno de los productos
+    public static DataTable PolizasPorProducto(int compania)
+    {
+        DataTable dt = new DataTable();
+        SqlDataAdapter da = new SqlDataAdapter();
+        FrameworkEntidades.cnx = new SqlConnection(FrameworkEntidades.Conexion("ConexionBD"));
+        FrameworkEntidades.cnx.Open();
+        SqlCommand cmd = new SqlCommand("sp_ConsultarPolizasPorCompania", FrameworkEntidades.cnx);
+        cmd.Parameters.Add(new SqlParameter("@compania", compania));
+        cmd.CommandType = CommandType.StoredProcedure;
+        da = new SqlDataAdapter(cmd);
+        da.Fill(dt);
+        FrameworkEntidades.cnx.Close();
+        return dt; 
+    }
+
+    // Se consultan los detalles de los soportes a partir de los recibos
+    public static DataSet BuscarDetalleSoporteBancario(DataTable dtRecibos)
+    {        
+        DataSet ds = new DataSet();
+        foreach (DataRow row in dtRecibos.Rows)
+        {
+            DataTable dt = new DataTable();
+            SqlDataAdapter da = new SqlDataAdapter();
+            FrameworkEntidades.cnx = new SqlConnection(FrameworkEntidades.Conexion("ConexionBD"));
+            FrameworkEntidades.cnx.Open();
+            SqlCommand cmd = new SqlCommand("sp_ConsultarDetallesSoportePorRecibos", FrameworkEntidades.cnx);
+            cmd.Parameters.Add(new SqlParameter("@rec_Id", row["IdentificadorRecibo"].ToString()));
+            cmd.CommandType = CommandType.StoredProcedure;
+            da = new SqlDataAdapter(cmd);
+            da.Fill(dt);
+            FrameworkEntidades.cnx.Close();
+            ds.Tables.Add(dt);
+        }
+        return ds; 
+    }
+
+    // Se consultan los soportes bancarios a partir de los detalles
+    public static DataSet BuscarSoporteBancario(DataTable dtDetallesSoportes)
+    {
+        DataSet ds = new DataSet();
+        foreach (DataRow row in dtDetallesSoportes.Rows)
+        {
+            DataTable dt = new DataTable();
+            SqlDataAdapter da = new SqlDataAdapter();
+            FrameworkEntidades.cnx = new SqlConnection(FrameworkEntidades.Conexion("ConexionBD"));
+            FrameworkEntidades.cnx.Open();
+            SqlCommand cmd = new SqlCommand("sp_ConsultarSoportesPorDetallesSoporte", FrameworkEntidades.cnx);
+            cmd.Parameters.Add(new SqlParameter("@detalleSoporte", row["IdentificadorDetalleSoporte"].ToString()));
+            cmd.CommandType = CommandType.StoredProcedure;
+            da = new SqlDataAdapter(cmd);
+            da.Fill(dt);
+            FrameworkEntidades.cnx.Close();
+            ds.Tables.Add(dt);
+        }
+        return ds;
+    }
+
+    // Se consulta el porcentaje de comisión de la compañía, así como la retención en la fuente
+    public static DataTable ComisionesRetencionesPorCompania(int compania)
+    {
+        DataTable dt = new DataTable();
+        SqlDataAdapter da = new SqlDataAdapter();
+        FrameworkEntidades.cnx = new SqlConnection(FrameworkEntidades.Conexion("ConexionBD"));
+        FrameworkEntidades.cnx.Open();
+        SqlCommand cmd = new SqlCommand("sp_ConsultarComisionesRetencionesPorProducto", FrameworkEntidades.cnx);
+        cmd.Parameters.Add(new SqlParameter("@producto", compania));
+        cmd.CommandType = CommandType.StoredProcedure;
+        da = new SqlDataAdapter(cmd);
+        da.Fill(dt);
+        FrameworkEntidades.cnx.Close();
+        return dt;
+    }    
+
+    public static DataTable ConsultarPrimaCliente(double ter_Id, int producto)
+    {
+        DataTable dt = new DataTable();
+        SqlDataAdapter da = new SqlDataAdapter();
+        FrameworkEntidades.cnx = new SqlConnection(FrameworkEntidades.Conexion("ConexionBD"));
+        FrameworkEntidades.cnx.Open();
+        SqlCommand cmd = new SqlCommand("sp_ConsultarPrimaCliente", FrameworkEntidades.cnx);
+        cmd.Parameters.Add(new SqlParameter("@ter_Id", ter_Id));
+        cmd.Parameters.Add(new SqlParameter("@producto", producto));
+        cmd.CommandType = CommandType.StoredProcedure;
+        da = new SqlDataAdapter(cmd);
+        da.Fill(dt);
+        FrameworkEntidades.cnx.Close();
+        return dt;
+    }
+
+    public static void ActualizarAplicacionesPagosUsadas(DataTable dtRecibosUsados)
+    {
+        foreach(DataRow drRecibosUsados in dtRecibosUsados.Rows)
+        {
+            FrameworkEntidades.cnx = new SqlConnection(FrameworkEntidades.Conexion("ConexionBD"));
+            FrameworkEntidades.cnx.Open();
+            SqlCommand cmd = new SqlCommand("sp_ActualizarPagosCompania", FrameworkEntidades.cnx);
+            cmd.Parameters.Add(new SqlParameter("@ter_Id", drRecibosUsados["ter_Id"].ToString()));
+            cmd.Parameters.Add(new SqlParameter("@pro_Id", drRecibosUsados["pro_Id"].ToString()));
+            cmd.Parameters.Add(new SqlParameter("@vigencia", drRecibosUsados["aplPago_Vigencia"].ToString()));
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.ExecuteNonQuery();
+            FrameworkEntidades.cnx.Close();
+        }
+    }
+
+    public static DataTable ConsultarClientesPorPoliza(int compania, int poliza)
+    {
+        DataTable dt = new DataTable();
+        SqlDataAdapter da = new SqlDataAdapter();
+        FrameworkEntidades.cnx = new SqlConnection(FrameworkEntidades.Conexion("ConexionBD"));
+        FrameworkEntidades.cnx.Open();
+        SqlCommand cmd = new SqlCommand("sp_ConsultarClientesPoliza", FrameworkEntidades.cnx);
+        cmd.Parameters.Add(new SqlParameter("@compania", compania));
+        cmd.Parameters.Add(new SqlParameter("@pol_Id", poliza));
+        cmd.CommandType = CommandType.StoredProcedure;
+        da = new SqlDataAdapter(cmd);
+        da.Fill(dt);
+        FrameworkEntidades.cnx.Close();
+        return dt;
+    }
+
+    public static DataTable ConsultarRecibosCompletos(int recibo)
+    {
+        DataTable dt = new DataTable();
+        SqlDataAdapter da = new SqlDataAdapter();
+        FrameworkEntidades.cnx = new SqlConnection(FrameworkEntidades.Conexion("ConexionBD"));
+        FrameworkEntidades.cnx.Open();
+        SqlCommand cmd = new SqlCommand("sp_ConsultarRecibosPagos", FrameworkEntidades.cnx);
+        cmd.Parameters.Add(new SqlParameter("@rec_Id", recibo));
+        cmd.CommandType = CommandType.StoredProcedure;
+        da = new SqlDataAdapter(cmd);
+        da.Fill(dt);
+        FrameworkEntidades.cnx.Close();
+        return dt;
+    }
+
+    public static void IngresarInformacionHistoricoPagos(DataTable dtPagoCompanias)
+    {
+        foreach (DataRow drPagoCompania in dtPagoCompanias.Rows)
+        {
+            FrameworkEntidades.cnx = new SqlConnection(FrameworkEntidades.Conexion("ConexionBD"));
+            FrameworkEntidades.cnx.Open();
+            SqlCommand cmd = new SqlCommand("sp_InsertarHistoricoPagoCompania", FrameworkEntidades.cnx);
+            DataTable dtCert= ConsultarCertificado(int.Parse(drPagoCompania["ter_Id"].ToString()), int.Parse(drPagoCompania["pro_Id"].ToString()));
+            cmd.Parameters.Add(new SqlParameter("@prima", dtCert.Rows[0]["cer_PrimaTotal"].ToString()));
+            cmd.Parameters.Add(new SqlParameter("@valorDescuento", drPagoCompania["aplPago_Valor"].ToString()));
+            cmd.Parameters.Add(new SqlParameter("@GR", dtCert.Rows[0]["pol_Id"].ToString()));
+            cmd.Parameters.Add(new SqlParameter("@pro_Id", drPagoCompania["pro_Id"].ToString()));
+            cmd.Parameters.Add(new SqlParameter("@cer_Id", dtCert.Rows[0]["cer_Id"].ToString()));
+            cmd.Parameters.Add(new SqlParameter("@con_Id", drPagoCompania["con_Id"].ToString()));
+            cmd.Parameters.Add(new SqlParameter("@vigencia", drPagoCompania["apl_Vigencia"].ToString()));
+            //cmd.Parameters.Add(new SqlParameter("@comision", drRecibosUsados["pro_Id"].ToString()));
+            //cmd.Parameters.Add(new SqlParameter("@estado", drRecibosUsados["aplPago_Vigencia"].ToString()));
+            //cmd.Parameters.Add(new SqlParameter("@devolucionPrima", drRecibosUsados["pro_Id"].ToString()));
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.ExecuteNonQuery();
+            FrameworkEntidades.cnx.Close();
+        }
+    }
+
+    public static DataTable ConsultarCertificado(int ter_Id, int pro_Id)
+    {
+        DataTable dt = new DataTable();
+        SqlDataAdapter da = new SqlDataAdapter();
+        FrameworkEntidades.cnx = new SqlConnection(FrameworkEntidades.Conexion("ConexionBD"));
+        FrameworkEntidades.cnx.Open();
+        SqlCommand cmd = new SqlCommand("sp_ConsultarCertificadoPorTerceroYCompania", FrameworkEntidades.cnx);
+        cmd.Parameters.Add(new SqlParameter("@ter_Id", ter_Id));
+        cmd.Parameters.Add(new SqlParameter("@pro_Id", pro_Id));
+        cmd.CommandType = CommandType.StoredProcedure;
+        da = new SqlDataAdapter(cmd);
+        da.Fill(dt);
+        FrameworkEntidades.cnx.Close();
+        return dt;
+    }
+}

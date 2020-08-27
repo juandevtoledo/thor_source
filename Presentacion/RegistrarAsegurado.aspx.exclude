@@ -1,0 +1,181 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="RegistrarAsegurado.aspx.cs" Inherits="Presentacion_RegistrarAsegurado" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+        <div class="row">
+            <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    <br />
+                    <br />
+                    <fieldset>
+                        <legend>Ingresar Producción</legend>
+                            <div class="row">
+                                <div class="col-md-6"></div>
+                                    <div class="col-md-5">
+                                         <div class="form-group">
+                                            <label for="labDocumento">Documento</label>
+                                            <asp:TextBox runat="server" ID="txtDocumento" CssClass="form-control" placeholder="Ingresar Documento" ></asp:TextBox>
+                                          </div>
+                                    </div>
+                                        <div class="col-md-1">  
+                                          <button type="button" runat="server" onserverclick="btnIngresar_Click" class="btn btn-info" id="botonIngresar">INGRESAR</button>
+                                        </div>
+                                <div class="col-md-1"></div>
+                            </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend>Ingresar Asegurado</legend>
+                            <div class="row">
+                                <div class="col-md-6">
+                                     <div class="form-group">
+                                            <label for="exampleInputEmail1">Tipo Documento *</label>
+                                           <asp:TextBox runat="server" Enabled="false" ID="txtTipoDocumento" CssClass="form-control"></asp:TextBox>
+                                     </div>
+                                </div>
+                                <div class="col-md-6">
+                                     <div class="form-group">
+                                            <label for="exampleInputEmail1">Numero Identificacion *</label>
+                                            <asp:TextBox runat="server" Enabled="false" ID="txtIdentificacion" CssClass="form-control"></asp:TextBox>
+                                          </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                     <div class="form-group">
+                                            <label for="exampleInputEmail1">Nombres *</label>
+                                            <asp:TextBox runat="server" Enabled="false" ID="txtNombre" CssClass="form-control"></asp:TextBox>
+                                          </div>
+                                </div>
+                                <div class="col-md-6">
+                                     <div class="form-group">
+                                            <label for="exampleInputEmail1">Apellidos *</label>
+                                            <asp:TextBox runat="server" Enabled="false" ID="txtApellido" CssClass="form-control"></asp:TextBox>
+                                          </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                     <div class="form-group">
+                                            <label for="exampleInputEmail1">Fecha Nacimiento *</label>
+                                           <asp:TextBox runat="server" Enabled="false" ID="txtNacimiento" CssClass="form-control"></asp:TextBox>
+                                     </div>
+                                </div>
+                                <div class="col-md-6">
+                                     <div class="form-group">
+                                            <label for="exampleInputEmail1">Edad *</label>
+                                            <asp:TextBox runat="server" Enabled="false" ID="txtEdad" CssClass="form-control"></asp:TextBox>
+                                          </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                     <div class="form-group">
+                                            <label for="exampleInputEmail1">Correo Electronico</label>
+                                            <asp:TextBox runat="server" Enabled="false" ID="txtCorreo" CssClass="form-control"></asp:TextBox>
+                                     </div>
+                                </div>
+                                <div class="col-md-6">
+                                     <div class="form-group">
+                                            <label for="exampleInputEmail1">Sexo *</label>
+                                            <asp:TextBox runat="server" Enabled="false" ID="txtSexo" CssClass="form-control"></asp:TextBox>
+                                     </div>
+                                </div>
+                            </div>
+                         <div class="row">
+                                <div class="col-md-6">
+                                     <div class="form-group">
+                                            <label for="exampleInputEmail1">Departamento *</label>
+                                            <asp:TextBox runat="server" Enabled="false" ID="txtDepartamento" CssClass="form-control"></asp:TextBox>
+                                     </div>
+                                </div>
+                                <div class="col-md-6">
+                                     <div class="form-group">
+                                            <label for="exampleInputEmail1">Ciudad *</label>
+                                           <asp:TextBox runat="server" Enabled="false" ID="txtCiudad" CssClass="form-control"></asp:TextBox>
+                                     </div>
+                                </div>
+                            </div>
+                         <div class="row">
+                                <div class="col-md-6">
+                                     <div class="form-group">
+                                            <label for="exampleInputEmail1">Celular *</label>
+                                            <asp:TextBox runat="server" Enabled="false" ID="txtCelular" CssClass="form-control"></asp:TextBox>
+                                     </div>
+                                </div>
+                                <div class="col-md-6">
+                                     <div class="form-group">
+                                            <label for="exampleInputEmail1">Telefono 1 *</label>
+                                           <asp:TextBox runat="server" Enabled="false" ID="txtTelefono1" CssClass="form-control"></asp:TextBox>
+                                     </div>
+                                </div>
+                            </div>
+                         <div class="row">
+                                <div class="col-md-6">
+                                     <div class="form-group">
+                                            <label for="exampleInputEmail1">Direccion *</label>
+                                            <asp:TextBox runat="server" Enabled="false" ID="txtDireccion" CssClass="form-control"></asp:TextBox>
+                                     </div>
+                                </div>
+                                <div class="col-md-6">
+                                     <div class="form-group">
+                                            <label for="exampleInputEmail1">Telefono 2 *</label>
+                                            <asp:TextBox runat="server" Enabled="false" ID="txtTelefono2" CssClass="form-control"></asp:TextBox>
+                                     </div>
+                                </div>
+                            </div>
+                         <div class="row">
+                                <div class="col-md-6">
+                                     <div class="form-group">
+                                            <label for="exampleInputEmail1">Lugar de Trabajo *</label>
+                                            <asp:TextBox runat="server" Enabled="false" ID="txtTrabajo" CssClass="form-control"></asp:TextBox>                                            
+                                     </div>
+                                </div>
+                                <div class="col-md-6">
+                                     <div class="form-group">
+                                            <label for="exampleInputEmail1">Ocupacion *</label>
+                                            <asp:TextBox runat="server" Enabled="false" ID="txtOcupacion" CssClass="form-control"></asp:TextBox>                                            
+                                     </div>
+                                    
+                                </div>                             
+                            </div>                        
+                        <hr />
+                         <div class="alert alert-success" role="alert">- Los campos marcados
+                                    con *  son totalmente obligatorios.<br />- Es necesario Digitar al menos uno de los tres campos 
+                                    (Celular,Telefono 1,Telefono 2).</div>                        
+                    </fieldset>                    
+                    <hr />
+                    <div class="row">
+                            <div runat="server" id="btnProducto" class="col-md-4">
+                                 <button runat="server" onserverclick="btnProducto_Click" type="button" class="btn btn-info" id="botonProductos2">RESUMEN PRODUCTOS</button>
+                            </div>
+                            <div runat="server" id="btnActualizar" class="col-md-2">
+                                 <button runat="server" onserverclick="btnActualizar_Click" type="button" class="btn btn-info" id="botonActualizar">ACTUALIZAR</button>                                                                
+                            </div>
+                            <div runat="server" id="btnRegistrar" class="col-md-2">
+                                 <button runat="server" onserverclick="btnRegistrar_Click" type="button" class="btn btn-info" id="botonRegistrar">REGISTRAR</button>
+                            </div>
+                            <div runat="server" id="btnEliminar" class="col-md-2">
+                                 <button runat="server" onserverclick="btnEliminar_Click" type="button" class="btn btn-info" id="botonEliminar">ELIMINAR</button>
+                            </div>    
+                            <div runat="server" id="btnEditar" class="col-md-2">
+                                 <button runat="server" onserverclick="btnEditar_Click" type="button" class="btn btn-info" id="botonEditar">EDITAR</button>
+                            </div>    
+                            <div runat="server" id="btnCancelar" class="col-md-2">
+                                 <button runat="server" onserverclick="btnCancelar_Click" type="button" class="btn btn-info" id="botonCancelar">CANCELAR</button>
+                            </div>                            
+                        <div class="col-md-1"></div>                       
+
+                    </div>                    
+                    <hr />
+                    <div class="alert alert-info" role="alert"><center>Somos una empresa asesora
+                          de seguros fundada en 1976 en la bella ciudad de Manizales,
+                         ofrecemos seguridad a nuestros clientes y sus familias, contamos con un excelente
+                         soporte humano y logístico. El amor a la vida, al trabajo y el respeto,
+                         nos han forjado un sentido claro de pertenencia.</center></div>
+                    <!--<img src="imagenes/torres.jpeg"  class="img-rounded" id="torres">-->
+                </div>              
+            <div class="col-md-1"></div>                         
+        </div>    
+</asp:Content>
+

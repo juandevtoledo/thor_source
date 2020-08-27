@@ -1,0 +1,379 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data;
+using System.Data.SqlClient;
+using System.Data.OleDb;
+using System.Data.Common;
+using System.IO;
+using System.Drawing;
+
+public partial class Presentacion2_SoporteBancario : System.Web.UI.Page
+{
+    public static double idSoporte;
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            DataTable dtFormaPago = AdministrarSoportesBancarios.ConsultarFormaPago();
+            ddlFormarDePago.DataSource = dtFormaPago;
+            ddlFormarDePago.DataTextField = "forpag_Nombre";
+            ddlFormarDePago.DataValueField = "forpag_Id";
+            ddlFormarDePago.DataBind();
+
+            DataTable dtBanco = AdministrarSoportesBancarios.ConsultarBanco();
+            ddlBanco.DataSource = dtBanco;
+            ddlBanco.DataTextField = "ban_Nombre";
+            ddlBanco.DataValueField = "ban_Id";
+            ddlBanco.DataBind();
+
+            ddlBancoArchivo.DataSource = dtBanco;
+            ddlBancoArchivo.DataTextField = "ban_Nombre";
+            ddlBancoArchivo.DataValueField = "ban_Id";
+            ddlBancoArchivo.DataBind();
+
+            DataTable dtTransferido = AdministrarSoportesBancarios.ConsultarTransferidoA();
+            ddlTransferido.DataSource = dtTransferido;
+            ddlTransferido.DataTextField = "tran_Nombre";
+            ddlTransferido.DataValueField = "tran_Id";
+            ddlTransferido.DataBind();
+
+            if (ddlBanco.Items.Count > 0)
+            {
+                DataTable dtTipoCuenta = AdministrarSoportesBancarios.ConsultarTipoCuenta(int.Parse(ddlBanco.SelectedValue));
+                ddlTipoCuenta.DataSource = dtTipoCuenta;
+                ddlTipoCuenta.DataTextField = "tipCue_Nombre";
+                ddlTipoCuenta.DataValueField = "tipCue_Id";
+                ddlTipoCuenta.DataBind();
+            }
+
+            if (ddlBanco.Items.Count > 0 && ddlTipoCuenta.Items.Count > 0)
+            {
+                DataTable dtNumeroCuenta = AdministrarSoportesBancarios.ConsultarNumeroCuenta(int.Parse(ddlBanco.SelectedValue), int.Parse(ddlTipoCuenta.SelectedValue));
+                ddlNoCuenta.DataSource = dtNumeroCuenta;
+                ddlNoCuenta.DataTextField = "cueBan_Numero";
+                ddlNoCuenta.DataValueField = "cueBan_Id";
+                ddlNoCuenta.DataBind();
+            }
+
+            if (int.Parse(ddlFormarDePago.SelectedValue) == 1)
+            {
+                txtNoCheque.Enabled = false;
+                ddlTransferido.Enabled = false;
+                ddlBanco.Enabled = false;
+                ddlTipoCuenta.Enabled = false;
+                ddlNoCuenta.Enabled = false;
+                txtFecha.Enabled = false;
+                txtNoTablon.Enabled = false;
+                txtValor.Enabled = false;
+            }
+
+            DataTable dtLocalidades = AdministrarCertificados.ConsultarLocalidades();
+            ddlLocalidad.DataValueField = "dep_Id";
+            ddlLocalidad.DataTextField = "dep_Nombre";
+            ddlLocalidad.DataSource = dtLocalidades;
+            ddlLocalidad.DataBind();
+            ddlLocalidad.Items.Insert(0, new ListItem("", ""));
+
+            // Viviana
+           //localidad uno a uno 
+            DataTable dtLocalidadesUnoAUno = AdministrarCertificados.ConsultarLocalidades();
+            ddlLocalidadUnoAUno.DataValueField = "dep_Id";
+            ddlLocalidadUnoAUno.DataTextField = "dep_Nombre";
+            ddlLocalidadUnoAUno.DataSource = dtLocalidades;
+            ddlLocalidadUnoAUno.DataBind();
+            ddlLocalidadUnoAUno.Items.Insert(0, new ListItem("", ""));    
+
+            //DataTable dtCuentaBancaria = AdministrarSoportesBancarios.ConsultarTodasCuentasBancarias();
+            //ddlCuentaArchivo.DataSource = dtCuentaBancaria;
+            //ddlCuentaArchivo.DataTextField = "cueBan_Numero";
+            //ddlCuentaArchivo.DataValueField = "cueBan_Id";
+            //ddlCuentaArchivo.DataBind();            
+
+            DataTable dtTipoCuentas = new DataTable();
+            dtTipoCuentas = AdministrarSoportesBancarios.ConsultarTipoCuentasPorBancos(int.Parse(ddlBancoArchivo.SelectedValue.ToString()));
+            ddlCuentasArchivo.DataTextField = "tipCue_Nombre";
+            ddlCuentasArchivo.DataValueField = "tipCue_Id";
+            ddlCuentasArchivo.DataSource = dtTipoCuentas;
+            ddlCuentasArchivo.DataBind();
+
+            DataTable dtCuentas = new DataTable();
+            dtCuentas = AdministrarSoportesBancarios.ConsultarCuentasPorBanco(int.Parse(ddlBancoArchivo.SelectedValue.ToString()), int.Parse(ddlCuentasArchivo.SelectedValue.ToString()));
+            ddlCuentaArchivo.DataTextField = "cueBan_Numero";
+            ddlCuentaArchivo.DataValueField = "cueBan_Id";
+            ddlCuentaArchivo.DataSource = dtCuentas;
+            ddlCuentaArchivo.DataBind();
+        }        
+    }
+    protected void ddlBanco_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        DataTable dtTipoCuenta = AdministrarSoportesBancarios.ConsultarTipoCuenta(int.Parse(ddlBanco.SelectedValue));
+        ddlTipoCuenta.DataSource = dtTipoCuenta;
+        ddlTipoCuenta.DataTextField = "tipCue_Nombre";
+        ddlTipoCuenta.DataValueField = "tipCue_Id";
+        ddlTipoCuenta.DataBind();        
+    }
+    protected void ddlTipoCuenta_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        DataTable dtNumeroCuenta = AdministrarSoportesBancarios.ConsultarNumeroCuenta(int.Parse(ddlBanco.SelectedValue), int.Parse(ddlTipoCuenta.SelectedValue));
+        ddlNoCuenta.DataSource = dtNumeroCuenta;
+        ddlNoCuenta.DataTextField = "cueBan_Numero";
+        ddlNoCuenta.DataValueField = "cueBan_Id";
+        ddlNoCuenta.DataBind();
+    }
+
+    protected void ddlFormarDePago_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (int.Parse(ddlFormarDePago.SelectedValue) == 1)
+        {
+            txtNoCheque.Enabled = false;
+            ddlTransferido.Enabled = false;
+            ddlBanco.Enabled = false;
+            ddlTipoCuenta.Enabled = false;
+            ddlNoCuenta.Enabled = false;
+            txtFecha.Enabled = false;
+            txtNoTablon.Enabled = false;
+            txtValor.Enabled = false;
+        }
+        else
+        {
+            txtNoCheque.Enabled = true;
+            ddlTransferido.Enabled = true;
+            ddlBanco.Enabled = true;
+            ddlTipoCuenta.Enabled = true;
+            ddlNoCuenta.Enabled = true;
+            txtFecha.Enabled = true;
+            txtNoTablon.Enabled = true;
+            txtValor.Enabled = true;
+        }
+    }
+    protected void btnGuardar_Click(object sender, EventArgs e)
+    {
+        
+        AdministrarSoportesBancarios.InsertarSoporteBancario(long.Parse(txtValor.Text), DateTime.Parse(txtFecha.Text), int.Parse(ddlTipoCuenta.SelectedValue), double.Parse(ddlPagaduriaUnoAUno.SelectedValue), int.Parse(ddlBanco.SelectedValue), int.Parse(ddlNoCuenta.SelectedValue), long.Parse(txtNoTablon.Text), int.Parse(ddlFormarDePago.SelectedValue));
+       //ActivarGrilla();
+    }
+
+    protected void ActivarGrilla()
+    {
+        DataTable dtSoportesBancarios = AdministrarSoportesBancarios.ConsultarSoportesBancariosPorAsignar(double.Parse(ddlPagaduria.SelectedValue.ToString()));
+        grvSoporteBancario.DataSource = dtSoportesBancarios;
+        grvSoporteBancario.DataBind();
+    }
+
+    //Metodo para cargar un datatable con los datos de un excel
+    protected void btnCargarDatos_Click(object sender, EventArgs e)
+    {
+        if (filArchivo.HasFile)
+        {
+            DataTable dtMovimientosGenerales = LeerExcel();
+            if (filArchivo.FileName.Substring(0, 3) == "Pla")
+            {
+                // Davivienda
+                DataTable dtMovimientos = AdministrarSoportesBancarios.MovimientosFuenteDavivienda(dtMovimientosGenerales);
+                foreach (DataRow row in dtMovimientos.Rows)
+                {
+                    AdministrarSoportesBancarios.InsertarSoporteBancario(long.Parse(row["Valor"].ToString()), DateTime.Parse(row["Fecha"].ToString()), 1, double.Parse(row["Identificacion"].ToString()), 1, int.Parse(ddlCuentaArchivo.SelectedValue.ToString()), 0, 2);
+                }
+            }
+
+            if (filArchivo.FileName.Substring(0, 3) == "CSV")
+            {
+                // Bancolombia
+                DataTable dtMovimientos = AdministrarSoportesBancarios.MovimientosFuenteBancolombia(dtMovimientosGenerales);
+                foreach (DataRow row in dtMovimientos.Rows)
+                {
+                    AdministrarSoportesBancarios.InsertarSoporteBancario(long.Parse(row["Valor"].ToString()), DateTime.Parse(row["Fecha"].ToString()), 1, double.Parse(row["Identificacion"].ToString()), 2, int.Parse(ddlCuentaArchivo.SelectedValue.ToString()), 0, 2);
+                }
+            }
+
+            if (filArchivo.FileName.Substring(0, 3) == "SOP")
+            {
+                foreach (DataRow row in dtMovimientosGenerales.Rows)
+                {
+                    if (row["Banco"].ToString() == "Popular")
+                        AdministrarSoportesBancarios.InsertarSoporteBancario(long.Parse(row["Valor"].ToString()), DateTime.Parse(row["Fecha"].ToString()), 1, double.Parse(row["Identificacion"].ToString()), 3, int.Parse(ddlCuentaArchivo.SelectedValue.ToString()), 0, 2);
+                    if (row["Banco"].ToString() == "Agrario")
+                        AdministrarSoportesBancarios.InsertarSoporteBancario(long.Parse(row["Valor"].ToString()), DateTime.Parse(row["Fecha"].ToString()), 1, double.Parse(row["Identificacion"].ToString()), 4, int.Parse(ddlCuentaArchivo.SelectedValue.ToString()), 0, 2);
+                    if (row["Banco"].ToString() == "BBVA")
+                        AdministrarSoportesBancarios.InsertarSoporteBancario(long.Parse(row["Valor"].ToString()), DateTime.Parse(row["Fecha"].ToString()), 1, double.Parse(row["Identificacion"].ToString()), 5, int.Parse(ddlCuentaArchivo.SelectedValue.ToString()), 0, 2);
+                    if (row["Banco"].ToString() == "CajaSocial")
+                        AdministrarSoportesBancarios.InsertarSoporteBancario(long.Parse(row["Valor"].ToString()), DateTime.Parse(row["Fecha"].ToString()), 1, double.Parse(row["Identificacion"].ToString()), 6, int.Parse(ddlCuentaArchivo.SelectedValue.ToString()), 0, 2);
+                }
+            }
+        }
+        //ActivarGrilla();
+    }
+
+    protected DataTable LeerExcel()
+    {
+        DataTable dtExcel = new DataTable();
+        if (filArchivo.HasFile)
+        {
+            string ruta = string.Concat((Server.MapPath("~/temp/" + filArchivo.FileName)));
+            filArchivo.PostedFile.SaveAs(ruta);
+            bool hasHeaders = false;
+            string HDR = hasHeaders ? "Yes" : "No";
+            string strConn;
+            if (ruta.Substring(ruta.LastIndexOf('.')).ToLower() == ".xlsx")
+                strConn = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + ruta + ";Extended Properties=\"Excel 12.0;HDR=" + HDR + ";IMEX=0\"";
+            else
+                strConn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + ruta + ";Extended Properties=\"Excel 8.0;HDR=" + HDR + ";IMEX=0\"";
+            OleDbConnection OleDbcon = new OleDbConnection(strConn);
+            OleDbCommand cmd = new OleDbCommand();
+            if (filArchivo.FileName.Substring(0, 3) == "Pla")
+                cmd = new OleDbCommand("Select * from [Planof8813b33-e759-4f1c-b34c-34$]", OleDbcon);
+            if (filArchivo.FileName.Substring(0, 3) == "CSV")
+                cmd = new OleDbCommand("Select * from [" + filArchivo.FileName.Substring(0, 31) + "$]", OleDbcon);
+
+            //if (filArchivo.FileName.Substring(0, 3) != "SOP")
+            //    cmd = new OleDbCommand("Select * from [" + filArchivo.FileName.Substring(0, 31) + "$]", OleDbcon);
+            //else
+            //    cmd = new OleDbCommand("Select * from [Hoja1$]", OleDbcon);
+            //OleDbDataAdapter objAdapter1 = new OleDbDataAdapter(cmd);
+
+            OleDbcon.Open();
+            DbDataReader dr = cmd.ExecuteReader();
+            dtExcel.Load(dr);
+
+            OleDbcon.Close();
+            Array.ForEach(Directory.GetFiles((Server.MapPath("~/temp/"))), File.Delete);
+            lbl1.ForeColor = Color.Green;
+            lbl1.Text = "Los datos fueron cargados correctamente!";
+        }
+        else
+        {
+            lbl1.ForeColor = Color.Red;
+            lbl1.Text = "Por favor seleccione un archivo";
+        }
+        return dtExcel;
+    }
+    protected void ddlPagaduria_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (ddlPagaduria.SelectedValue.ToString() != "")
+        {
+            DataTable dtSoportesBancarios = AdministrarSoportesBancarios.ConsultarSoportesBancariosPorAsignar(double.Parse(ddlPagaduria.SelectedValue.ToString()));
+            grvSoporteBancario.DataSource = dtSoportesBancarios;
+            grvSoporteBancario.DataBind();
+        }
+    }
+
+    protected void PagaduriaPorLocalidad(object sender, EventArgs e)
+    {
+        DataTable dt = new DataTable();
+        dt = AdministrarCertificados.ConsultarPagaduriaPorLocalidad(int.Parse(ddlLocalidad.SelectedValue.ToString()));
+        ddlPagaduria.DataTextField = "paga_Nombre";
+        ddlPagaduria.DataValueField = "paga_Id";
+        ddlPagaduria.DataSource = dt;
+        ddlPagaduria.DataBind();
+
+        if (ddlPagaduria.SelectedValue.ToString() != "")
+        {
+            DataTable dtSoportesBancarios = AdministrarSoportesBancarios.ConsultarSoportesBancariosPorAsignar(double.Parse(ddlPagaduria.SelectedValue.ToString()));
+            grvSoporteBancario.DataSource = dtSoportesBancarios;
+            grvSoporteBancario.DataBind();
+        }
+    }
+
+    // Viviana 
+    // pagaduria uno a uno 
+    protected void PagaduriaPorLocalidadUnoAUno(object sender, EventArgs e)
+    {
+        DataTable dt = new DataTable();
+        dt = AdministrarCertificados.ConsultarPagaduriaPorLocalidad(int.Parse(ddlLocalidadUnoAUno.SelectedValue.ToString()));
+        ddlPagaduriaUnoAUno.DataTextField = "paga_Nombre";
+        ddlPagaduriaUnoAUno.DataValueField = "paga_Identificacion";
+        ddlPagaduriaUnoAUno.DataSource = dt;
+        ddlPagaduriaUnoAUno.DataBind();
+
+        if (ddlPagaduria.SelectedValue.ToString() != "")
+        {
+            DataTable dtSoportesBancarios = AdministrarSoportesBancarios.ConsultarSoportesBancariosPorAsignar(double.Parse(ddlPagaduria.SelectedValue.ToString()));
+            grvSoporteBancario.DataSource = dtSoportesBancarios;
+            grvSoporteBancario.DataBind();
+        }
+    }
+
+    protected void grvSoporteBancario_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        //grvEntregaProduccion.PageIndex = e.NewPageIndex;
+    }
+
+    protected void grvSoporteBancario_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+        ddlLocalidad.Visible = false;
+        lblLocalidad.Visible = false;
+        ddlPagaduria.Visible = false;
+        lblPagaduria.Visible = false;
+        ddlConvenio.Visible = true;
+        lblConvenio.Visible = true;
+        lblValorConvenio.Visible = true;
+        txtValorConvenio.Visible = true;
+        grvSoporteBancario.Visible = false;
+
+        //DataTable dtConvenios = DAOAdministrarSoporteBancario.ConsultarConveniosPorPagaduria(double.Parse(ddlPagaduria.SelectedValue.ToString()));
+        DataTable dtConvenios = AdministrarSoportesBancarios.ConsultarConveniosPorPagaduria(double.Parse(ddlPagaduria.SelectedValue.ToString()));
+        ddlConvenio.DataTextField = "con_Nombre";
+        ddlConvenio.DataValueField = "con_Id";
+        ddlConvenio.DataSource = dtConvenios;
+        ddlConvenio.DataBind();
+
+        lblPagaduriaSeleccionada.Visible = true;
+        ddlPagaduriaSeleccionada.Visible = true;
+        DataTable dt = new DataTable();
+        dt = AdministrarCertificados.ConsultarPagaduriaPorLocalidad(int.Parse(ddlLocalidad.SelectedValue.ToString()));
+        ddlPagaduriaSeleccionada.DataTextField = "paga_Nombre";
+        ddlPagaduriaSeleccionada.DataValueField = "paga_Identificacion";
+        ddlPagaduriaSeleccionada.DataSource = dt;
+        ddlPagaduriaSeleccionada.DataBind();
+        ddlPagaduriaSeleccionada.SelectedIndex = ddlPagaduriaSeleccionada.Items.IndexOf(ddlPagaduriaSeleccionada.Items.FindByText(ddlPagaduria.SelectedItem.ToString()));
+
+        int index = int.Parse(e.CommandArgument.ToString());
+        idSoporte = double.Parse(grvSoporteBancario.Rows[index].Cells[1].Text);
+        //DataTable dtValorSoporte = DAOAdministrarSoporteBancario.ConsultarConvenioElegido(idSoporte);
+        DataTable dtValorSoporte = AdministrarSoportesBancarios.ConsultarConvenioElegido(idSoporte);
+        double valorSoporte = double.Parse(dtValorSoporte.Rows[0]["sop_Valor"].ToString());
+        txtValorSoporte.Visible = true;
+        lblValorSoporte.Visible = true;
+        txtValorSoporte.Text = valorSoporte.ToString();
+
+        btnAdicionar.Visible = true;
+    }
+
+    protected void btnAdicionar_Click(object sender, EventArgs e)
+    {
+        if (double.Parse(txtValorConvenio.Text) <= double.Parse(txtValorSoporte.Text))
+            AdministrarSoportesBancarios.InsertarDetalleSoporteBancario(idSoporte, double.Parse(txtValorConvenio.Text), int.Parse(ddlConvenio.SelectedValue.ToString()), 1);
+    }
+
+    protected void CargarTipoCuentasPorBancos(object sender, EventArgs e)
+    {
+        DataTable dtTipoCuentas = new DataTable();
+        dtTipoCuentas = AdministrarSoportesBancarios.ConsultarTipoCuentasPorBancos(int.Parse(ddlBancoArchivo.SelectedValue.ToString()));
+        ddlCuentasArchivo.DataTextField = "tipCue_Nombre";
+        ddlCuentasArchivo.DataValueField = "tipCue_Id";
+        ddlCuentasArchivo.DataSource = dtTipoCuentas;
+        ddlCuentasArchivo.DataBind();
+
+        DataTable dtCuentas = new DataTable();
+        dtCuentas = AdministrarSoportesBancarios.ConsultarCuentasPorBanco(int.Parse(ddlBancoArchivo.SelectedValue.ToString()), int.Parse(ddlCuentasArchivo.SelectedValue.ToString()));
+        ddlCuentaArchivo.DataTextField = "cueBan_Numero";
+        ddlCuentaArchivo.DataValueField = "cueBan_Id";
+        ddlCuentaArchivo.DataSource = dtCuentas;
+        ddlCuentaArchivo.DataBind();
+    }   
+
+    protected void CargarCuentasPorBancos(object sender, EventArgs e)
+    {
+        DataTable dtCuentas = new DataTable();
+        dtCuentas = AdministrarSoportesBancarios.ConsultarCuentasPorBanco(int.Parse(ddlBancoArchivo.SelectedValue.ToString()), int.Parse(ddlCuentasArchivo.SelectedValue.ToString()));
+        ddlCuentaArchivo.DataTextField = "cueBan_Numero";
+        ddlCuentaArchivo.DataValueField = "cueBan_Id";
+        ddlCuentaArchivo.DataSource = dtCuentas;
+        ddlCuentaArchivo.DataBind();
+    }    
+}

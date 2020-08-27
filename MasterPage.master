@@ -1,0 +1,295 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="MasterPage.master.cs" Inherits="MasterPage" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Thor - Torres Guarín</title>
+    <asp:ContentPlaceHolder id="head" runat="server">
+    </asp:ContentPlaceHolder>
+
+    <link href="/Content/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/Content/EstilosIndex.css" />
+    <link href="/Content/select2/select2-3.5.4/select2.css" rel="stylesheet" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
+
+    <link rel="icon" type="image/png" href="/Imagenes/logo_Thor_caja.png" />
+</head>
+<body runat="server">
+    
+    <div class="div-disable-body"></div>
+    <form id="form1" runat="server">
+        <nav class="navbar navbar-fixed-top div-navbar">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="div-button-menu">
+                        <button><span class=" glyphicon glyphicon-menu-hamburger"></span></button>
+                    </div>
+                    <div class="div-logo-sistema text-center div-logo-sistema-responsive">
+                        <h1 class="div-nombre-sistema"><a href="/">
+                            <img src="/Imagenes/logo_thor.png">
+                        </a></h1>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-12 col-lg-offset-2 col-md-offset-3 col-sm-offset-0">
+                        <figure><img src="/Imagenes/logo_torres.png" /></figure>
+                    </div>
+                    <ul class="nav navbar-nav navbar-right navbar-informacion">
+                        <li class="dropdown dropdown-informacion">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                <strong><asp:Label ID="nombreUsuario" runat="server" Text="Label"></asp:Label></strong>
+                            <span class="caret"></span></a>
+                            <ul class="dropdown-menu div-dropdown">
+                                <li class="div-informacion">
+                                    <strong><asp:Label ID="Label1" runat="server" Text="Usuario:"/></strong><br />
+                                    <asp:Label ID="usuario" runat="server" Text="Label"></asp:Label>
+                                    <br />
+                                    <strong><asp:Label ID="Label2" runat="server" Text="Agencia:"/></strong>
+                                    <asp:Label ID="agenciaUsuario" runat="server" Text="Label"></asp:Label>
+                                    <br />
+                                    <strong><asp:Label ID="Label3" runat="server" Text="Cargo:"/></strong><br />
+                                    <asp:Label ID="cargoUsuario" runat="server" Text="Label"></asp:Label>
+                                </li>
+                                <li class="divider"></li>
+                                 <li>
+                                    <asp:LinkButton Text="Cambio de clave" runat="server" ID="btnCambioClave" OnClick="btnCambioClave_Click"><span class="glyphicon glyphicon-lock"></span> Cambio de clave</asp:LinkButton>
+                                </li>   
+                                <li>
+                                    <asp:LinkButton Text="Cerrar sesión" runat="server" ID="btnCerrarSession" OnClick="btnCerrarSesion_Click"><span class="glyphicon glyphicon-log-out"></span> Cerrar sesión</asp:LinkButton>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>               
+        </nav>
+        <div class="div-height-100">
+            <div class="col-lg-2 col-md-3 impre div-height-100 divMenuOculto" id="divMenu">  
+                <div class="div-button-atras">
+                    <button><span class=" glyphicon glyphicon-menu-left"></span></button>
+                </div>
+                <div class="div-logo-sistema text-center row">
+                    <h1 class="div-nombre-sistema"><a href="/"><img src="/Imagenes/logo_thor.png"></a></h1>
+                </div>
+                  <div class="row">
+                       <asp:Menu ID="Menu1" orientation="Vertical" StaticDisplayLevels="1" OnMenuItemDataBound="Menu1_MenuItemDataBound" OnMenuItemclick="Menu1_MenuItemClick"
+                       runat="server" AutoPostBack="true">
+                       </asp:Menu>
+                   </div>
+            </div>
+            <div class="col-lg-10 col-md-9 col-lg-offset-2 col-md-offset-3">
+                <div class="div-navbar-height"></div>
+                <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server"></asp:ContentPlaceHolder>        
+            </div>
+        </div>
+    </form>
+<script src="/Scripts/jquery-1.11.2.min.js"></script> 
+<script src="/Scripts/bootstrap.min.js"></script>
+<script src="/Content/select2/select2-3.5.4/select2.min.js" ></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        /* ------------------------------------------------------
+            Funcionalidad ddls
+        ------------------------------------------------------ */
+        $(".ddl").select2({
+            placeholder: "Seleccione",
+            allowClear: true
+        });
+        $(".ddl2").select2({
+            placeholder: "Seleccione",
+            allowClear: true
+        });
+        $(".ddl3").select2({
+            placeholder: "Seleccione",
+            allowClear: true
+        });
+        /* --------------------------------------------------- */
+
+        
+        /* ------------------------------------------------------
+            Funcionalidades algunos elementos bootstrap
+        ------------------------------------------------------ */
+        $('.dropdown-toggle').dropdown();
+        $('[data-toggle="tooltip"]').tooltip();
+        /* --------------------------------------------------- */
+
+
+        /* ------------------------------------------------------
+            Funcionalidad menu
+        ------------------------------------------------------ */
+        $('.div-button-menu button, .div-disable-body, .div-button-atras button').bind('click tap', function (e) {
+            e.preventDefault();
+            $('#divMenu').toggleClass('divMenuOculto');
+            $('.div-disable-body').toggleClass('activo');
+        });
+        /* --------------------------------------------------- */
+
+
+        /* ------------------------------------------------------
+            Agregamos clases requeridas
+        ------------------------------------------------------ */
+        $('.table').parent().addClass('table-responsive');
+        /* --------------------------------------------------- */
+
+
+        /* ------------------------------------------------------
+            Funcion boton consultar soporte
+        ------------------------------------------------------ */
+        var soporte_activo = localStorage.getItem('soporte_consultado')
+
+        $('.btnListaSop').each(function (index, ele) {
+            //console.log(ele)
+            $(ele).addClass('btn_' + index).attr('data-index', 'btn_' + index);
+        });
+
+        $('.btnListaSop').bind('click', function () {
+            var index = $(this).attr('data-index')
+            //console.log(index);
+            localStorage.setItem('soporte_consultado', index)
+        });
+        $('.btnListaRegresar').bind('click', function () {
+            localStorage.setItem('soporte_consultado', null)
+        });
+        setTimeout(function () {
+            $('.' + soporte_activo).trigger('click');
+        }, 5000)
+        /* --------------------------------------------------- */
+
+
+        /* ------------------------------------------------------
+            Tabs_bootstrap
+        ------------------------------------------------------ */
+        // Funcion que reinicia los tabs al momento de salir del modulo
+        $('#divMenu li a').bind('click tap', function () {
+            var tab = "#tab-1";
+            localStorage.setItem('tab', tab);
+        });
+
+        if ($('#confirm_section').length > 0) {
+            if ($('#confirm_section').val() == 'carta_retiro') {
+                var tab = localStorage.getItem('tab');
+            }
+            if ($('#confirm_section').val() == 'novedades') {
+                var tab = localStorage.getItem('tab');
+            }
+            if ($('#confirm_section').val() == 'archivoNovedades') {
+                var tab = localStorage.getItem('tab');
+            }
+            if ($('#confirm_section').val() == 'soporte_bancario') {
+                var tab = localStorage.getItem('tab');
+            }
+            if ($('#confirm_section').val() == 'conciliacion') {
+                var tab = localStorage.getItem('tab');
+            }
+            if ($('#confirm_section').val() == 'certificado') {
+                var tab = localStorage.getItem('tab');
+            }
+            if ($('#confirm_section').val() == 'digitar') {
+                var tab = localStorage.getItem('tab');
+            }
+        }
+        else {
+            var tab = "#tab-1";
+            localStorage.setItem('tab', tab);
+        }
+
+        if (tab != null || tab != undefined) {
+            $(tab).addClass('in active');
+            $('a[href="' + tab + '"]').parent().addClass('active');
+        }
+
+        // Funcion que activa los tabs
+        $('a[data-toggle="tab"]').on('shown', function (e) {
+            activeTab = e.target;
+        })
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href") // activated tab
+
+            if ($('#confirm_section').val() == 'carta_retiro') {
+                localStorage.setItem('tab', target);
+            }
+            if ($('#confirm_section').val() == 'novedades') {
+                localStorage.setItem('tab', target);
+            }
+            if ($('#confirm_section').val() == 'soporte_bancario') {
+                localStorage.setItem('tab', target);
+            }
+            if ($('#confirm_section').val() == 'conciliacion') {
+                localStorage.setItem('tab', target);
+            }
+            if ($('#confirm_section').val() == 'certificado') {
+                localStorage.setItem('tab', target);
+            }
+            if ($('#confirm_section').val() == 'digitar') {
+                localStorage.setItem('tab', target);
+            }
+        });
+        /* --------------------------------------------------- */
+    
+
+        /* ------------------------------------------------------
+            Posible borrar
+        ------------------------------------------------------ */
+        if ($('#confirm_section').length > 0) {
+            if ($('#confirm_section').val() == 'soporte_bancario') {
+                var tab_active = localStorage.getItem('tab_active');
+            }
+        }
+        else {
+            localStorage.setItem('tab_active', 0);
+        }
+        // Tab initialization
+      
+        if (tab_active != null || tab_active != undefined) {
+            $('#tabs').tabs({
+                active: tab_active
+            });
+        }
+        if ($('#tabs').length > 0) {
+            $('#tabs').tabs();
+            $('#tabs').tabs({
+                activate: function (event, ui) {
+                    //console.log(event);
+                    var index = ui.newTab.index();
+                    if ($('#confirm_section').val() == 'soporte_bancario') {
+                        localStorage.setItem('tab_active', index);
+                    }
+            
+                }
+            });
+        }
+        /* --------------------------------------------------- */
+
+        /* ------------------------------------------------------
+           Table - Contar registros
+       ------------------------------------------------------ */
+        var total_tr = $('.table-cuentaCobro tr').length;
+        if (total_tr <= 8) {
+            $('.table-cuentaCobro').addClass('table-compact');
+        }
+        if (total_tr > 8 && total_tr < 15) {
+            $('.table-cuentaCobro').addClass('table-not-compact');
+        }
+        /* --------------------------------------------------- */
+
+        var tab_active = getParameterByName('tab');
+        console.log(tab_active);
+        //$('[href="#' + tab_active + ']"').trigger('click');
+        $('.nav-tabs a[href="#' + tab_active + '"]').tab('show');
+    });
+
+    function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+</script>
+</body>
+</html>
+

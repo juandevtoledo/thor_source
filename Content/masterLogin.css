@@ -1,0 +1,1737 @@
+﻿
+body
+{
+    /*background-color:darkgray;*/
+}
+body, html{
+    height:100%;
+}
+.div-login-body [class*=' col-']{
+    float: none;
+}
+.divider-mini {
+    height: 20px;
+    clear: both;
+}
+.torres
+{
+    position:relative;
+    left:50px;
+    opacity:0.6 !important;
+}
+.relative{
+    position: relative;
+}
+.div-center{
+    vertical-align: middle;
+    float:none;
+    display:inline-block;
+    margin-right:-4px;
+}
+.mapa-fig-laguajira img,
+.mapa-fig-boyaca img{
+    object-position: top center !important;
+}
+@media only screen and (min-width: 992px) {
+    .div-height-100{
+        height: 100%;
+    }
+    .div-align-center {
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+.white{
+    background-color: #fff;
+}
+body {
+    background-image: url("../Imagenes/login_fondo.png");
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+.div-login{
+    padding: 40px 40px 80px;
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+.div-login input[type="text"],
+.div-login input[type="number"],
+.div-login input[type="email"],
+.div-login textarea,
+.div-login .form-control{
+  border-radius: 2px !important;
+  border-width: 1px !important;
+}
+.div-login-header figure img{
+    margin: auto;
+}
+.form-control:focus{
+  box-shadow: none !important;
+  border-color: #232977 !important;
+}
+.rojo{
+    background: red !important;
+}
+.azul{
+    background: blue !important;
+}
+.btn{
+  border-radius: 2px !important;
+}
+#colombia
+{
+    position:relative;
+    height:100%;
+    width:460px;
+    opacity: !important;
+    margin: auto !important;
+}
+#colombia svg{
+   margin: auto !important;
+}
+.st0{
+      fill:#09499D;
+      stroke:#8FC7FF;
+      transition: .3s;
+    }
+    .st1{fill:#C6C6C6;stroke:#888889;}
+    .st2{fill:#FFFFFF;stroke:#5C9EFF;}
+    .st3{fill:#09499D;}
+    .st4{font-family:'Helvetica';}
+    .st5{font-size:28.1035px;}
+    .st6{font-size:29.5929px;}
+
+    .mapa_colombia {
+      position: relative;
+      max-width: 600px;
+    }
+    .st0:hover{
+      fill:#39a6ff;
+      stroke:#fff;
+      cursor:pointer;
+    }
+    .hover{
+      fill:#39a6ff;
+      stroke:#fff;
+      cursor:pointer;
+    }
+    #nombres g{
+      visibility: hidden;
+      opacity: 0;
+      transform: scale(0);
+      cursor:pointer;
+    }
+    #nombres g.mapa-visible{
+      visibility: visible;
+      opacity: 1;
+      transform: scale(1);
+    }
+    .mapa-informacion{
+      background-color: #fff;
+      width: 350px;
+      height: 450px;
+      position: absolute;
+      top: calc(50% - 210px);
+      left: calc(50% - 175px);
+      padding: 20px;
+      box-sizing: border-box;
+      border-radius: 2px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    }
+    .mapa-informacion{
+      visibility: hidden;
+      opacity: 0;
+      transform: scale(0);
+      transition: .3s;
+    }
+    .mapa-informacion .mapa-fig{
+      display: none;
+    }
+    .mapa-informacion.mapa-visible{
+      visibility: visible;
+      opacity: 1;
+      transform: scale(1);
+    }
+    .mapa-fig.mapa-visible{
+      display: block;
+    }
+    .mapa-fig h3{
+      font-size: 32px;
+      margin: 0px;
+      padding: 0px;
+      margin-bottom: 5px;
+      color: #09499D;
+    }
+    .mapa-fig img{
+      max-width: 100%;
+      width: 310px;
+      height: 202px;
+      object-fit: cover;
+      object-position: center center;
+    }
+    .mapa-fig figure{
+      padding: 0px;
+      margin: 0px;
+      margin-bottom: 5px;
+    }
+    .mapa-fig .mapa-dato{
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+    .mapa-button-close{
+      width: 30px;
+      height: 30px;
+      background-color: #ccc;
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+/*edicion de Antioquia*/
+
+/* la etiqueta LABEL */
+  .elboton
+{
+    background-image:url("../imagenes2/Antioquia.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+   position:absolute;
+    left:67px;
+    top:107px;
+    width:145px;
+   height:145px;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
+  transition-timing-function: linear;
+
+}
+    .elboton:hover{
+    z-index:100;
+    background-image:url("../imagenes2/Antioquia2.fw.png");
+     background-repeat:no-repeat;
+    color: #FFF;
+    opacity:0.6;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+    position:absolute;
+   left:67px;
+    top:105px;
+  }
+  /* en un post de Blogger. oculto los saltos de línea internos para no volverme loco */
+  .elboton br {display:none;}
+  /* el contenedor con lo lo que queremos mostrar */
+  .hiddenbox {
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #000 inset;
+    left: 160px;
+    line-height: 0;
+    margin: 25px 0;
+    opacity: 0;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
+    top: 20px;
+    z-index: 100;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -o-transform: scale(0);
+    -ms-transform: scale(0);
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+  }
+  /* se muestra el contenido oculto */
+  .popUpControl:checked ~ label > .hiddenbox {
+    opacity: 0.7;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+  }
+  /* el CHECKBOX lo mantenemos siempre oculto */
+  .popUpControl {display: none;}
+
+
+  /*edicion de Bogota*/
+
+  /* la etiqueta LABEL */
+  .elboton2 {
+    background-image:url("../imagenes2/Bogota.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+   position:absolute;
+    left:160px;
+    top:210px;
+    width:100px;
+   height:75px;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
+  transition-timing-function: linear;
+
+  }
+    .elboton2:hover{
+    z-index:100;
+    background-image:url("../imagenes2/Bogota2.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    opacity:0.6;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+    position:absolute;
+    left:160px;
+    top:210px;
+  }
+  /* en un post de Blogger. oculto los saltos de línea internos para no volverme loco */
+  .elboton2 br {display:none;}
+  /* el contenedor con lo lo que queremos mostrar */
+  .hiddenbox2 {
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #000 inset;
+    left: 10px;
+    line-height: 0;
+    margin: 25px 0;
+    opacity: 0;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
+    top: 50px;
+    z-index: 100;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -o-transform: scale(0);
+    -ms-transform: scale(0);
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+  }
+  /* se muestra el contenido oculto */
+  .popUpControl2:checked ~ label > .hiddenbox2 {
+    opacity: 0.7;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+  }
+  /* el CHECKBOX lo mantenemos siempre oculto */
+  .popUpControl2 {display: none;
+
+  }
+
+  /*Departamento de Caldas*/
+
+   /* la etiqueta LABEL */
+  .elboton3 
+  {
+    background-image:url("../imagenes2/Caldas.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+   position:absolute;
+    left:127px;
+    top:213px;
+    width:60px;
+   height:50px;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
+  transition-timing-function: linear;
+
+  }
+    .elboton3:hover
+    {
+    z-index:100;
+    background-image:url("../imagenes2/Caldas2.fw.png");
+     background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    opacity:0.6;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+    position:absolute;
+     left:127px;
+    top:213px;
+  }
+  /* en un post de Blogger. oculto los saltos de línea internos para no volverme loco */
+  .elboton3 br 
+  {
+      display:none;
+  }
+  /* el contenedor con lo lo que queremos mostrar */
+  .hiddenbox3 
+  {
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #000 inset;
+    left: 10px;
+    line-height: 0;
+    margin: 25px 0;
+    opacity: 0;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
+    top: 50px;
+    z-index: 100;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -o-transform: scale(0);
+    -ms-transform: scale(0);
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+  }
+  /* se muestra el contenido oculto */
+  .popUpControl3:checked ~ label > .hiddenbox3 
+  {
+    opacity: 0.7;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+  }
+  /* el CHECKBOX lo mantenemos siempre oculto */
+  .popUpControl3 
+  {
+      display: none;
+  }
+
+  /*Departamento de Risaralda*/
+
+   /* la etiqueta LABEL */
+  .elboton4
+  {
+    background-image:url("../imagenes2/Pereira.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+   position:absolute;
+    left:112px;
+    top:222px;
+    width:45px;
+   height:50px;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
+  transition-timing-function: linear;
+
+  }
+    .elboton4:hover
+    {
+    z-index:100;
+    background-image:url("../imagenes2/Pereira2.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    opacity:0.6;
+    text-shadow: 1px 1px 1px #000;
+    position:absolute;
+     left:112px;
+    top:222px;
+  }
+  /* en un post de Blogger. oculto los saltos de línea internos para no volverme loco */
+  .elboton4 br 
+  {
+      display:none;
+  }
+  /* el contenedor con lo lo que queremos mostrar */
+  .hiddenbox4 
+  {
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #000 inset;
+    left: 10px;
+    line-height: 0;
+    margin: 25px 0;
+    opacity: 0;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
+    top: 50px;
+    z-index: 100;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -o-transform: scale(0);
+    -ms-transform: scale(0);
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+  }
+  /* se muestra el contenido oculto */
+  .popUpControl4:checked ~ label > .hiddenbox4 
+  {
+    opacity: 0.7;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+  }
+  /* el CHECKBOX lo mantenemos siempre oculto */
+  .popUpControl4 
+  {
+      display: none;
+  }
+
+  /*Departamento de Tolima*/
+
+   /* la etiqueta LABEL */
+  .elboton5
+  {
+    background-image:url("../imagenes2/Tolima.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+   position:absolute;
+    left:122px;
+    top:225px;
+    width:63px;
+   height:100px;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
+  transition-timing-function: linear;
+
+  }
+    .elboton5:hover
+    {
+    z-index:100;
+    background-image:url("../imagenes2/Tolima2.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    opacity:0.6;
+    text-shadow: 1px 1px 1px #000;
+    position:absolute;
+     left:122px;
+    top:225px;
+  }
+  /* en un post de Blogger. oculto los saltos de línea internos para no volverme loco */
+  .elboton5 br 
+  {
+      display:none;
+  }
+  /* el contenedor con lo lo que queremos mostrar */
+  .hiddenbox5 
+  {
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #000 inset;
+    left: 10px;
+    line-height: 0;
+    margin: 25px 0;
+    opacity: 0;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
+    top: 50px;
+    z-index: 100;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -o-transform: scale(0);
+    -ms-transform: scale(0);
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+  }
+  /* se muestra el contenido oculto */
+  .popUpControl5:checked ~ label > .hiddenbox5
+  {
+    opacity: 0.7;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+  }
+  /* el CHECKBOX lo mantenemos siempre oculto */
+  .popUpControl5 
+  {
+      display: none;
+  }
+
+   /*Departamento de Huila*/
+
+   /* la etiqueta LABEL */
+  .elboton6
+  {
+    background-image:url("../imagenes2/Huila.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+   position:absolute;
+    left:103px;
+    top:272px;
+    width:85px;
+   height:85px;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
+  transition-timing-function: linear;
+
+  }
+    .elboton6:hover
+    {
+    z-index:100;
+    background-image:url("../imagenes2/Huila2.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    opacity:0.6;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+    position:absolute;
+    left:103px;
+    top:272px;
+  }
+  /* en un post de Blogger. oculto los saltos de línea internos para no volverme loco */
+  .elboton6 br 
+  {
+      display:none;
+  }
+  /* el contenedor con lo lo que queremos mostrar */
+  .hiddenbox6 
+  {
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #000 inset;
+    left: 10px;
+    line-height: 0;
+    margin: 25px 0;
+    opacity: 0;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
+    top: 50px;
+    z-index: 100;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -o-transform: scale(0);
+    -ms-transform: scale(0);
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+  }
+  /* se muestra el contenido oculto */
+  .popUpControl6:checked ~ label > .hiddenbox6
+  {
+    opacity: 0.7;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+  }
+  /* el CHECKBOX lo mantenemos siempre oculto */
+  .popUpControl6 
+  {
+      display: none;
+  }
+
+
+     /*Departamento de Valle de cauca*/
+
+   /* la etiqueta LABEL */
+  .elboton7
+  {
+    background-image:url("../imagenes2/ValleCauca.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+   position:absolute;
+    left:70px;
+    top:232px;
+    width:75px;
+   height:78px;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
+  transition-timing-function: linear;
+
+  }
+    .elboton7:hover
+    {
+    z-index:100;
+    background-image:url("../imagenes2/ValleCauca2.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    opacity:0.6;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+    position:absolute;
+    left:70px;
+    top:232px;
+  }
+  /* en un post de Blogger. oculto los saltos de línea internos para no volverme loco */
+  .elboton7 br 
+  {
+      display:none;
+  }
+  /* el contenedor con lo lo que queremos mostrar */
+  .hiddenbox7
+  {
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #000 inset;
+    left: 10px;
+    line-height: 0;
+    margin: 25px 0;
+    opacity: 0;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
+    top: 50px;
+    z-index: 100;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -o-transform: scale(0);
+    -ms-transform: scale(0);
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+  }
+  /* se muestra el contenido oculto */
+  .popUpControl7:checked ~ label > .hiddenbox7
+  {
+    opacity: 0.7;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+  }
+  /* el CHECKBOX lo mantenemos siempre oculto */
+  .popUpControl7 
+  {
+      display: none;
+  }
+
+    /*Departamento de Nariño*/
+
+   /* la etiqueta LABEL */
+  .elboton8
+  {
+    background-image:url("../imagenes2/narinio.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+   position:absolute;
+    left:21px;
+    top:309px;
+    width:95px;
+   height:90px;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
+  transition-timing-function: linear;
+
+  }
+    .elboton8:hover
+    {
+    z-index:100;
+    background-image:url("../imagenes2/narinio2.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    opacity:0.6;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+    position:absolute;
+     left:21px;
+    top:309px;
+  }
+  /* en un post de Blogger. oculto los saltos de línea internos para no volverme loco */
+  .elboton8 br 
+  {
+      display:none;
+  }
+  /* el contenedor con lo lo que queremos mostrar */
+  .hiddenbox8
+  {
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #000 inset;
+    left: 10px;
+    line-height: 0;
+    margin: 25px 0;
+    opacity: 0;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
+    top: 50px;
+    z-index: 100;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -o-transform: scale(0);
+    -ms-transform: scale(0);
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+  }
+  /* se muestra el contenido oculto */
+  .popUpControl8:checked ~ label > .hiddenbox8
+  {
+    opacity: 0.7;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+  }
+  /* el CHECKBOX lo mantenemos siempre oculto */
+  .popUpControl8
+  {
+      display: none;
+  }
+
+   /*Departamento de Caqueta*/
+
+   /* la etiqueta LABEL */
+  .elboton9
+  {
+    background-image:url("../imagenes2/Caqueta.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+   position:absolute;
+    left:121px;
+    top:295px;
+    width:193px;
+   height:150px;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
+  transition-timing-function: linear;
+
+  }
+    .elboton9:hover
+    {
+    z-index:100;
+    background-image:url("../imagenes2/Caqueta2.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    opacity:0.6;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+    position:absolute;
+    left:121px;
+    top:295px;
+  }
+  /* en un post de Blogger. oculto los saltos de línea internos para no volverme loco */
+  .elboton9 br 
+  {
+      display:none;
+  }
+  /* el contenedor con lo lo que queremos mostrar */
+  .hiddenbox9
+  {
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #000 inset;
+    left: 10px;
+    line-height: 0;
+    margin: 25px 0;
+    opacity: 0;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
+    top: 50px;
+    z-index: 100;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -o-transform: scale(0);
+    -ms-transform: scale(0);
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+  }
+  /* se muestra el contenido oculto */
+  .popUpControl9:checked ~ label > .hiddenbox9
+  {
+    opacity: 0.7;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+  }
+  /* el CHECKBOX lo mantenemos siempre oculto */
+  .popUpControl9
+  {
+      display: none;
+  }
+
+   /*Departamento de Meta*/
+
+   /* la etiqueta LABEL */
+  .elboton10
+  {
+    background-image:url("../imagenes2/Meta.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+   position:absolute;
+    left:160px;
+    top:233px;
+    width:160px;
+   height:120px;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
+  transition-timing-function: linear;
+
+  }
+    .elboton10:hover
+    {
+    z-index:100;
+    background-image:url("../imagenes2/Meta2.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    opacity:0.5;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+    position:absolute;
+    left:160px;
+    top:233px;
+  }
+  /* en un post de Blogger. oculto los saltos de línea internos para no volverme loco */
+  .elboton10 br 
+  {
+      display:none;
+  }
+  /* el contenedor con lo lo que queremos mostrar */
+  .hiddenbox10
+  {
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #000 inset;
+    left: 10px;
+    line-height: 0;
+    margin: 25px 0;
+    opacity: 0;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
+    top: 50px;
+    z-index: 100;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -o-transform: scale(0);
+    -ms-transform: scale(0);
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+  }
+  /* se muestra el contenido oculto */
+  .popUpControl10:checked ~ label > .hiddenbox10
+  {
+    opacity: 0.7;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+  }
+  /* el CHECKBOX lo mantenemos siempre oculto */
+  .popUpControl10
+  {
+      display: none;
+  }
+
+
+  /*Departamento de Casanare*/
+
+   /* la etiqueta LABEL */
+  .elboton11
+  {
+    background-image:url("../imagenes2/Casanare.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+   position:absolute;
+    left:227px;
+    top:191px;
+    width:140px;
+   height:90px;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
+  transition-timing-function: linear;
+
+  }
+    .elboton11:hover
+    {
+    z-index:100;
+    background-image:url("../imagenes2/Casanare2.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    opacity:0.6;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+    position:absolute;
+    left:227px;
+    top:191px;
+  }
+  /* en un post de Blogger. oculto los saltos de línea internos para no volverme loco */
+  .elboton11 br 
+  {
+      display:none;
+  }
+  /* el contenedor con lo lo que queremos mostrar */
+  .hiddenbox11
+  {
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #000 inset;
+    left: 10px;
+    line-height: 0;
+    margin: 25px 0;
+    opacity: 0;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
+    top: 50px;
+    z-index: 100;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -o-transform: scale(0);
+    -ms-transform: scale(0);
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+  }
+  /* se muestra el contenido oculto */
+  .popUpControl11:checked ~ label > .hiddenbox11
+  {
+    opacity: 0.7;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+  }
+  /* el CHECKBOX lo mantenemos siempre oculto */
+  .popUpControl11
+  {
+      display: none;
+  }
+
+   /*Departamento de Boyaca*/
+
+   /* la etiqueta LABEL */
+  .elboton12
+  {
+    background-image:url("../imagenes2/Boyaca.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+   position:absolute;
+    left:173px;
+    top:166px;
+    width:110px;
+   height:100px;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
+  transition-timing-function: linear;
+
+  }
+    .elboton12:hover
+    {
+    z-index:100;
+    background-image:url("../imagenes2/Boyaca2.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    opacity:0.6;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+    position:absolute;
+    left:173px;
+    top:166px;
+  }
+  /* en un post de Blogger. oculto los saltos de línea internos para no volverme loco */
+  .elboton12 br 
+  {
+      display:none;
+  }
+  /* el contenedor con lo lo que queremos mostrar */
+  .hiddenbox12
+  {
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #000 inset;
+    left: 10px;
+    line-height: 0;
+    margin: 25px 0;
+    opacity: 0;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
+    top: 50px;
+    z-index: 100;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -o-transform: scale(0);
+    -ms-transform: scale(0);
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+  }
+  /* se muestra el contenido oculto */
+  .popUpControl12:checked ~ label > .hiddenbox12
+  {
+    opacity: 0.7;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+  }
+  /* el CHECKBOX lo mantenemos siempre oculto */
+  .popUpControl12
+  {
+      display: none;
+  }
+
+     /*Departamento de Cordoba*/
+
+   /* la etiqueta LABEL */
+  .elboton13
+  {
+    background-image:url("../imagenes2/Cordoba.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+   position:absolute;
+    left:99px;
+    top:95px;
+    width:87px;
+   height:85px;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
+  transition-timing-function: linear;
+
+  }
+    .elboton13:hover
+    {
+    z-index:100;
+    background-image:url("../imagenes2/Cordoba2.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    opacity:0.6;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+    position:absolute;
+     left:99px;
+    top:95px;
+  }
+  /* en un post de Blogger. oculto los saltos de línea internos para no volverme loco */
+  .elboton13 br 
+  {
+      display:none;
+  }
+  /* el contenedor con lo lo que queremos mostrar */
+  .hiddenbox13
+  {
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #000 inset;
+    left: 10px;
+    line-height: 0;
+    margin: 25px 0;
+    opacity: 0;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
+    top: 50px;
+    z-index: 100;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -o-transform: scale(0);
+    -ms-transform: scale(0);
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+  }
+  /* se muestra el contenido oculto */
+  .popUpControl13:checked ~ label > .hiddenbox13
+  {
+    opacity: 0.7;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+  }
+  /* el CHECKBOX lo mantenemos siempre oculto */
+  .popUpControl13
+  {
+      display: none;
+  }
+
+
+      /*Departamento de Sucre*/
+
+   /* la etiqueta LABEL */
+  .elboton14
+  {
+    background-image:url("../imagenes2/Sucre.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+   position:absolute;
+    left:128px;
+    top:75px;
+    width:55px;
+   height:88px;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
+  transition-timing-function: linear;
+
+  }
+    .elboton14:hover
+    {
+    z-index:100;
+    background-image:url("../imagenes2/Sucre2.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    opacity:0.6;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+    position:absolute;
+   left:128px;
+    top:75px;
+  }
+  /* en un post de Blogger. oculto los saltos de línea internos para no volverme loco */
+  .elboton14 br 
+  {
+      display:none;
+  }
+  /* el contenedor con lo lo que queremos mostrar */
+  .hiddenbox14
+  {
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #000 inset;
+    left: 10px;
+    line-height: 0;
+    margin: 25px 0;
+    opacity: 0;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
+    top: 50px;
+    z-index: 100;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -o-transform: scale(0);
+    -ms-transform: scale(0);
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+  }
+  /* se muestra el contenido oculto */
+  .popUpControl14:checked ~ label > .hiddenbox14
+  {
+    opacity: 0.7;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+  }
+  /* el CHECKBOX lo mantenemos siempre oculto */
+  .popUpControl14
+  {
+      display: none;
+  }
+
+
+    /*Departamento de Atlantico*/
+
+   /* la etiqueta LABEL */
+  .elboton15
+  {
+    background-image:url("../imagenes2/Atlantico.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+   position:absolute;
+    left:142px;
+    top:48px;
+    width:35px;
+   height:35px;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
+  transition-timing-function: linear;
+
+  }
+    .elboton15:hover
+    {
+    z-index:100;
+    background-image:url("../imagenes2/Atlantico2.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    opacity:0.6;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+    position:absolute;
+  left:142px;
+    top:48px;
+  }
+  /* en un post de Blogger. oculto los saltos de línea internos para no volverme loco */
+  .elboton15 br 
+  {
+      display:none;
+  }
+  /* el contenedor con lo lo que queremos mostrar */
+  .hiddenbox15
+  {
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #000 inset;
+    left: 10px;
+    line-height: 0;
+    margin: 25px 0;
+    opacity: 0;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
+    top: 50px;
+    z-index: 100;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -o-transform: scale(0);
+    -ms-transform: scale(0);
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+  }
+  /* se muestra el contenido oculto */
+  .popUpControl15:checked ~ label > .hiddenbox15
+  {
+    opacity: 0.7;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+  }
+  /* el CHECKBOX lo mantenemos siempre oculto */
+  .popUpControl15
+  {
+      display: none;
+  }
+
+   /*Departamento de Cesar*/
+
+   /* la etiqueta LABEL */
+  .elboton16
+  {
+    background-image:url("../imagenes2/Cesar.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+   position:absolute;
+    left:189px;
+    top:51px;
+    width:60px;
+   height:130px;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
+  transition-timing-function: linear;
+
+  }
+    .elboton16:hover
+    {
+    z-index:100;
+    background-image:url("../imagenes2/Cesar2.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    opacity:0.6;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+    position:absolute;
+   left:189px;
+    top:51px;
+  }
+  /* en un post de Blogger. oculto los saltos de línea internos para no volverme loco */
+  .elboton16 br 
+  {
+      display:none;
+  }
+  /* el contenedor con lo lo que queremos mostrar */
+  .hiddenbox16
+  {
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #000 inset;
+    left: 10px;
+    line-height: 0;
+    margin: 25px 0;
+    opacity: 0;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
+    top: 50px;
+    z-index: 100;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -o-transform: scale(0);
+    -ms-transform: scale(0);
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+  }
+  /* se muestra el contenido oculto */
+  .popUpControl16:checked ~ label > .hiddenbox16
+  {
+    opacity: 0.7;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+  }
+  /* el CHECKBOX lo mantenemos siempre oculto */
+  .popUpControl16
+  {
+      display: none;
+  }
+
+
+  /*Departamento de Magdalena*/
+
+   /* la etiqueta LABEL */
+  .elboton17
+  {
+    background-image:url("../imagenes2/Magdalena.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+   position:absolute;
+    left:155px;
+    top:38px;
+    width:60px;
+   height:130px;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
+  transition-timing-function: linear;
+
+  }
+    .elboton17:hover
+    {
+    z-index:100;
+    background-image:url("../imagenes2/Magdalena2.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    opacity:0.6;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+    position:absolute;
+   left:155px;
+    top:38px;
+  }
+  /* en un post de Blogger. oculto los saltos de línea internos para no volverme loco */
+  .elboton17 br 
+  {
+      display:none;
+  }
+  /* el contenedor con lo lo que queremos mostrar */
+  .hiddenbox17
+  {
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #000 inset;
+    left: 10px;
+    line-height: 0;
+    margin: 25px 0;
+    opacity: 0;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
+    top: 50px;
+    z-index: 100;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -o-transform: scale(0);
+    -ms-transform: scale(0);
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+  }
+  /* se muestra el contenido oculto */
+  .popUpControl17:checked ~ label > .hiddenbox17
+  {
+    opacity: 0.7;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+  }
+  /* el CHECKBOX lo mantenemos siempre oculto */
+  .popUpControl17
+  {
+      display: none;
+  }
+
+  
+  /*Departamento de Guajira*/
+
+   /* la etiqueta LABEL */
+  .elboton18
+  {
+    background-image:url("../imagenes2/Guajira.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+   position:absolute;
+    left:194px;
+    top:0px;
+    width:110px;
+   height:90px;
+  transition-duration: 0.3s;
+  transition-timing-function: linear;
+  transition-timing-function: linear;
+
+  }
+    .elboton18:hover
+    {
+    z-index:100;
+    background-image:url("../imagenes2/Guajira2.fw.png");
+    background-repeat:no-repeat;
+    color: #FFF;
+    cursor: pointer;
+    display: inline-block;
+    opacity:0.6;
+    font-size: 20px;
+    text-shadow: 1px 1px 1px #000;
+    position:absolute;
+   left:194px;
+    top:0px;
+  }
+  /* en un post de Blogger. oculto los saltos de línea internos para no volverme loco */
+  .elboton18 br 
+  {
+      display:none;
+  }
+  /* el contenedor con lo lo que queremos mostrar */
+  .hiddenbox18
+  {
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #000 inset;
+    left: 10px;
+    line-height: 0;
+    margin: 25px 0;
+    opacity: 0;
+    padding: 15px;
+    position: absolute;
+    text-align: center;
+    top: 50px;
+    z-index: 100;
+    -moz-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -moz-transform: scale(0);
+    -webkit-transform: scale(0);
+    -o-transform: scale(0);
+    -ms-transform: scale(0);
+    -moz-transition: all 1s;
+    -webkit-transition: all 1s;
+    -o-transition: all 1s;
+    -ms-transition: all 1s;
+  }
+  /* se muestra el contenido oculto */
+  .popUpControl18:checked ~ label > .hiddenbox18
+  {
+    opacity: 0.7;
+    -moz-transform: scale(1);
+    -webkit-transform: scale(1);
+    -o-transform: scale(1);
+    -ms-transform: scale(1);
+  }
+  /* el CHECKBOX lo mantenemos siempre oculto */
+  .popUpControl18
+  {
+      display: none;
+  }
+
+
+ @media only screen and (max-width: 992px) {
+    .mapa {
+        display: none !important;
+    }
+    .app-fondo{
+        height: 100%;
+    }
+    .div-align-center{
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+ @media only screen and (max-width: 520px) {
+    .div-login{
+        padding: 30px 10px;
+    }
+    
+}
+
+ .mapa-contenido{
+    margin-top: 10px;
+}
